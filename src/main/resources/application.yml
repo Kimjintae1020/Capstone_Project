@@ -1,0 +1,26 @@
+# MySQL 데이터베이스 설정
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://${DB_HOST}:${PORT}/${DB_NAME}?useSSL=false&useUnicode=true&serverTimezone=Asia/Seoul&allowPublicKeyRetrieval=true
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+  jpa:
+    hibernate:
+      ddl-auto: none
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQLDialect
+        format_sql: true
+        show_sql: true
+  # JWT 보안 설정
+  jwt:
+    secret: ${JWT_SECRET}
+    expiration: 10800000  # 토큰 만료 시간 (3시간)
+    issuer: ${JWT_ISSUER}
+
+# 로그 설정
+logging:
+  level:
+    root: INFO
+    com.example: DEBUG

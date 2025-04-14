@@ -8,9 +8,8 @@ import lombok.Getter;
 public class SuccessResponse<T> {
     private final int status;
     private final String message;
-    private final T data;
 
-    public static <T> SuccessResponse<T> of(int status, String message, T data) {
-        return new SuccessResponse<>(status, message, data);
+    public static <T> SuccessResponse<T> of(int status, String message) {
+        return new SuccessResponse<>(status, message);
     }
 }

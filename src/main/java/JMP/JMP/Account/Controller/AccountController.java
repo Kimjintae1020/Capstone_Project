@@ -1,9 +1,10 @@
 package JMP.JMP.Account.Controller;
 
+import JMP.JMP.Account.Dto.DtoLogin;
 import JMP.JMP.Account.Service.AccountService;
 import JMP.JMP.Account.Dto.DtoRegister;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -19,15 +20,21 @@ public class AccountController {
 
     //  회원가입
     @PostMapping("/register")
-    public ResponseEntity<?> submitSignUpForm(@RequestBody DtoRegister dtoRegister) {
+    public ResponseEntity<?> register(@RequestBody DtoRegister dtoRegister) {
 
         ResponseEntity<?> response = accountService.register(dtoRegister);
 
-        if(response.getStatusCode() == HttpStatus.CONFLICT){
-            return ResponseEntity.status(HttpStatus.CONFLICT).body("이미 사용 중인 이메일입니다.");
-        }
-
         return response;
+    }
+
+    // 로그인 로직
+    @PostMapping("/login")
+    public ResponseEntity<?> login(@RequestBody DtoLogin dtoLogin, HttpServletResponse response) {
+
+        ResponseEntity<?> loginResponse = accountService.login(dtoLogin, response);
+
+
+        return loginResponse;
     }
 
 }

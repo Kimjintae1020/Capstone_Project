@@ -11,6 +11,10 @@ public enum ErrorCode {
 
         // 계정 관련
         DUPLICATE_EMAIL(409, "ACCOUNT-001", "이미 사용 중인 이메일입니다."),
+        DUPLICATE_PHONE(409, "ACCOUNT-002", "이미 사용 중인 핸드폰입니다."),
+        EMAIL_NOT_FOUND(404, "ACCOUNT-003", "해당 이메일로 등록된 사용자가 없습니다."),
+        INVALID_PASSWORD(409, "ACCOUNT-004", "비밀번호가 일치하지 않습니다."),
+
         UNAUTHORIZED(401, "ACCOUNT-002", "인증에 실패한 경우"),
         ACCOUNT_NOT_FOUND(404, "ACCOUNT-003", "계정을 찾을 수 없는 경우"),
         ROLE_NOT_EXISTS(403, "ACCOUNT-004", "권한이 부족한 경우"),

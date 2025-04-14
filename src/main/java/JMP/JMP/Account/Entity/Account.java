@@ -19,40 +19,43 @@ public class Account {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "account_id")
+    @Column(name = "ACCOUNT_ID")
     private Long id;
 
-    @Column(nullable = false, unique = true)
+    @Column(name = "EMAIL", nullable = false, unique = true)
     private String email;
 
-    @Column(nullable = false)
+    @Column(name = "PASSWORD", nullable = false)
     private String password;
 
-    @Column(nullable = false)
+    @Column(name = "NAME", nullable = false)
     private String name;
 
-    @Column(name = "birth_year", nullable = false)
+    @Column(name = "BIRTH_YEAR", nullable = false)
     private String birthYear;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
+    @Column(name = "GENDER", nullable = false)
     private Gender gender;
 
-    @Column(nullable = false, unique = true)
+    @Column(name = "PHONE", nullable = false, unique = true)
     private String phone;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
+    @Column(name = "MAJOR", nullable = false)
     private Major major;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
+    @Column(name = "EDUCATION", nullable = false)
     private Education education;
 
-    @Column(name = "created_at")
+    @Column(name = "CREATED_AT")
     private LocalDate createdAt;
 
-    // 생성일 자동 설정하고 싶다면 아래에 추가해도 됨
+    @Column(name = "ROLE", nullable = false)
+    @Enumerated(EnumType.STRING)
+    private Role role = Role.USER;
+
     @PrePersist
     protected void onCreate() {
         this.createdAt = LocalDate.now();

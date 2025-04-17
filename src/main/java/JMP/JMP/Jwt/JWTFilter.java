@@ -2,7 +2,7 @@ package JMP.JMP.Jwt;
 
 import JMP.JMP.Account.Dto.CustomUserDetails;
 import JMP.JMP.Account.Entity.Account;
-import JMP.JMP.Account.Entity.Role;
+import JMP.JMP.Account.Role.Role;
 import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;

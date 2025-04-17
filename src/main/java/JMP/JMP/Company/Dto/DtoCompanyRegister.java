@@ -1,25 +1,27 @@
-package JMP.JMP.Account.Dto;
+package JMP.JMP.Company.Dto;
 
-import JMP.JMP.Enum.Education;
 import JMP.JMP.Enum.Gender;
-import JMP.JMP.Enum.Major;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
+
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-public class DtoRegister {
+public class DtoCompanyRegister {
 
     private Long id;
     private String email;
     private String password;
     private String name;
-    private String birthYear;
     private Gender gender;
     private String phone;
-    private Major major;
-    private Education education;
+    private String businessNumber;
+    private String position;
+    private String companyName;        // 회사명
+    private String companyLocation;    // 회사 주소
+    private LocalDate createdAt;
 
 }

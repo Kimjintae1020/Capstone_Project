@@ -6,7 +6,7 @@ import JMP.JMP.Account.Dto.ErrorResponse;
 import JMP.JMP.Account.Dto.SuccessResponse;
 import JMP.JMP.Account.Entity.Account;
 import JMP.JMP.Account.Entity.RefreshEntity;
-import JMP.JMP.Account.Entity.Role;
+import JMP.JMP.Account.Role.Role;
 import JMP.JMP.Account.Repository.AccountRepository;
 import JMP.JMP.Account.Repository.RefreshRepository;
 import JMP.JMP.Enum.ErrorCode;
@@ -33,7 +33,7 @@ public class AccountService {
     private final JWTUtil jwtUtil;
     private final RefreshRepository refreshRepository;
 
-    // 회원관리
+    // 회원가입로직 (사용자)
     public ResponseEntity<?> register(DtoRegister dtoRegister) {
 
         // 이메일 중복검사
@@ -77,8 +77,6 @@ public class AccountService {
     public ResponseEntity<?> login(DtoLogin dtoLogin, HttpServletResponse response) {
 
         Optional<Account> optionalAccount = accountRepository.findByEmail(dtoLogin.getEmail());
-
-        log.info(optionalAccount.toString());
 
         // 해당 이메일이 DB에 없을 때
         if (optionalAccount.isEmpty()) {

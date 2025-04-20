@@ -3,7 +3,6 @@ package JMP.JMP.Config;
 import JMP.JMP.Account.Repository.RefreshRepository;
 import JMP.JMP.Jwt.JWTFilter;
 import JMP.JMP.Jwt.JWTUtil;
-import JMP.JMP.Jwt.LoginFilter;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -26,10 +25,7 @@ import java.util.Collections;
 @RequiredArgsConstructor
 public class SecurityConfig {
 
-    //AuthenticationManager가 인자로 받을 AuthenticationConfiguraion 객체 생성자 주입
-    private final AuthenticationConfiguration authenticationConfiguration;
     private final JWTUtil jwtUtil;
-    private final RefreshRepository refreshRepository;
 
 
     //AuthenticationManager Bean 등록
@@ -82,18 +78,14 @@ public class SecurityConfig {
 
         http
                 .authorizeHttpRequests((auth) -> auth
-                        .requestMatchers("/api/**", "/", "/api/login").permitAll()
+                        .requestMatchers("/api/**", "/", "/api/login").permitAll()      // 개발 편의를 위해 전체 허용
                         .requestMatchers("/admin").hasRole("ADMIN")
                         .requestMatchers("/reissue").permitAll()
                         .anyRequest().authenticated());
 
         //JWTFilter 등록
         http
-                .addFilterBefore(new JWTFilter(jwtUtil), LoginFilter.class);
-
-        //필터 추가 LoginFilter()는 인자를 받음 (AuthenticationManager() 메소드에 authenticationConfiguration 객체를 넣어야 함) 따라서 등록 필요
-        http
-                .addFilterAt(new LoginFilter(authenticationManager(authenticationConfiguration),jwtUtil, refreshRepository), UsernamePasswordAuthenticationFilter.class);    // addFilterAt 대신해서 작성하기 때문에 -> At
+                .addFilterBefore(new JWTFilter(jwtUtil), UsernamePasswordAuthenticationFilter.class);
 
 //        http
 //                .addFilterBefore(new CustomLogoutFilter(jwtUtil, refreshRepository), LogoutFilter.class);

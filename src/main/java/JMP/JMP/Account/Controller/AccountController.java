@@ -42,7 +42,7 @@ public class AccountController {
             return authService.loginUser(dtoLogin, response);
         }
         // 기업 담당자 로그인
-        else if (dtoLogin.getRole() == Role.PENDING || dtoLogin.getRole() == Role.COMPANY) {
+        else if (dtoLogin.getRole() == Role.COMPANY) {
             return authService.loginCompany(dtoLogin, response);
         }
 

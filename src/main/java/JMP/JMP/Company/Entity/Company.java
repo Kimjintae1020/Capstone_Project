@@ -1,5 +1,6 @@
 package JMP.JMP.Company.Entity;
 
+import JMP.JMP.Enum.PostRole;
 import JMP.JMP.Enum.Role;
 import JMP.JMP.Enum.Gender;
 import jakarta.persistence.*;
@@ -49,12 +50,16 @@ public class Company {
         @Column(name = "COMPANY_LOCATION", nullable = false)
         private String companyLocation;    // 회사 주소
 
+        @Column(name = "POST_ROLE", nullable = false)
+        @Enumerated(EnumType.STRING)
+        private PostRole postRole = PostRole.PENDING;    // 공고 작성 권한
+
         @Column(name = "CREATED_AT")
         private LocalDate createdAt;
 
         @Column(name = "ROLE", nullable = false)
         @Enumerated(EnumType.STRING)
-        private Role role = Role.PENDING;
+        private Role role = Role.COMPANY;
 
         @PrePersist
         protected void onCreate() {

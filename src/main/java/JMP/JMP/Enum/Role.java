@@ -8,13 +8,12 @@ public enum Role {
 
     USER("ROLE_USER"),              // 사용자
 
-    PENDING("ROLE_PENDING"),        // 기업 담당자 기본값
     COMPANY("ROLE_COMPANY");        // 기업 담당자
 
+    private String value;
     Role(String value) {
         this.value = value;
     }
-    private String value;
 
 }
 

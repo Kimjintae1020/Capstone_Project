@@ -20,11 +20,8 @@ public enum ErrorCode {
         DUPLICATE_COMPANY_PHONE(409, "COMPANY-002", "이미 사용 중인 기업 담당자 핸드폰입니다."),
         DUPLICATE_BUSSINESS_NUMBER(409, "COMPANY-003", "이미 등록되어 있는 사업자 번호입니다."),
 
-        UNAUTHORIZED(401, "ACCOUNT-002", "인증에 실패한 경우"),
-        ACCOUNT_NOT_FOUND(404, "ACCOUNT-003", "계정을 찾을 수 없는 경우"),
-        ROLE_NOT_EXISTS(403, "ACCOUNT-004", "권한이 부족한 경우"),
-        TOKEN_NOT_EXISTS(404, "ACCOUNT-005", "해당 key의 인증 토큰이 존재하지 않는 경우");
-
+        // 권한 관련
+        INVALID_ROLE(400, "ROLE-001", "잘못된 권한 입니다.");
 
         private final int status;
         private final String code;

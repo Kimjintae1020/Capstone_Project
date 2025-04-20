@@ -1,4 +1,4 @@
-package JMP.JMP.Account.Role;
+package JMP.JMP.Enum;
 
 import lombok.Getter;
 

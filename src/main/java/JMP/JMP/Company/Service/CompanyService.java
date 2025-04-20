@@ -2,7 +2,7 @@ package JMP.JMP.Company.Service;
 
 import JMP.JMP.Account.Dto.ErrorResponse;
 import JMP.JMP.Account.Dto.SuccessResponse;
-import JMP.JMP.Account.Role.Role;
+import JMP.JMP.Enum.Role;
 import JMP.JMP.Company.Entity.Company;
 import JMP.JMP.Company.Dto.DtoCompanyRegister;
 import JMP.JMP.Company.Repository.CompanyRespository;

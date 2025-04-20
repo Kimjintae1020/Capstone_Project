@@ -1,6 +1,6 @@
 package JMP.JMP.Company.Entity;
 
-import JMP.JMP.Account.Role.Role;
+import JMP.JMP.Enum.Role;
 import JMP.JMP.Enum.Gender;
 import jakarta.persistence.*;
 import lombok.*;

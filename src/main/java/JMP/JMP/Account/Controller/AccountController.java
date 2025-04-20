@@ -25,7 +25,7 @@ public class AccountController {
     private final AuthService authService;
 
     //  회원가입
-    @PostMapping("/register")
+    @PostMapping("/register/account")
     public ResponseEntity<?> register(@RequestBody DtoRegister dtoRegister) {
 
         ResponseEntity<?> response = accountService.register(dtoRegister);

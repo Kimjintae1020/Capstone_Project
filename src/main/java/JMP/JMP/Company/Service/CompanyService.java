@@ -2,7 +2,8 @@ package JMP.JMP.Company.Service;
 
 import JMP.JMP.Account.Dto.ErrorResponse;
 import JMP.JMP.Account.Dto.SuccessResponse;
-import JMP.JMP.Account.Role.Role;
+import JMP.JMP.Enum.PostRole;
+import JMP.JMP.Enum.Role;
 import JMP.JMP.Company.Entity.Company;
 import JMP.JMP.Company.Dto.DtoCompanyRegister;
 import JMP.JMP.Company.Repository.CompanyRespository;
@@ -59,11 +60,13 @@ public class CompanyService {
                 .position(dtoCompanyRegister.getPosition())
                 .companyLocation(dtoCompanyRegister.getCompanyLocation())
                 .companyName(dtoCompanyRegister.getCompanyName())
-                .role(Role.PENDING)
+                .postRole(PostRole.PENDING)
+                .role(Role.COMPANY)
                 .build();
         companyRespository.save(savedCompany);
 
         log.info("기업 담당자 회원가입 완료");
+
         // 회원가입 성공 Http 상태코드 (201 created)
         return ResponseEntity
                 .status(HttpStatus.CREATED)

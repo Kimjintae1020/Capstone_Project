@@ -22,6 +22,5 @@ public class DtoCompanyRegister {
     private String position;
     private String companyName;        // 회사명
     private String companyLocation;    // 회사 주소
-    private LocalDate createdAt;
 
 }

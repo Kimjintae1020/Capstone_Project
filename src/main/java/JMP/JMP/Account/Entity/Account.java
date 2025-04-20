@@ -3,7 +3,7 @@ package JMP.JMP.Account.Entity;
 import JMP.JMP.Enum.Education;
 import JMP.JMP.Enum.Gender;
 import JMP.JMP.Enum.Major;
-import JMP.JMP.Account.Role.Role;
+import JMP.JMP.Enum.Role;
 import jakarta.persistence.*;
 import lombok.*;
 

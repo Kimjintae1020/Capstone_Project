@@ -1,10 +1,11 @@
-package JMP.JMP.Account.Service;
+package JMP.JMP.Auth.Service;
 
 import JMP.JMP.Account.Dto.DtoLogin;
 import JMP.JMP.Account.Dto.ErrorResponse;
 import JMP.JMP.Account.Dto.SuccessResponse;
 import JMP.JMP.Account.Entity.Account;
 import JMP.JMP.Account.Entity.RefreshEntity;
+import JMP.JMP.Auth.DtoEmailRequest;
 import JMP.JMP.Company.Entity.Company;
 import JMP.JMP.Company.Repository.CompanyRespository;
 import JMP.JMP.Enum.Role;
@@ -93,5 +94,20 @@ public class AuthService {
 
     private ResponseEntity<?> errorResponse(ErrorCode errorCode) {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ErrorResponse.of(errorCode));
+    }
+
+    // 이메일 중복 검사
+    public ResponseEntity<?> existEmailCheck(String email) {
+        if (accountRepository.existsByEmail(email)) {
+            return ResponseEntity.status(HttpStatus.CONFLICT)
+                    .body(ErrorResponse.of(ErrorCode.DUPLICATE_EMAIL));
+        }
+        if (companyRespository.existsByEmail(email)) {
+            return ResponseEntity.status(HttpStatus.CONFLICT)
+                    .body(ErrorResponse.of(ErrorCode.DUPLICATE_EMAIL));
+        }
+
+        return ResponseEntity.ok(SuccessResponse.of(200, "사용 가능한 이메일 입니다."));
+
     }
 }

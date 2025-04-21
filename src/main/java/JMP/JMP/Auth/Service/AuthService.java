@@ -44,7 +44,8 @@ public class AuthService {
     public ResponseEntity<?> loginUser(DtoLogin dto, HttpServletResponse response) {
         Optional<Account> optional = accountRepository.findByEmail(dto.getEmail());
         if (optional.isEmpty()) {
-            return errorResponse(ErrorCode.EMAIL_NOT_FOUND);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(ErrorResponse.of(ErrorCode.EMAIL_NOT_FOUND));
         }
 
         Account account = optional.get();   // Optional 꺼내기
@@ -52,7 +53,8 @@ public class AuthService {
 
         // 비밀번호가 일치하지 않으면
         if (!passwordEncoder.matches(dto.getPassword(), account.getPassword())) {
-            return errorResponse(ErrorCode.INVALID_PASSWORD);
+            return ResponseEntity.status(HttpStatus.CONFLICT)
+                    .body(ErrorResponse.of(ErrorCode.INVALID_PASSWORD));
         }
         
         return issueToken(account.getEmail(), account.getRole(), response);
@@ -65,11 +67,13 @@ public class AuthService {
         Optional<Company> optional = companyRespository.findByEmail(dto.getEmail());
 
         if (optional.isEmpty()) {
-            return errorResponse(ErrorCode.EMAIL_NOT_FOUND);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(ErrorResponse.of(ErrorCode.EMAIL_NOT_FOUND));
         }
         Company company = optional.get();
         if (!passwordEncoder.matches(dto.getPassword(), company.getPassword())) {
-            return errorResponse(ErrorCode.INVALID_PASSWORD);
+            return ResponseEntity.status(HttpStatus.CONFLICT)
+                    .body(ErrorResponse.of(ErrorCode.INVALID_PASSWORD));
         }
         return issueToken(company.getEmail(), company.getRole(), response);
     }
@@ -90,10 +94,6 @@ public class AuthService {
         );
 
         return ResponseEntity.ok(SuccessResponse.of(200, "로그인 성공"));
-    }
-
-    private ResponseEntity<?> errorResponse(ErrorCode errorCode) {
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ErrorResponse.of(errorCode));
     }
 
     // 이메일 중복 검사

@@ -1,6 +1,5 @@
 package JMP.JMP.Company.Repository;
 
-import JMP.JMP.Auth.DtoEmailRequest;
 import JMP.JMP.Company.Entity.Company;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;

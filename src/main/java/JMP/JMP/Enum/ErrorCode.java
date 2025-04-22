@@ -21,7 +21,17 @@ public enum ErrorCode {
         DUPLICATE_BUSSINESS_NUMBER(409, "COMPANY-003", "이미 등록되어 있는 사업자 번호입니다."),
 
         // 권한 관련
-        INVALID_ROLE(400, "ROLE-001", "잘못된 권한 입니다.");
+        INVALID_ROLE(400, "ROLE-001", "잘못된 권한 입니다."),
+        NO_POST_PERMISSION(403, "ROLE-002", "프로젝트 공고를 작성할 권한이 없습니다."),
+
+
+
+        // 인증 관련
+        NOT_AUTHENTICATED(401, "AUTH-001", "로그인 되어 있지 않습니다."),
+        TOKEN_EXPIRED(401, "AUTH-002", "토큰이 만료되었습니다."),
+        INVALID_TOKEN(401, "AUTH-003", "유효하지 않은 토큰입니다.");
+
+
 
         private final int status;
         private final String code;

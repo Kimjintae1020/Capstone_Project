@@ -5,7 +5,8 @@ import JMP.JMP.Account.Dto.ErrorResponse;
 import JMP.JMP.Account.Dto.SuccessResponse;
 import JMP.JMP.Account.Entity.Account;
 import JMP.JMP.Account.Entity.RefreshEntity;
-import JMP.JMP.Auth.DtoEmailRequest;
+import JMP.JMP.Auth.Dto.DtoMypageAccount;
+import JMP.JMP.Auth.Dto.DtoMypageCompany;
 import JMP.JMP.Company.Entity.Company;
 import JMP.JMP.Company.Repository.CompanyRespository;
 import JMP.JMP.Enum.Role;
@@ -44,15 +45,16 @@ public class AuthService {
     public ResponseEntity<?> loginUser(DtoLogin dto, HttpServletResponse response) {
         Optional<Account> optional = accountRepository.findByEmail(dto.getEmail());
         if (optional.isEmpty()) {
-            return errorResponse(ErrorCode.EMAIL_NOT_FOUND);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(ErrorResponse.of(ErrorCode.EMAIL_NOT_FOUND));
         }
 
-        Account account = optional.get();   // Optional 꺼내기
-
+        Account account = optional.get();
 
         // 비밀번호가 일치하지 않으면
         if (!passwordEncoder.matches(dto.getPassword(), account.getPassword())) {
-            return errorResponse(ErrorCode.INVALID_PASSWORD);
+            return ResponseEntity.status(HttpStatus.CONFLICT)
+                    .body(ErrorResponse.of(ErrorCode.INVALID_PASSWORD));
         }
         
         return issueToken(account.getEmail(), account.getRole(), response);
@@ -65,11 +67,13 @@ public class AuthService {
         Optional<Company> optional = companyRespository.findByEmail(dto.getEmail());
 
         if (optional.isEmpty()) {
-            return errorResponse(ErrorCode.EMAIL_NOT_FOUND);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(ErrorResponse.of(ErrorCode.EMAIL_NOT_FOUND));
         }
         Company company = optional.get();
         if (!passwordEncoder.matches(dto.getPassword(), company.getPassword())) {
-            return errorResponse(ErrorCode.INVALID_PASSWORD);
+            return ResponseEntity.status(HttpStatus.CONFLICT)
+                    .body(ErrorResponse.of(ErrorCode.INVALID_PASSWORD));
         }
         return issueToken(company.getEmail(), company.getRole(), response);
     }
@@ -92,10 +96,6 @@ public class AuthService {
         return ResponseEntity.ok(SuccessResponse.of(200, "로그인 성공"));
     }
 
-    private ResponseEntity<?> errorResponse(ErrorCode errorCode) {
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ErrorResponse.of(errorCode));
-    }
-
     // 이메일 중복 검사
     public ResponseEntity<?> existEmailCheck(String email) {
         if (accountRepository.existsByEmail(email)) {
@@ -108,6 +108,42 @@ public class AuthService {
         }
 
         return ResponseEntity.ok(SuccessResponse.of(200, "사용 가능한 이메일 입니다."));
+
+    }
+
+    // 마이페이지 조회
+    public ResponseEntity<?> getMypage(String loginId, Role role) {
+
+        if (role == Role.USER) {
+            Optional<Account> optionalAccount = accountRepository.findByEmail(loginId);
+
+            if (optionalAccount.isEmpty()) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                        .body(ErrorResponse.of(ErrorCode.EMAIL_NOT_FOUND));
+            }
+
+            Account account = optionalAccount.get();
+            DtoMypageAccount dto = new DtoMypageAccount(account);
+
+            return ResponseEntity.ok(dto);
+
+        }
+        else if (role == Role.COMPANY) {
+            Optional<Company> optionalCompany = companyRespository.findByEmail(loginId);
+
+            if (optionalCompany.isEmpty()) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                        .body(ErrorResponse.of(ErrorCode.EMAIL_NOT_FOUND));
+            }
+
+            Company company = optionalCompany.get();
+            DtoMypageCompany dto = new DtoMypageCompany(company);
+
+            return ResponseEntity.ok(dto);
+        }
+
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(ErrorResponse.of(ErrorCode.INVALID_ROLE));
 
     }
 }

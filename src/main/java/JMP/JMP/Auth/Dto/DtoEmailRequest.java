@@ -1,4 +1,4 @@
-package JMP.JMP.Auth;
+package JMP.JMP.Auth.Dto;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;

@@ -31,8 +31,6 @@ public class ProjectService {
     @Transactional
     public ResponseEntity<?> createProject(DtoCreateProject dtoCreateProject, String loginId) {
 
-        // To Do:
-        // 담당자 권한에 따른 생성 유무
         Optional<Company> companyOptional = companyRespository.findByEmail(loginId);
 
         if (companyOptional.isEmpty()) {

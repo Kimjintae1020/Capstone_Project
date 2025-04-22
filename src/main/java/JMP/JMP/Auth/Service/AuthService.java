@@ -5,7 +5,8 @@ import JMP.JMP.Account.Dto.ErrorResponse;
 import JMP.JMP.Account.Dto.SuccessResponse;
 import JMP.JMP.Account.Entity.Account;
 import JMP.JMP.Account.Entity.RefreshEntity;
-import JMP.JMP.Auth.DtoEmailRequest;
+import JMP.JMP.Auth.Dto.DtoMypageAccount;
+import JMP.JMP.Auth.Dto.DtoMypageCompany;
 import JMP.JMP.Company.Entity.Company;
 import JMP.JMP.Company.Repository.CompanyRespository;
 import JMP.JMP.Enum.Role;
@@ -48,8 +49,7 @@ public class AuthService {
                     .body(ErrorResponse.of(ErrorCode.EMAIL_NOT_FOUND));
         }
 
-        Account account = optional.get();   // Optional 꺼내기
-
+        Account account = optional.get();
 
         // 비밀번호가 일치하지 않으면
         if (!passwordEncoder.matches(dto.getPassword(), account.getPassword())) {
@@ -108,6 +108,42 @@ public class AuthService {
         }
 
         return ResponseEntity.ok(SuccessResponse.of(200, "사용 가능한 이메일 입니다."));
+
+    }
+
+    // 마이페이지 조회
+    public ResponseEntity<?> getMypage(String loginId, Role role) {
+
+        if (role == Role.USER) {
+            Optional<Account> optionalAccount = accountRepository.findByEmail(loginId);
+
+            if (optionalAccount.isEmpty()) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                        .body(ErrorResponse.of(ErrorCode.EMAIL_NOT_FOUND));
+            }
+
+            Account account = optionalAccount.get();
+            DtoMypageAccount dto = new DtoMypageAccount(account);
+
+            return ResponseEntity.ok(dto);
+
+        }
+        else if (role == Role.COMPANY) {
+            Optional<Company> optionalCompany = companyRespository.findByEmail(loginId);
+
+            if (optionalCompany.isEmpty()) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                        .body(ErrorResponse.of(ErrorCode.EMAIL_NOT_FOUND));
+            }
+
+            Company company = optionalCompany.get();
+            DtoMypageCompany dto = new DtoMypageCompany(company);
+
+            return ResponseEntity.ok(dto);
+        }
+
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(ErrorResponse.of(ErrorCode.INVALID_ROLE));
 
     }
 }

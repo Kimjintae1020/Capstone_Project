@@ -2,6 +2,7 @@ package JMP.JMP.Auth.Controller;
 
 import JMP.JMP.Account.Dto.DtoLogin;
 import JMP.JMP.Account.Dto.ErrorResponse;
+import JMP.JMP.Account.Dto.SuccessResponse;
 import JMP.JMP.Auth.Service.AuthService;
 import JMP.JMP.Enum.ErrorCode;
 import JMP.JMP.Enum.Role;
@@ -62,4 +63,13 @@ public class AuthController {
         ResponseEntity<?> response = authService.getMypage(loginId, role);
         return response;
     }
+
+    @PostMapping("/logout")
+    public ResponseEntity<?> logout(@RequestHeader("Authorization") String token, HttpServletResponse response) {
+        authService.logout(token, response);
+        return ResponseEntity.ok(SuccessResponse.of(200, "로그아웃 성공"));
+    }
+
+
 }
+

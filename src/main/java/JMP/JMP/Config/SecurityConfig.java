@@ -26,6 +26,7 @@ import java.util.Collections;
 public class SecurityConfig {
 
     private final JWTUtil jwtUtil;
+    private final RefreshRepository refreshRepository;
 
 
     //AuthenticationManager Bean 등록
@@ -78,17 +79,16 @@ public class SecurityConfig {
 
         http
                 .authorizeHttpRequests((auth) -> auth
-                        .requestMatchers("/api/**", "/", "/api/login").permitAll()      // 개발 편의를 위해 전체 허용
+                        .requestMatchers("/api/**", "/").permitAll()      // 개발 편의를 위해 전체 허용
                         .requestMatchers("/admin").hasRole("ADMIN")
                         .requestMatchers("/reissue").permitAll()
                         .anyRequest().authenticated());
 
-        //JWTFilter 등록
+
         http
+                //JWTFilter 등록
                 .addFilterBefore(new JWTFilter(jwtUtil), UsernamePasswordAuthenticationFilter.class);
 
-//        http
-//                .addFilterBefore(new CustomLogoutFilter(jwtUtil, refreshRepository), LogoutFilter.class);
 
         http
                 .sessionManagement((session) -> session

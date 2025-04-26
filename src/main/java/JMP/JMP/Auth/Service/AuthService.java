@@ -16,6 +16,7 @@ import JMP.JMP.Enum.ErrorCode;
 import JMP.JMP.Jwt.JWTUtil;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import jakarta.servlet.http.Cookie;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -146,4 +147,21 @@ public class AuthService {
                 .body(ErrorResponse.of(ErrorCode.INVALID_ROLE));
 
     }
+
+    @Transactional
+    public void logout(String token, HttpServletResponse response) {
+        String accessToken = token.replace("Bearer ", "");
+        String email = jwtUtil.getUsername(accessToken);
+
+        refreshRepository.findByUsername(email)
+                .ifPresent(refreshRepository::delete);
+
+        Cookie cookie = new Cookie("refresh", null);
+        cookie.setMaxAge(0);
+        cookie.setPath("/");
+        cookie.setHttpOnly(true);
+        cookie.setSecure(true);
+        response.addCookie(cookie);
+    }
+
 }

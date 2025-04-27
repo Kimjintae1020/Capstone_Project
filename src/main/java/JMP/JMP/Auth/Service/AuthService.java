@@ -14,6 +14,8 @@ import JMP.JMP.Account.Repository.AccountRepository;
 import JMP.JMP.Account.Repository.RefreshRepository;
 import JMP.JMP.Enum.ErrorCode;
 import JMP.JMP.Jwt.JWTUtil;
+import io.jsonwebtoken.ExpiredJwtException;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import jakarta.servlet.http.Cookie;
@@ -24,6 +26,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Date;
 import java.util.Optional;
 
 @Service
@@ -57,7 +60,7 @@ public class AuthService {
             return ResponseEntity.status(HttpStatus.CONFLICT)
                     .body(ErrorResponse.of(ErrorCode.INVALID_PASSWORD));
         }
-        
+
         return issueToken(account.getEmail(), account.getRole(), response);
     }
 
@@ -87,15 +90,25 @@ public class AuthService {
         response.setHeader("Authorization", "Bearer " + accessToken);
         response.setHeader("Set-Cookie", "refresh=" + refreshToken + "; Path=/; HttpOnly; Secure; SameSite=None");
 
-        // Refresh 저장
-        refreshRepository.save(
-                refreshRepository.findByUsername(email)
-                        .map(r -> { r.setRefresh(refreshToken); return r; })
-                        .orElse(new RefreshEntity(email, refreshToken, "86400000L"))
-        );
+        // 만료된 토큰 삭제 후 적용 flush
+        refreshRepository.findByUsername(email)
+                .ifPresent(refreshEntity -> {
+                    refreshRepository.delete(refreshEntity);
+                    refreshRepository.flush();
+                });
+
+        // 토큰 새로 발급
+        RefreshEntity refreshEntity = new RefreshEntity();
+        refreshEntity.setUsername(email);
+        refreshEntity.setRefresh(refreshToken);
+        refreshEntity.setExpiration(new Date(System.currentTimeMillis() + REFRESH_TOKEN_VALIDITY).toString());
+
+        refreshRepository.save(refreshEntity);
 
         return ResponseEntity.ok(SuccessResponse.of(200, "로그인 성공"));
     }
+
+
 
     // 이메일 중복 검사
     public ResponseEntity<?> existEmailCheck(String email) {
@@ -165,4 +178,74 @@ public class AuthService {
         response.addCookie(cookie);
     }
 
+    // access 토큰 만료시 Refresh Token 재발급
+    // [로직] Access Token 만료 -> reissue -> delete -> newAccessToken flush적용
+    @Transactional
+    public ResponseEntity<?> reissue(HttpServletRequest request, HttpServletResponse response) {
+
+        String refresh = null;
+        Cookie[] cookies = request.getCookies();
+
+        if (cookies != null) {
+            for (Cookie cookie : cookies) {
+                if ("refresh".equals(cookie.getName())) {
+                    refresh = cookie.getValue();
+                    break;
+                }
+            }
+        }
+
+        if (refresh == null) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("refresh token 없음");
+        }
+
+        try {
+            jwtUtil.isExpired(refresh);
+        } catch (ExpiredJwtException e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("refresh token 만료");
+        }
+
+        if (!"refresh".equals(jwtUtil.getCategory(refresh))) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("잘못된 refresh token");
+        }
+
+        if (!refreshRepository.existsByRefresh(refresh)) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("DB에 존재하지 않는 refresh token");
+        }
+
+        String username = jwtUtil.getUsername(refresh);
+        String role = jwtUtil.getRole(refresh);
+
+        refreshRepository.findByUsername(username)
+                .ifPresent(refreshEntity -> {
+                    refreshRepository.delete(refreshEntity);
+                    refreshRepository.flush();
+                });
+
+        String newAccess = jwtUtil.createJwt("access", username, role, ACCESS_TOKEN_VALIDITY);
+        String newRefresh = jwtUtil.createJwt("refresh", username, role, REFRESH_TOKEN_VALIDITY);
+
+        log.info("newRefresh: " + newRefresh);
+        RefreshEntity refreshEntity = new RefreshEntity();
+        refreshEntity.setUsername(username);
+        refreshEntity.setRefresh(newRefresh);
+        refreshEntity.setExpiration(new Date(System.currentTimeMillis() + REFRESH_TOKEN_VALIDITY).toString());
+
+        refreshRepository.save(refreshEntity);
+
+        response.setHeader("Authorization", "Bearer " + newAccess);
+        response.addCookie(createCookie("refresh", newRefresh));
+
+        return ResponseEntity.ok(SuccessResponse.of(200, "토큰 재발급 성공"));
+    }
+
+
+    private Cookie createCookie(String key, String value) {
+        Cookie cookie = new Cookie(key, value);
+        cookie.setHttpOnly(true);
+        cookie.setSecure(true);
+        cookie.setPath("/");
+        cookie.setMaxAge((int) (REFRESH_TOKEN_VALIDITY / 1000));
+        return cookie;
+    }
 }

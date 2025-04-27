@@ -6,12 +6,14 @@ import JMP.JMP.Company.Entity.Company;
 import JMP.JMP.Company.Repository.CompanyRespository;
 import JMP.JMP.Enum.ErrorCode;
 import JMP.JMP.Enum.PostRole;
-import JMP.JMP.Enum.Role;
+import JMP.JMP.Project.Dto.ProjectPageResponse;
 import JMP.JMP.Project.Dto.DtoCreateProject;
 import JMP.JMP.Project.Entity.Project;
 import JMP.JMP.Project.Repository.ProjectRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -62,5 +64,16 @@ public class ProjectService {
         return ResponseEntity.ok(SuccessResponse.of(201, "공고글 작성이 완료되었습니다."));
     }
 
+    // 프로젝트 공고 목록 조회
+    public ProjectPageResponse getProjectList(Pageable pageable) {
 
+            Page<Project> posts = projectRepository.findAll(pageable);
+
+            return new ProjectPageResponse(
+                    pageable.getPageNumber() + 1,
+                    posts.getTotalPages(),
+                    (int) posts.getTotalElements(),
+                    posts.getContent()
+            );
+        }
 }

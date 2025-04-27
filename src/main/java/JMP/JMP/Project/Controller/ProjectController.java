@@ -4,9 +4,12 @@ import JMP.JMP.Account.Dto.ErrorResponse;
 import JMP.JMP.Enum.ErrorCode;
 import JMP.JMP.Jwt.JWTUtil;
 import JMP.JMP.Project.Dto.DtoCreateProject;
+import JMP.JMP.Project.Dto.ProjectPageResponse;
 import JMP.JMP.Project.Service.ProjectService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -36,5 +39,17 @@ public class ProjectController {
         ResponseEntity<?> response = projectService.createProject(dtoCreateProject,loginId);
 
         return response;
+    }
+
+    @GetMapping("/project/list")
+    public ResponseEntity<ProjectPageResponse> getPosts(@RequestParam(defaultValue = "1") int page,      // 기본값 0, Service 단에서 +1 설정
+                                                        @RequestParam(defaultValue = "10") int size) {
+
+        Pageable pageable = PageRequest.of(page -1, size);
+        ProjectPageResponse response = projectService.getProjectList(pageable);
+
+        return ResponseEntity.ok(response);
+
+
     }
 }

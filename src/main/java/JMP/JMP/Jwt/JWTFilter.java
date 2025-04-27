@@ -29,11 +29,11 @@ public class JWTFilter  extends OncePerRequestFilter {
 
         String requestUri = request.getRequestURI();
 
-        if (requestUri.matches("^\\/login(?:\\/.*)?$")) {
-
+        if (requestUri.equals("/api/login") || requestUri.equals("/api/reissue") || requestUri.equals("/api/signup")) {
             filterChain.doFilter(request, response);
             return;
         }
+
 
         // 헤더에서 access키에 담긴 토큰을 꺼냄
         String accessToken = request.getHeader("Authorization");

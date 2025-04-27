@@ -150,6 +150,7 @@ public class AuthService {
 
     @Transactional
     public void logout(String token, HttpServletResponse response) {
+
         String accessToken = token.replace("Bearer ", "");
         String email = jwtUtil.getUsername(accessToken);
 

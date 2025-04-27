@@ -12,7 +12,6 @@ public class ErrorResponse {
     private final String errorCode;
     private final String message;
 
-    // ErrorCode enum 기반으로 ErrorResponse 생성하는 static 메서
     public static ErrorResponse of(ErrorCode errorCode) {
         return new ErrorResponse(
                 errorCode.getStatus(),

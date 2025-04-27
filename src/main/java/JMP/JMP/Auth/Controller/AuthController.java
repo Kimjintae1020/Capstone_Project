@@ -36,6 +36,7 @@ public class AuthController {
             return authService.loginCompany(dtoLogin, response);
         }
 
+        log.info("check reissue");
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                 .body(ErrorResponse.of(ErrorCode.INVALID_ROLE));
 
@@ -50,7 +51,7 @@ public class AuthController {
     @GetMapping("/mypage")
     public ResponseEntity<?> getMypage(@RequestHeader(value = "Authorization", required = false) String token){
 
-        // To Do: 기업 또는 사용자별 마이페이지 제공해야하는가?
+        // 기업 또는 사용자별 마이페이지 제공해야하는가?
         if (token == null || !token.startsWith("Bearer ")) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                     .body(ErrorResponse.of(ErrorCode.NOT_AUTHENTICATED));
@@ -69,7 +70,6 @@ public class AuthController {
         authService.logout(token, response);
         return ResponseEntity.ok(SuccessResponse.of(200, "로그아웃 성공"));
     }
-
 
 }
 

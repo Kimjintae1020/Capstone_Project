@@ -2,7 +2,6 @@ package JMP.JMP.Account.Controller;
 
 import JMP.JMP.Account.Service.AccountService;
 import JMP.JMP.Account.Dto.DtoRegister;
-import JMP.JMP.Auth.Service.AuthService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -16,7 +15,6 @@ import org.springframework.web.bind.annotation.RestController;
 public class AccountController {
 
     private final AccountService accountService;
-    private final AuthService authService;
 
     //  회원가입
     @PostMapping("/register/account")

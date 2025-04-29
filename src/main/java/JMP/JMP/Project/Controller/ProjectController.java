@@ -34,7 +34,8 @@ public class ProjectController {
         }
 
         String accessToken = token.replace("Bearer ", "");
-        String loginId = jwtUtil.getUsername(accessToken);
+        String loginId = jwtUtil.getUsername(accessToken);      // ex) loginId: company@gmail.com
+
 
         ResponseEntity<?> response = projectService.createProject(dtoCreateProject,loginId);
 

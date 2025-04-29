@@ -10,6 +10,7 @@ import jakarta.servlet.http.Cookie;
 import lombok.AllArgsConstructor;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -18,6 +19,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import java.io.IOException;
 
 @AllArgsConstructor
+@Slf4j
 public class JWTFilter extends OncePerRequestFilter {
 
     private final JWTUtil jwtUtil;
@@ -26,15 +28,32 @@ public class JWTFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
 
         String requestUri = request.getRequestURI();
+        log.info("JWT Filter URI: {}", requestUri);
 
-        if (requestUri.equals("/api/login") || requestUri.equals("/api/reissue") || requestUri.equals("/api/signup")) {
+        if (!requestUri.startsWith("/api")) {
             filterChain.doFilter(request, response);
             return;
         }
 
         String accessToken = request.getHeader("Authorization");
-        if (accessToken != null && accessToken.startsWith("Bearer ")) {
-            accessToken = accessToken.substring(7);
+
+        if (accessToken == null || accessToken.isBlank()) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+
+        if (!accessToken.startsWith("Bearer ")) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+
+        accessToken = accessToken.substring(7);
+
+        log.info("access token: {}", accessToken);
+
+        if (accessToken.isBlank()) {
+            filterChain.doFilter(request, response);
+            return;
         }
 
         String refreshToken = null;
@@ -48,13 +67,10 @@ public class JWTFilter extends OncePerRequestFilter {
             }
         }
 
-        if (accessToken == null) {
-            filterChain.doFilter(request, response);
-            return;
-        }
-
         try {
+            log.info("access token: {}", accessToken);
             jwtUtil.isExpired(accessToken);
+
         } catch (ExpiredJwtException e) {
             System.out.println("[JWTFilter] Access Token 만료됨");
 

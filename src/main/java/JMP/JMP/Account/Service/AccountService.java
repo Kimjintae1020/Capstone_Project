@@ -27,13 +27,6 @@ public class AccountService {
     // 회원가입로직 (사용자)
     public ResponseEntity<?> register(DtoRegister dtoRegister) {
 
-        // 이메일 중복검사
-        if (accountRepository.existsByEmail(dtoRegister.getEmail())) {
-            log.info("이메일 중복");
-            return ResponseEntity.status(HttpStatus.CONFLICT)
-                    .body(ErrorResponse.of(ErrorCode.DUPLICATE_EMAIL));
-        }
-
         // 핸드폰 중복검사
         if (accountRepository.existsByPhone(dtoRegister.getPhone())) {
             log.info("핸드폰번호 중복");

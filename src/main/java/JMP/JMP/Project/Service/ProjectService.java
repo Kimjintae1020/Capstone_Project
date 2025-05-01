@@ -1,10 +1,10 @@
 package JMP.JMP.Project.Service;
 
-import JMP.JMP.Account.Dto.ErrorResponse;
+import JMP.JMP.Error.ErrorResponse;
 import JMP.JMP.Auth.Dto.SuccessResponse;
 import JMP.JMP.Company.Entity.Company;
 import JMP.JMP.Company.Repository.CompanyRespository;
-import JMP.JMP.Enum.ErrorCode;
+import JMP.JMP.Error.ErrorCode;
 import JMP.JMP.Enum.PostRole;
 import JMP.JMP.Project.Dto.ProjectPageResponse;
 import JMP.JMP.Project.Dto.DtoCreateProject;
@@ -36,7 +36,7 @@ public class ProjectService {
         Optional<Company> companyOptional = companyRespository.findByEmail(loginId);
 
         if (companyOptional.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE)
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(ErrorResponse.of(ErrorCode.EMAIL_NOT_FOUND));
         }
 

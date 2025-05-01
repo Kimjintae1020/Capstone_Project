@@ -1,6 +1,5 @@
-package JMP.JMP.Account.Dto;
+package JMP.JMP.Error;
 
-import JMP.JMP.Enum.ErrorCode;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 

@@ -1,7 +1,7 @@
 package JMP.JMP.Project.Controller;
 
-import JMP.JMP.Account.Dto.ErrorResponse;
-import JMP.JMP.Enum.ErrorCode;
+import JMP.JMP.Error.ErrorResponse;
+import JMP.JMP.Error.ErrorCode;
 import JMP.JMP.Jwt.JWTUtil;
 import JMP.JMP.Project.Dto.DtoCreateProject;
 import JMP.JMP.Project.Dto.ProjectPageResponse;

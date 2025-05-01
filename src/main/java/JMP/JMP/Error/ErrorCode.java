@@ -1,4 +1,4 @@
-package JMP.JMP.Enum;
+package JMP.JMP.Error;
 
 import lombok.Getter;
 

@@ -1,4 +1,4 @@
-package JMP.JMP.Account.Dto;
+package JMP.JMP.Auth.Dto;
 
 
 import JMP.JMP.Enum.Role;

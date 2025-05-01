@@ -1,13 +1,13 @@
 package JMP.JMP.Apply.Service;
 
-import JMP.JMP.Account.Dto.ErrorResponse;
-import JMP.JMP.Account.Dto.SuccessResponse;
+import JMP.JMP.Error.ErrorResponse;
+import JMP.JMP.Auth.Dto.SuccessResponse;
 import JMP.JMP.Account.Entity.Account;
 import JMP.JMP.Account.Repository.AccountRepository;
 import JMP.JMP.Apply.Entity.Apply;
 import JMP.JMP.Apply.Repository.ApplyRepository;
 import JMP.JMP.Enum.ApplyStatus;
-import JMP.JMP.Enum.ErrorCode;
+import JMP.JMP.Error.ErrorCode;
 import JMP.JMP.Jwt.JWTUtil;
 import JMP.JMP.Project.Entity.Project;
 import JMP.JMP.Project.Repository.ProjectRepository;

@@ -1,18 +1,15 @@
 package JMP.JMP.Auth.Service;
 
-import JMP.JMP.Account.Dto.DtoLogin;
-import JMP.JMP.Account.Dto.ErrorResponse;
-import JMP.JMP.Account.Dto.SuccessResponse;
+import JMP.JMP.Auth.Dto.*;
+import JMP.JMP.Error.ErrorResponse;
 import JMP.JMP.Account.Entity.Account;
 import JMP.JMP.Account.Entity.RefreshEntity;
-import JMP.JMP.Auth.Dto.DtoMypageAccount;
-import JMP.JMP.Auth.Dto.DtoMypageCompany;
 import JMP.JMP.Company.Entity.Company;
 import JMP.JMP.Company.Repository.CompanyRespository;
 import JMP.JMP.Enum.Role;
 import JMP.JMP.Account.Repository.AccountRepository;
 import JMP.JMP.Account.Repository.RefreshRepository;
-import JMP.JMP.Enum.ErrorCode;
+import JMP.JMP.Error.ErrorCode;
 import JMP.JMP.Jwt.JWTUtil;
 import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -105,7 +102,7 @@ public class AuthService {
 
         refreshRepository.save(refreshEntity);
 
-        return ResponseEntity.ok(SuccessResponse.of(200, "로그인 성공"));
+        return ResponseEntity.ok(LoginSuccessResponse.of(200, "로그인 성공", role));
     }
 
 

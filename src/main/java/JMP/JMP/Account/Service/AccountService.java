@@ -1,12 +1,12 @@
 package JMP.JMP.Account.Service;
 
 import JMP.JMP.Account.Dto.DtoRegister;
-import JMP.JMP.Account.Dto.ErrorResponse;
-import JMP.JMP.Account.Dto.SuccessResponse;
+import JMP.JMP.Error.ErrorResponse;
+import JMP.JMP.Auth.Dto.SuccessResponse;
 import JMP.JMP.Account.Entity.Account;
 import JMP.JMP.Enum.Role;
 import JMP.JMP.Account.Repository.AccountRepository;
-import JMP.JMP.Enum.ErrorCode;
+import JMP.JMP.Error.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;

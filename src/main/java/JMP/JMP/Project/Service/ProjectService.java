@@ -1,7 +1,7 @@
 package JMP.JMP.Project.Service;
 
 import JMP.JMP.Account.Dto.ErrorResponse;
-import JMP.JMP.Account.Dto.SuccessResponse;
+import JMP.JMP.Auth.Dto.SuccessResponse;
 import JMP.JMP.Company.Entity.Company;
 import JMP.JMP.Company.Repository.CompanyRespository;
 import JMP.JMP.Enum.ErrorCode;

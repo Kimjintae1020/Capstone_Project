@@ -1,7 +1,7 @@
 package JMP.JMP.Company.Service;
 
 import JMP.JMP.Account.Dto.ErrorResponse;
-import JMP.JMP.Account.Dto.SuccessResponse;
+import JMP.JMP.Auth.Dto.SuccessResponse;
 import JMP.JMP.Enum.PostRole;
 import JMP.JMP.Enum.Role;
 import JMP.JMP.Company.Entity.Company;

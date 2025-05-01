@@ -1,7 +1,7 @@
 package JMP.JMP.Apply.Service;
 
 import JMP.JMP.Account.Dto.ErrorResponse;
-import JMP.JMP.Account.Dto.SuccessResponse;
+import JMP.JMP.Auth.Dto.SuccessResponse;
 import JMP.JMP.Account.Entity.Account;
 import JMP.JMP.Account.Repository.AccountRepository;
 import JMP.JMP.Apply.Entity.Apply;

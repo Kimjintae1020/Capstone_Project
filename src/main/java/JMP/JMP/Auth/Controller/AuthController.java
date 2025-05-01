@@ -1,8 +1,8 @@
 package JMP.JMP.Auth.Controller;
 
-import JMP.JMP.Account.Dto.DtoLogin;
+import JMP.JMP.Auth.Dto.DtoLogin;
 import JMP.JMP.Account.Dto.ErrorResponse;
-import JMP.JMP.Account.Dto.SuccessResponse;
+import JMP.JMP.Auth.Dto.SuccessResponse;
 import JMP.JMP.Auth.Service.AuthService;
 import JMP.JMP.Enum.ErrorCode;
 import JMP.JMP.Enum.Role;

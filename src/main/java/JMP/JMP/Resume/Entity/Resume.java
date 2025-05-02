@@ -1,6 +1,7 @@
 package JMP.JMP.Resume.Entity;
 
 import JMP.JMP.Account.Entity.Account;
+import JMP.JMP.Enum.DevPosition;
 import JMP.JMP.Enum.RequiredSkill;
 import jakarta.persistence.*;
 import lombok.*;
@@ -21,21 +22,25 @@ public class Resume {
     @Column(name = "RESUME_ID")
     private Long resumeId;
 
-    @Column(name = "RESUME_TILE", nullable = false)
+    @Column(name = "RESUME_TITLE", nullable = false)
     private String title;
 
-    @Column(name = "RESUME_CONTENT", nullable = false)
-    private String content;
+    @Column(name = "RESUME_INTRO", nullable = false)
+    private String intro;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "RESUME_SKILL", nullable = false)
     private RequiredSkill skill;
 
-    @Column(name = "RESUME_FILEURL", nullable = false)
-    private String resumeFileUrl;
+    @Column(name = "RESUME_GITHUBURL", nullable = false)
+    private String githuburl;
 
     @Column(name = "RESUME_VISIBLE", nullable = false)
     private boolean visible;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "RESUME_DEVPOSITION")
+    private DevPosition devposition;
 
     @Column(name = "CREATED_AT")
     private LocalDate createdAt;

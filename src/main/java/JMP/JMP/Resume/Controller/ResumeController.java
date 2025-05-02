@@ -1,6 +1,6 @@
 package JMP.JMP.Resume.Controller;
 
-import JMP.JMP.Resume.Dto.DtoResume;
+import JMP.JMP.Resume.Dto.DtoCreateResume;
 import JMP.JMP.Resume.Service.ResumeService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -16,9 +16,9 @@ public class ResumeController {
     //  이력서 등록
     @PostMapping("/resume/create")
     public ResponseEntity<?> createResume(@RequestHeader(value = "Authorization", required = false) String token,
-                                          @RequestBody DtoResume dtoResume){
+                                          @RequestBody DtoCreateResume dtoCreateResume){
 
-        ResponseEntity<?> response = resumeService.createResume(token, dtoResume);
+        ResponseEntity<?> response = resumeService.createResume(token, dtoCreateResume);
 
         return response;
     }

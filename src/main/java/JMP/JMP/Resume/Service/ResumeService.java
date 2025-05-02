@@ -6,7 +6,7 @@ import JMP.JMP.Account.Repository.AccountRepository;
 import JMP.JMP.Auth.Dto.SuccessResponse;
 import JMP.JMP.Error.ErrorCode;
 import JMP.JMP.Jwt.JWTUtil;
-import JMP.JMP.Resume.Dto.DtoResume;
+import JMP.JMP.Resume.Dto.DtoCreateResume;
 import JMP.JMP.Resume.Entity.Resume;
 import JMP.JMP.Resume.Repository.ResumeRepository;
 import lombok.RequiredArgsConstructor;
@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import java.time.LocalDate;
 import java.util.Optional;
 
 @Service
@@ -30,7 +31,7 @@ public class ResumeService {
     // 이력서 등록
     @Transactional
     // To Do: 매칭 데이터 -> 매칭 API -> AI 분석 -> 공고 추천
-    public ResponseEntity<?> createResume(String token, DtoResume dtoResume) {
+    public ResponseEntity<?> createResume(String token, DtoCreateResume dtoCreateResume) {
 
         String accessToken = token.replace("Bearer ", "");
         String loginId = jwtUtil.getUsername(accessToken);
@@ -46,13 +47,14 @@ public class ResumeService {
 
         Resume resume = new Resume();
             resume.setAccount(account);
-            resume.setTitle(dtoResume.getTitle());
-            resume.setContent(dtoResume.getContent());
-            resume.setSkill(dtoResume.getSkill());
-            resume.setResumeFileUrl(dtoResume.getResumeFileUrl());
-            resume.setVisible(dtoResume.isVisible());
-            resume.setCreatedAt(dtoResume.getCreatedAt());
-            resume.setUpdatedAt(dtoResume.getUpdatedAt());
+            resume.setTitle(dtoCreateResume.getTitle());
+            resume.setIntro(dtoCreateResume.getIntro());
+            resume.setSkill(dtoCreateResume.getSkill());
+            resume.setGithuburl(dtoCreateResume.getGithubUrl());
+            resume.setVisible(dtoCreateResume.isVisible());
+            resume.setDevposition(dtoCreateResume.getDevposition());
+            resume.setCreatedAt(LocalDate.now());
+            resume.setUpdatedAt(LocalDate.now());
 
         resumeRepository.save(resume);
 

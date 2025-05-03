@@ -42,8 +42,9 @@ public class ProjectController {
         return response;
     }
 
+    // 게시글 목록 조회
     @GetMapping("/project/list")
-    public ResponseEntity<ProjectPageResponse> getPosts(@RequestParam(defaultValue = "1") int page,      // 기본값 0, Service 단에서 +1 설정
+    public ResponseEntity<ProjectPageResponse> getProjectList(@RequestParam(defaultValue = "1") int page,      // 기본값 0, Service 단에서 +1 설정
                                                         @RequestParam(defaultValue = "10") int size) {
 
         Pageable pageable = PageRequest.of(page -1, size);

@@ -7,6 +7,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Entity
 @Table(name = "RESUME")
@@ -28,9 +29,11 @@ public class Resume {
     @Column(name = "RESUME_INTRO", nullable = false)
     private String intro;
 
+    @ElementCollection(fetch = FetchType.LAZY)
     @Enumerated(EnumType.STRING)
-    @Column(name = "RESUME_SKILL", nullable = false)
-    private RequiredSkill skill;
+    @CollectionTable(name = "RESUME_SKILLS", joinColumns = @JoinColumn(name = "RESUME_ID"))
+    @Column(name = "SKILL")
+    private List<RequiredSkill> skills;
 
     @Column(name = "RESUME_GITHUBURL", nullable = false)
     private String githuburl;

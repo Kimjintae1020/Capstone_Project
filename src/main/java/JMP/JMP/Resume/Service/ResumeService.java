@@ -10,6 +10,7 @@ import JMP.JMP.Resume.Dto.DtoCreateResume;
 import JMP.JMP.Resume.Entity.Resume;
 import JMP.JMP.Resume.Repository.ResumeRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -22,6 +23,7 @@ import java.util.Optional;
 @Service
 @RequiredArgsConstructor
 @RequestMapping("/api")
+@Slf4j
 public class ResumeService {
 
     private final ResumeRepository resumeRepository;
@@ -45,11 +47,12 @@ public class ResumeService {
 
         Account account = accountOptional.get();
 
+        log.info(dtoCreateResume.getSkills().toString());
         Resume resume = new Resume();
             resume.setAccount(account);
             resume.setTitle(dtoCreateResume.getTitle());
             resume.setIntro(dtoCreateResume.getIntro());
-            resume.setSkill(dtoCreateResume.getSkill());
+            resume.setSkills(dtoCreateResume.getSkills());
             resume.setGithuburl(dtoCreateResume.getGithubUrl());
             resume.setVisible(dtoCreateResume.isVisible());
             resume.setDevposition(dtoCreateResume.getDevposition());

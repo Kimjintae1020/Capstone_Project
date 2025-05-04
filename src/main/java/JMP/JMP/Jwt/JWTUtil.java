@@ -21,20 +21,17 @@ public class JWTUtil {
     }
 
     public String getUsername(String token) {
-        // parser() 메소드를 사용하여 내부 데이터를 확인함
         return parseClaims(token).get("username", String.class);
     }
 
     public String getRole(String token) {
-        // parser() 메소드를 사용하여 내부 데이터를 확인함
-        return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().get("role", String.class);
+        return parseClaims(token).get("role", String.class);
     }
-
 
     public String getCategory(String token) {
-
-        return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().get("category", String.class);
+        return parseClaims(token).get("category", String.class);
     }
+
 
     // 토근이 소멸, 만료되었는지 확인하는 메소드
     public boolean isExpired(String token) {

@@ -8,6 +8,7 @@ import JMP.JMP.Error.ErrorCode;
 import JMP.JMP.Jwt.JWTUtil;
 import JMP.JMP.Resume.Dto.DtoCreateResume;
 import JMP.JMP.Resume.Entity.Resume;
+import JMP.JMP.Resume.Entity.ResumeProject;
 import JMP.JMP.Resume.Repository.ResumeRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -18,7 +19,9 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -47,7 +50,6 @@ public class ResumeService {
 
         Account account = accountOptional.get();
 
-        log.info(dtoCreateResume.getSkills().toString());
         Resume resume = new Resume();
             resume.setAccount(account);
             resume.setTitle(dtoCreateResume.getTitle());
@@ -56,6 +58,21 @@ public class ResumeService {
             resume.setGithuburl(dtoCreateResume.getGithubUrl());
             resume.setVisible(dtoCreateResume.isVisible());
             resume.setDevposition(dtoCreateResume.getDevposition());
+            resume.setPhoto(dtoCreateResume.getPhoto());
+            resume.setIntroduce(dtoCreateResume.getIntroduce());
+
+            List<ResumeProject> resumeProjects = dtoCreateResume.getProjects().stream()
+                    .map(dtoProject -> ResumeProject.builder()
+                            .name(dtoProject.getName())
+                            .description(dtoProject.getDescription())
+                            .techStack(dtoProject.getTechStack())
+                            .githubLink(dtoProject.getGithubLink())
+                            .resume(resume)
+                            .build())
+                    .collect(Collectors.toList());
+
+            resume.setProjects(resumeProjects);
+
             resume.setCreatedAt(LocalDate.now());
             resume.setUpdatedAt(LocalDate.now());
 

@@ -38,9 +38,8 @@ public class AuthService {
     private final JWTUtil jwtUtil;
     private final RefreshRepository refreshRepository;
 
-    private static final long ACCESS_TOKEN_VALIDITY = 600000L; // 10분
+    private static final long ACCESS_TOKEN_VALIDITY = 600000L;    // 10분
     private static final long REFRESH_TOKEN_VALIDITY = 86400000L; // 24시간
-
 
     // 사용자 로그인
     public ResponseEntity<?> loginUser(DtoLogin dto, HttpServletResponse response) {

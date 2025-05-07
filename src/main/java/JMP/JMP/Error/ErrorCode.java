@@ -38,7 +38,7 @@ public enum ErrorCode {
         INVALID_PROJECT_DEADLINE(400, "PROJECT-002", "모집 마감일은 프로젝트 시작일보다 이전이어야 합니다."),
 
         // JWT 관련
-        JWT_EXPIRED(401, "JWT-001", "로그인 세션이 만료되었습니다. 다시 로그인 해주세요.");
+        JWT_EXPIRED(401, "JWT-001", "로그인이 만료되었습니다. 다시 로그인 해주세요.");
 
 
 

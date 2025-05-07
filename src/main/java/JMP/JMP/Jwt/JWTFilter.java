@@ -3,6 +3,9 @@ package JMP.JMP.Jwt;
 import JMP.JMP.Account.Dto.CustomUserDetails;
 import JMP.JMP.Account.Entity.Account;
 import JMP.JMP.Enum.Role;
+import JMP.JMP.Error.ErrorCode;
+import JMP.JMP.Error.ErrorResponse;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -46,32 +49,49 @@ public class JWTFilter extends OncePerRequestFilter {
 
         try {
             jwtUtil.isExpired(accessToken);
+
+            // access 토큰 유효함
+            String category = jwtUtil.getCategory(accessToken);
+            if (!"access".equals(category)) {
+                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                return;
+            }
+
+            String username = jwtUtil.getUsername(accessToken);
+            String role = jwtUtil.getRole(accessToken);
+            setAuthentication(username, role);
+
+            filterChain.doFilter(request, response);
+            return;
+
         } catch (ExpiredJwtException e) {
+            log.info("AccessToken 만료됨");
 
             if (refreshToken != null) {
                 try {
                     jwtUtil.isExpired(refreshToken);
 
+                    // refresh 토큰 유효 → 새로운 access 토큰 재발급
                     String username = jwtUtil.getUsername(refreshToken);
                     String role = jwtUtil.getRole(refreshToken);
                     String newAccessToken = jwtUtil.createJwt("access", username, role, 15 * 60 * 1000L);
                     response.setHeader("Authorization", "Bearer " + newAccessToken);
 
-                    // 인증 객체 설정
                     setAuthentication(username, role);
-
                     filterChain.doFilter(request, response);
                     return;
 
                 } catch (ExpiredJwtException ex) {
                     log.info("RefreshToken도 만료됨");
-                    response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-                    return;
                 }
-            } else {
-                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-                return;
             }
+
+            // 둘 다 만료 → 에러 응답 반환
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            response.setContentType("application/json;charset=UTF-8");
+            ErrorResponse errorResponse = ErrorResponse.of(ErrorCode.JWT_EXPIRED);
+            String json = new ObjectMapper().writeValueAsString(errorResponse);
+            response.getWriter().write(json);
         }
 
         String category = jwtUtil.getCategory(accessToken);
@@ -87,6 +107,7 @@ public class JWTFilter extends OncePerRequestFilter {
         filterChain.doFilter(request, response);
 
     }
+
 
     private String extractAccessToken(HttpServletRequest request) {
         String accessToken = request.getHeader("Authorization");

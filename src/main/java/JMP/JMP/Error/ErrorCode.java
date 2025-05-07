@@ -24,8 +24,6 @@ public enum ErrorCode {
         INVALID_ROLE(400, "ROLE-001", "잘못된 권한 입니다."),
         NO_POST_PERMISSION(403, "ROLE-002", "프로젝트 공고를 작성할 권한이 없습니다."),
 
-
-
         // 인증 관련
         NOT_AUTHENTICATED(401, "AUTH-001", "로그인 되어 있지 않습니다."),
         TOKEN_EXPIRED(401, "AUTH-002", "토큰이 만료되었습니다."),
@@ -34,7 +32,14 @@ public enum ErrorCode {
         // 지원 관련
         APPLICATION_CLOSED(400, "APPLY-001", "지원 마감된 프로젝트입니다."),
         ALREADY_APPLIED(400, "APPLY-002", "이미 지원한 공고입니다."),
-        PROJECT_NOT_FOUND(404, "PROJECT_001", "프로젝트가 존재하지 않습니다.");
+
+        // 기업 공고글 관련
+        PROJECT_NOT_FOUND(404, "PROJECT_001", "프로젝트가 존재하지 않습니다."),
+        INVALID_PROJECT_DEADLINE(400, "PROJECT-002", "모집 마감일은 프로젝트 시작일보다 이전이어야 합니다."),
+
+        // JWT 관련
+        JWT_EXPIRED(401, "JWT-001", "로그인 세션이 만료되었습니다. 다시 로그인 해주세요.");
+
 
 
         private final int status;

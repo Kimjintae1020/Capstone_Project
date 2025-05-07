@@ -56,6 +56,9 @@ public class ProjectService {
         project.setRequiredSkill(dtoCreateProject.getRequiredSkill());
         project.setStartDate(dtoCreateProject.getStartDate());
         project.setEndDate(dtoCreateProject.getEndDate());
+        project.setRecruitCount(dtoCreateProject.getRecruitCount());
+        project.setRecruitDeadline(dtoCreateProject.getRecruitDeadline());
+
         projectRepository.save(project);
 
 

@@ -6,6 +6,7 @@ import JMP.JMP.Jwt.JWTUtil;
 import JMP.JMP.Project.Dto.DtoCreateProject;
 import JMP.JMP.Project.Dto.ProjectPageResponse;
 import JMP.JMP.Project.Service.ProjectService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
@@ -26,7 +27,7 @@ public class ProjectController {
     //  프로젝트 공고 작성
     @PostMapping("/create/project")
     public ResponseEntity<?> createProject(@RequestHeader(value = "Authorization", required = false) String token,
-                                            @RequestBody DtoCreateProject dtoCreateProject){
+                                            @RequestBody @Valid DtoCreateProject dtoCreateProject){
 
         if (token == null || !token.startsWith("Bearer ")) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)

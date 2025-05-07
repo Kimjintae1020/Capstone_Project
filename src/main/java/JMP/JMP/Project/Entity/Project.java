@@ -46,6 +46,12 @@ public class Project {
     @Column(name = "END_DATE")
     private LocalDate endDate;
 
+    @Column(name = "RECRUITCOUNT")
+    private int recruitCount;           // 총 모집 인원
+
+    @Column(name = "RECRUITDEADLINE")
+    private LocalDate recruitDeadline;  // 프로젝트 공고 모집 마감일
+
     @Column(name = "CREATED_AT")
     private LocalDate createdAt;
 

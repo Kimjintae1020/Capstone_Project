@@ -104,4 +104,24 @@ public class ResumeService {
                 .toList();
 
     }
+
+    // 이력서 삭제
+    @Transactional
+    public ResponseEntity<?> deleteResume(String email, Long resumeId) {
+
+        Optional<Account> optionalAccount = accountRepository.findByEmail(email);
+
+        if (optionalAccount.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(ErrorResponse.of(ErrorCode.RESUME_NOT_FOUND));
+        }
+
+        Account account = optionalAccount.get();
+        Optional<Resume> resumeOptional = resumeRepository.findByResumeIdAndAccountId(resumeId, account.getId());
+
+        resumeRepository.delete(resumeOptional.get());
+
+        return ResponseEntity.ok().body("이력서가 성공적으로 삭제되었습니다.");
+    }
+
 }

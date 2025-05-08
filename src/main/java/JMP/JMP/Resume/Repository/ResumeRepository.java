@@ -8,6 +8,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface ResumeRepository extends JpaRepository<Resume, Long> {
@@ -17,6 +18,5 @@ public interface ResumeRepository extends JpaRepository<Resume, Long> {
     List<DtoResumeList> findAllResumes(@Param("accountId") Long accountId);
 
 
-
-
+    Optional<Resume> findByResumeIdAndAccountId(Long resumeId, Long accountId);
 }

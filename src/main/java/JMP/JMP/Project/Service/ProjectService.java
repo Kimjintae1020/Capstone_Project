@@ -70,13 +70,13 @@ public class ProjectService {
     // 프로젝트 공고 목록 조회
     public ProjectPageResponse getProjectList(Pageable pageable) {
 
-            Page<Project> posts = projectRepository.findAll(pageable);
+            Page<Project> projects = projectRepository.findAll(pageable);
 
             return new ProjectPageResponse(
                     pageable.getPageNumber() + 1,
-                    posts.getTotalPages(),
-                    (int) posts.getTotalElements(),
-                    posts.getContent()
+                    projects.getTotalPages(),
+                    (int) projects.getTotalElements(),
+                    projects.getContent()
             );
         }
 

@@ -19,6 +19,7 @@ public class DtoProjectPage {
     private List<RequiredSkill> requiredSkill;
     private LocalDate startDate;
     private LocalDate endDate;
+    private LocalDate recruitDeadline;
     private LocalDate createdAt;
     private LocalDate updatedAt;
 
@@ -30,6 +31,7 @@ public class DtoProjectPage {
         this.requiredSkill = project.getRequiredSkill();
         this.startDate = project.getStartDate();
         this.endDate = project.getEndDate();
+        this.recruitDeadline = project.getRecruitDeadline();
         this.createdAt = project.getCreatedAt();
         this.updatedAt = project.getUpdatedAt();
     }

@@ -37,4 +37,15 @@ public class ResumeController {
 
         return response;
     }
+
+    //  이력서 삭제
+    @DeleteMapping("/resume/{resumeId}/delete")
+    public ResponseEntity<?> deleteResume(@RequestHeader(value = "Authorization", required = false) String token,
+                                            @PathVariable Long resumeId){
+
+        String email = jwtUtil.getUsername(token.replace("Bearer ", ""));
+        ResponseEntity<?> response = resumeService.deleteResume(email,resumeId);
+
+        return response;
+    }
 }

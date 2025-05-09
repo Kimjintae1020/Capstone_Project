@@ -24,3 +24,7 @@ logging:
   level:
     root: INFO
     com.example: DEBUG
+
+file:
+  dir: src/main/resources/static/uploads
+

@@ -37,7 +37,7 @@ public class ResumeService {
     // 이력서 등록
     @Transactional
     // To Do: 매칭 데이터 -> 매칭 API -> AI 분석 -> 공고 추천
-    public ResponseEntity<?> createResume(String token, DtoCreateResume dtoCreateResume) {
+    public ResponseEntity<?> createResume(String token, DtoCreateResume dtoCreateResume, String savedPath) {
 
         String accessToken = token.replace("Bearer ", "");
         String loginId = jwtUtil.getUsername(accessToken);
@@ -59,7 +59,9 @@ public class ResumeService {
             resume.setGithuburl(dtoCreateResume.getGithubUrl());
             resume.setVisible(dtoCreateResume.isVisible());
             resume.setDevposition(dtoCreateResume.getDevposition());
-            resume.setPhoto(dtoCreateResume.getPhoto());
+
+            resume.setPhoto(savedPath);
+
             resume.setIntroduce(dtoCreateResume.getIntroduce());
 
             List<ResumeProject> resumeProjects = dtoCreateResume.getProjects().stream()

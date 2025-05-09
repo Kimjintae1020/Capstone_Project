@@ -45,7 +45,7 @@ public class Resume {
     @Column(name = "RESUME_DEVPOSITION")
     private DevPosition devposition;        // 개발 직무, 포지션
 
-    @Column(name = "RESUME_PHOTO")
+    @Column(name = "RESUME_PHOTO", columnDefinition = "LONGTEXT")
     private String photo;                   // 사진
 
     @Column(name = "RESUME_INTRODUCE")

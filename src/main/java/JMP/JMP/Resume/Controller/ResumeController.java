@@ -5,10 +5,16 @@ import JMP.JMP.Resume.Dto.DtoCreateResume;
 import JMP.JMP.Resume.Dto.DtoResumeList;
 import JMP.JMP.Resume.Service.ResumeService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequiredArgsConstructor
@@ -18,12 +24,28 @@ public class ResumeController {
     private final ResumeService resumeService;
     private final JWTUtil jwtUtil;
 
-    //  이력서 등록
-    @PostMapping("/resume/create")
-    public ResponseEntity<?> createResume(@RequestHeader(value = "Authorization", required = false) String token,
-                                          @RequestBody DtoCreateResume dtoCreateResume){
+    @Value("${file.dir}")
+    private String uploadDir;
 
-        ResponseEntity<?> response = resumeService.createResume(token, dtoCreateResume);
+    //  이력서 등록
+    @PostMapping(value = "/resume/create", consumes = MediaType.MULTIPART_FORM_DATA_VALUE) // multipart/form-data 타입만 허용
+    public ResponseEntity<?> createResume(
+            @RequestHeader(value = "Authorization", required = false) String token,
+            @RequestPart("dto") DtoCreateResume dtoCreateResume,
+            @RequestPart(value = "photo", required = false) MultipartFile photo) throws IOException {
+
+        String savedPath = null;
+        if (photo != null && !photo.isEmpty()) {
+
+            String fileName = UUID.randomUUID() + "_" + photo.getOriginalFilename();
+            String resolvedPath = new File(uploadDir).getAbsolutePath();
+            File file = new File(resolvedPath, fileName);
+
+            photo.transferTo(file);
+            savedPath = "/uploads/" + fileName;
+        }
+
+        ResponseEntity<?> response = resumeService.createResume(token, dtoCreateResume, savedPath);
 
         return response;
     }

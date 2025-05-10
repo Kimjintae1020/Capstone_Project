@@ -6,6 +6,7 @@ import JMP.JMP.Account.Repository.AccountRepository;
 import JMP.JMP.Auth.Dto.SuccessResponse;
 import JMP.JMP.Error.ErrorCode;
 import JMP.JMP.Jwt.JWTUtil;
+import JMP.JMP.Resume.Dto.CreateResumeSuccessResponse;
 import JMP.JMP.Resume.Dto.DtoCreateResume;
 import JMP.JMP.Resume.Dto.DtoResumeList;
 import JMP.JMP.Resume.Entity.Resume;
@@ -81,7 +82,7 @@ public class ResumeService {
 
         resumeRepository.save(resume);
 
-        return ResponseEntity.ok(SuccessResponse.of(201, "이력서 작성이 완료되었습니다."));
+        return ResponseEntity.ok(CreateResumeSuccessResponse.of(201, "이력서 작성이 완료되었습니다.", resume.getResumeId()));
     }
 
     //  이력서 목록 조회

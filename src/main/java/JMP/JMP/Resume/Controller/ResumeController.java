@@ -42,7 +42,7 @@ public class ResumeController {
             File file = new File(resolvedPath, fileName);
 
             photo.transferTo(file);
-            savedPath = "/uploads/" + fileName;
+            savedPath = fileName;
         }
 
         ResponseEntity<?> response = resumeService.createResume(token, dtoCreateResume, savedPath);

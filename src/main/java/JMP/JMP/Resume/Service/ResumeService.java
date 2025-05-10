@@ -9,6 +9,7 @@ import JMP.JMP.Jwt.JWTUtil;
 import JMP.JMP.Resume.Dto.CreateResumeSuccessResponse;
 import JMP.JMP.Resume.Dto.DtoCreateResume;
 import JMP.JMP.Resume.Dto.DtoResumeList;
+import JMP.JMP.Resume.Dto.DtoUpdateResume;
 import JMP.JMP.Resume.Entity.Resume;
 import JMP.JMP.Resume.Entity.ResumeProject;
 import JMP.JMP.Resume.Repository.ResumeRepository;
@@ -51,6 +52,8 @@ public class ResumeService {
         }
 
         Account account = accountOptional.get();
+
+        log.info(dtoCreateResume.getTitle());
 
         Resume resume = new Resume();
             resume.setAccount(account);
@@ -126,5 +129,35 @@ public class ResumeService {
 
         return ResponseEntity.ok().body("이력서가 성공적으로 삭제되었습니다.");
     }
+
+    // 이력서 수정 기능
+    @Transactional
+    public ResponseEntity<?> updateResume(String email, Long resumeId, DtoUpdateResume dtoUpdateResume) {
+
+        Optional<Account> optionalAccount = accountRepository.findByEmail(email);
+
+        if (optionalAccount.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(ErrorResponse.of(ErrorCode.EMAIL_NOT_FOUND));
+        }
+
+        Account account = optionalAccount.get();
+
+        Optional<Resume> optionalResume = resumeRepository.findByResumeIdAndAccountId(resumeId, account.getId());
+
+        if (optionalResume.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                    .body(ErrorResponse.of(ErrorCode.RESUME_NOT_OWNED));
+        }
+
+        Resume resume = optionalResume.get();
+
+        resume.UpdateResume(dtoUpdateResume);
+
+        return ResponseEntity.ok(SuccessResponse.of(200, "이력서가 성공적으로 수정되었습니다."));
+    }
+
+
+
 
 }

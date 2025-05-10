@@ -3,6 +3,7 @@ package JMP.JMP.Resume.Controller;
 import JMP.JMP.Jwt.JWTUtil;
 import JMP.JMP.Resume.Dto.DtoCreateResume;
 import JMP.JMP.Resume.Dto.DtoResumeList;
+import JMP.JMP.Resume.Dto.DtoUpdateResume;
 import JMP.JMP.Resume.Service.ResumeService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -70,4 +71,17 @@ public class ResumeController {
 
         return response;
     }
+
+    // 이력서 수정
+    @PutMapping("/resume/{resumeId}/update")
+    public ResponseEntity<?> updateResume(@RequestHeader(value = "Authorization", required = false) String token,
+                                          @PathVariable Long resumeId,
+                                          @RequestBody DtoUpdateResume dtoUpdateResume){
+
+        String email = jwtUtil.getUsername(token.replace("Bearer ", ""));
+        ResponseEntity<?> response = resumeService.updateResume(email,resumeId,dtoUpdateResume);
+
+        return response;
+    }
+
 }

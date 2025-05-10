@@ -3,6 +3,7 @@ package JMP.JMP.Resume.Entity;
 import JMP.JMP.Account.Entity.Account;
 import JMP.JMP.Enum.DevPosition;
 import JMP.JMP.Enum.RequiredSkill;
+import JMP.JMP.Resume.Dto.DtoUpdateResume;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -72,6 +73,17 @@ public class Resume {
 
     @PreUpdate
     protected void onUpdate() {
+        this.updatedAt = LocalDate.now();
+    }
+
+    public void UpdateResume(DtoUpdateResume dto) {
+        this.title = dto.getTitle();
+        this.intro = dto.getIntro();
+        this.skills = dto.getSkills();
+        this.githuburl = dto.getGithubUrl();
+        this.visible = dto.isVisible();
+        this.devposition = dto.getDevposition();
+        this.introduce = dto.getIntroduce();
         this.updatedAt = LocalDate.now();
     }
 }

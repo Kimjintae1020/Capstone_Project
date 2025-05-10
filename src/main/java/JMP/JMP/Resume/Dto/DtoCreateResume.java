@@ -14,6 +14,7 @@ import java.util.List;
 @NoArgsConstructor
 public class DtoCreateResume {
 
+    private Long resumeId;
     private String title;
     private String intro;
     private List<RequiredSkill> skills;

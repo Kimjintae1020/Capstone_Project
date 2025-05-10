@@ -84,4 +84,15 @@ public class ResumeController {
         return response;
     }
 
+    // 이력서 공개범위 수정
+    @PatchMapping("/resume/{resumeId}/visible")
+    public ResponseEntity<?> visibleResume(@RequestHeader(value = "Authorization", required = false) String token,
+                                           @PathVariable Long resumeId,
+                                           @RequestParam boolean visible){
+
+        String email = jwtUtil.getUsername(token.replace("Bearer ", ""));
+        ResponseEntity<?> response = resumeService.updateResumevisible(email,resumeId,visible);
+
+        return response;
+    }
 }

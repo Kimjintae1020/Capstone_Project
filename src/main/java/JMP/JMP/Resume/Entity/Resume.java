@@ -86,4 +86,8 @@ public class Resume {
         this.introduce = dto.getIntroduce();
         this.updatedAt = LocalDate.now();
     }
+
+    public void UpdateResumeVisible(boolean visible) {
+        this.visible = visible;
+    }
 }

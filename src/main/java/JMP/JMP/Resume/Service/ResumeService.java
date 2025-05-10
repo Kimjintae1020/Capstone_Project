@@ -9,6 +9,7 @@ import JMP.JMP.Jwt.JWTUtil;
 import JMP.JMP.Resume.Dto.CreateResumeSuccessResponse;
 import JMP.JMP.Resume.Dto.DtoCreateResume;
 import JMP.JMP.Resume.Dto.DtoResumeList;
+import JMP.JMP.Resume.Dto.DtoUpdateResume;
 import JMP.JMP.Resume.Entity.Resume;
 import JMP.JMP.Resume.Entity.ResumeProject;
 import JMP.JMP.Resume.Repository.ResumeRepository;
@@ -52,33 +53,35 @@ public class ResumeService {
 
         Account account = accountOptional.get();
 
+        log.info(dtoCreateResume.getTitle());
+
         Resume resume = new Resume();
-            resume.setAccount(account);
-            resume.setTitle(dtoCreateResume.getTitle());
-            resume.setIntro(dtoCreateResume.getIntro());
-            resume.setSkills(dtoCreateResume.getSkills());
-            resume.setGithuburl(dtoCreateResume.getGithubUrl());
-            resume.setVisible(dtoCreateResume.isVisible());
-            resume.setDevposition(dtoCreateResume.getDevposition());
+        resume.setAccount(account);
+        resume.setTitle(dtoCreateResume.getTitle());
+        resume.setIntro(dtoCreateResume.getIntro());
+        resume.setSkills(dtoCreateResume.getSkills());
+        resume.setGithuburl(dtoCreateResume.getGithubUrl());
+        resume.setVisible(dtoCreateResume.isVisible());
+        resume.setDevposition(dtoCreateResume.getDevposition());
 
-            resume.setPhoto(savedPath);
+        resume.setPhoto(savedPath);
 
-            resume.setIntroduce(dtoCreateResume.getIntroduce());
+        resume.setIntroduce(dtoCreateResume.getIntroduce());
 
-            List<ResumeProject> resumeProjects = dtoCreateResume.getProjects().stream()
-                    .map(dtoProject -> ResumeProject.builder()
-                            .name(dtoProject.getName())
-                            .description(dtoProject.getDescription())
-                            .techStack(dtoProject.getTechStack())
-                            .githubLink(dtoProject.getGithubLink())
-                            .resume(resume)
-                            .build())
-                    .collect(Collectors.toList());
+        List<ResumeProject> resumeProjects = dtoCreateResume.getProjects().stream()
+                .map(dtoProject -> ResumeProject.builder()
+                        .name(dtoProject.getName())
+                        .description(dtoProject.getDescription())
+                        .techStack(dtoProject.getTechStack())
+                        .githubLink(dtoProject.getGithubLink())
+                        .resume(resume)
+                        .build())
+                .collect(Collectors.toList());
 
-            resume.setProjects(resumeProjects);
+        resume.setProjects(resumeProjects);
 
-            resume.setCreatedAt(LocalDate.now());
-            resume.setUpdatedAt(LocalDate.now());
+        resume.setCreatedAt(LocalDate.now());
+        resume.setUpdatedAt(LocalDate.now());
 
         resumeRepository.save(resume);
 
@@ -127,4 +130,56 @@ public class ResumeService {
         return ResponseEntity.ok().body("이력서가 성공적으로 삭제되었습니다.");
     }
 
+    // 이력서 수정 기능
+    @Transactional
+    public ResponseEntity<?> updateResume(String email, Long resumeId, DtoUpdateResume dtoUpdateResume) {
+
+        Optional<Account> optionalAccount = accountRepository.findByEmail(email);
+
+        if (optionalAccount.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(ErrorResponse.of(ErrorCode.EMAIL_NOT_FOUND));
+        }
+
+        Account account = optionalAccount.get();
+
+        Optional<Resume> optionalResume = resumeRepository.findByResumeIdAndAccountId(resumeId, account.getId());
+
+        if (optionalResume.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                    .body(ErrorResponse.of(ErrorCode.RESUME_NOT_OWNED));
+        }
+
+        Resume resume = optionalResume.get();
+
+        resume.UpdateResume(dtoUpdateResume);
+
+        return ResponseEntity.ok(SuccessResponse.of(200, "이력서가 성공적으로 수정되었습니다."));
+    }
+
+    // 이력서 공개범위 수정
+    @Transactional
+    public ResponseEntity<?> updateResumevisible(String email, Long resumeId, boolean visible) {
+
+        Optional<Account> optionalAccount = accountRepository.findByEmail(email);
+
+        if (optionalAccount.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(ErrorResponse.of(ErrorCode.EMAIL_NOT_FOUND));
+        }
+
+        Account account = optionalAccount.get();
+
+        Optional<Resume> optionalResume = resumeRepository.findByResumeIdAndAccountId(resumeId, account.getId());
+
+        if (optionalResume.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                    .body(ErrorResponse.of(ErrorCode.RESUME_NOT_OWNED));
+        }
+
+        Resume resume = optionalResume.get();
+        resume.UpdateResumeVisible(visible);
+
+        return ResponseEntity.ok(SuccessResponse.of(200, "공개범위 수정되었습니다."));
+    }
 }

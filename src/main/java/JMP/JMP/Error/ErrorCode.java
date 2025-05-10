@@ -41,7 +41,9 @@ public enum ErrorCode {
         JWT_EXPIRED(401, "JWT-001", "로그인이 만료되었습니다. 다시 로그인 해주세요."),
 
         // 이력서 관련
-        RESUME_NOT_FOUND(401, "JWT-001", "로그인이 만료되었습니다. 다시 로그인 해주세요.");
+        RESUME_NOT_FOUND(404, "RESUME-001", "이력서를 찾을 수 없습니다."),
+        RESUME_NOT_OWNED(403, "RESUME-002", "해당 이력서에 접근할 수 없습니다.");
+
 
 
         private final int status;

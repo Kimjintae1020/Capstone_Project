@@ -4,7 +4,9 @@ import JMP.JMP.Error.ErrorResponse;
 import JMP.JMP.Error.ErrorCode;
 import JMP.JMP.Jwt.JWTUtil;
 import JMP.JMP.Project.Dto.DtoCreateProject;
+import JMP.JMP.Project.Dto.DtoProjectDetail;
 import JMP.JMP.Project.Dto.ProjectPageResponse;
+import JMP.JMP.Project.Entity.Project;
 import JMP.JMP.Project.Service.ProjectService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -43,7 +45,7 @@ public class ProjectController {
         return response;
     }
 
-    // 게시글 목록 조회
+    // 프로젝트 공고 목록 조회
     @GetMapping("/project/list")
     public ResponseEntity<ProjectPageResponse> getProjectList(@RequestParam(defaultValue = "1") int page,      // 기본값 0, Service 단에서 +1 설정
                                                         @RequestParam(defaultValue = "10") int size) {
@@ -53,6 +55,15 @@ public class ProjectController {
 
         return ResponseEntity.ok(response);
 
+    }
+
+    // 프로젝트 공고 상세조회
+    @GetMapping("/project/{projectId}/detail")
+    public DtoProjectDetail getProjectDetail(@PathVariable Long projectId){
+
+        DtoProjectDetail response = projectService.getProjectDetail(projectId);
+
+        return response;
 
     }
 }

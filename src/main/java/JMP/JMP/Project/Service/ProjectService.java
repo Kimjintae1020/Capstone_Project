@@ -1,11 +1,13 @@
 package JMP.JMP.Project.Service;
 
+import JMP.JMP.Account.Repository.AccountRepository;
 import JMP.JMP.Error.ErrorResponse;
 import JMP.JMP.Auth.Dto.SuccessResponse;
 import JMP.JMP.Company.Entity.Company;
 import JMP.JMP.Company.Repository.CompanyRespository;
 import JMP.JMP.Error.ErrorCode;
 import JMP.JMP.Enum.PostRole;
+import JMP.JMP.Project.Dto.DtoProjectDetail;
 import JMP.JMP.Project.Dto.ProjectPageResponse;
 import JMP.JMP.Project.Dto.DtoCreateProject;
 import JMP.JMP.Project.Entity.Project;
@@ -28,6 +30,7 @@ public class ProjectService {
 
     private final ProjectRepository projectRepository;
     private final CompanyRespository companyRespository;
+    private final AccountRepository accountRepository;
 
     // 프로젝트 공고 생성
     @Transactional
@@ -61,8 +64,6 @@ public class ProjectService {
 
         projectRepository.save(project);
 
-
-
         log.info("프로젝트 공고 작성 성공");
         return ResponseEntity.ok(SuccessResponse.of(201, "공고글 작성이 완료되었습니다."));
     }
@@ -80,4 +81,12 @@ public class ProjectService {
             );
         }
 
+    // 프로젝트 공고 상세 조회
+    public DtoProjectDetail getProjectDetail(Long projectId) {
+
+        Project project = projectRepository.findById(projectId)
+                .orElseThrow(() -> new RuntimeException("공고 없음"));
+
+        return DtoProjectDetail.of(project);
+    }
 }

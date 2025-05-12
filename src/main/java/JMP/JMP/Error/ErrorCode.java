@@ -28,6 +28,8 @@ public enum ErrorCode {
         NOT_AUTHENTICATED(401, "AUTH-001", "로그인 되어 있지 않습니다."),
         TOKEN_EXPIRED(401, "AUTH-002", "토큰이 만료되었습니다."),
         INVALID_TOKEN(401, "AUTH-003", "유효하지 않은 토큰입니다."),
+        UNAUTHORIZED_ACCESS(403, "AUTH-003", "접근 권한이 없습니다."),
+
 
         // 지원 관련
         APPLICATION_CLOSED(400, "APPLY-001", "지원 마감된 프로젝트입니다."),

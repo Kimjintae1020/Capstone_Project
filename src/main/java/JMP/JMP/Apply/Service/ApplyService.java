@@ -11,6 +11,8 @@ import JMP.JMP.Error.ErrorCode;
 import JMP.JMP.Jwt.JWTUtil;
 import JMP.JMP.Project.Entity.Project;
 import JMP.JMP.Project.Repository.ProjectRepository;
+import JMP.JMP.Resume.Entity.Resume;
+import JMP.JMP.Resume.Repository.ResumeRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -29,9 +31,10 @@ public class ApplyService {
     private final JWTUtil jwtUtil;
     private final ProjectRepository projectRepository;
     private final AccountRepository accountRepository;
+    private final ResumeRepository resumeRepository;
 
     @Transactional
-    public ResponseEntity<?> projectApply(String token, Long projectId) {
+    public ResponseEntity<?> projectApply(String token, Long projectId, Long resumeId) {
 
         if (token == null || !token.startsWith("Bearer ")) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
@@ -43,6 +46,7 @@ public class ApplyService {
 
         Project project = projectRepository.findById(projectId).orElse(null);
         Account account = accountRepository.findByEmail(loginId).orElse(null);
+        Resume resume = resumeRepository.findById(resumeId).orElse(null);
 
         // 프로젝트 시작일이 오늘보다 이전이면 (이미 사작이라면?)
         if (project.getStartDate().isBefore(LocalDate.now())) {
@@ -59,7 +63,8 @@ public class ApplyService {
         Apply savedApply = Apply.builder()
                 .project(project)
                 .account(account)
-                .status(ApplyStatus.COMPLETED)
+                .resume(resume)
+                .status(ApplyStatus.PENDING)
                 .appliedAt(LocalDate.now())
                 .build();
         applyRepository.save(savedApply);

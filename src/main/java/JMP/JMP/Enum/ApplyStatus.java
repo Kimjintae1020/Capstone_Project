@@ -2,11 +2,9 @@ package JMP.JMP.Enum;
 
 public enum ApplyStatus {
 
-    PENDING("대기"),
-    ACCEPTED("승인"),
-    REJECTED("거절"),
-    CANCELLED("취소"),
-    COMPLETED("완료");
+    PENDING("검토중"),
+    ACCEPTED("합격"),
+    REJECTED("불합격");
 
     private final String description;
 

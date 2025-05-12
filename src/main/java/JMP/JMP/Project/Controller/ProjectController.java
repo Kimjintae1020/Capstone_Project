@@ -2,11 +2,12 @@ package JMP.JMP.Project.Controller;
 
 import JMP.JMP.Error.ErrorResponse;
 import JMP.JMP.Error.ErrorCode;
+import JMP.JMP.Error.Exception.UnauthorizedException;
 import JMP.JMP.Jwt.JWTUtil;
 import JMP.JMP.Project.Dto.DtoCreateProject;
+import JMP.JMP.Project.Dto.DtoProjectApplicants;
 import JMP.JMP.Project.Dto.DtoProjectDetail;
 import JMP.JMP.Project.Dto.ProjectPageResponse;
-import JMP.JMP.Project.Entity.Project;
 import JMP.JMP.Project.Service.ProjectService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -16,6 +17,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @Slf4j
 @RestController
@@ -64,6 +67,14 @@ public class ProjectController {
         DtoProjectDetail response = projectService.getProjectDetail(projectId);
 
         return response;
+    }
 
+    // 프로젝트 지원자 목록 조회
+    @GetMapping("/project/{projectId}/applicants")
+    public ResponseEntity<List<DtoProjectApplicants>> getProjectApplicants(@RequestHeader(value = "Authorization", required = false) String token,
+                                                                           @PathVariable Long projectId) throws UnauthorizedException {
+
+        List<DtoProjectApplicants> applicants = projectService.getProjectApplicants(projectId, token);
+        return ResponseEntity.ok(applicants);
     }
 }

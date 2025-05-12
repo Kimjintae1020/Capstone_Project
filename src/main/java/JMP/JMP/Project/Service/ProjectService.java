@@ -1,12 +1,16 @@
 package JMP.JMP.Project.Service;
 
-import JMP.JMP.Account.Repository.AccountRepository;
+import JMP.JMP.Apply.Entity.Apply;
+import JMP.JMP.Apply.Repository.ApplyRepository;
 import JMP.JMP.Error.ErrorResponse;
 import JMP.JMP.Auth.Dto.SuccessResponse;
 import JMP.JMP.Company.Entity.Company;
 import JMP.JMP.Company.Repository.CompanyRespository;
 import JMP.JMP.Error.ErrorCode;
 import JMP.JMP.Enum.PostRole;
+import JMP.JMP.Error.Exception.UnauthorizedException;
+import JMP.JMP.Jwt.JWTUtil;
+import JMP.JMP.Project.Dto.DtoProjectApplicants;
 import JMP.JMP.Project.Dto.DtoProjectDetail;
 import JMP.JMP.Project.Dto.ProjectPageResponse;
 import JMP.JMP.Project.Dto.DtoCreateProject;
@@ -21,6 +25,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -30,7 +35,8 @@ public class ProjectService {
 
     private final ProjectRepository projectRepository;
     private final CompanyRespository companyRespository;
-    private final AccountRepository accountRepository;
+    private final ApplyRepository applyRepository;
+    private final JWTUtil jwtUtil;
 
     // 프로젝트 공고 생성
     @Transactional
@@ -89,4 +95,31 @@ public class ProjectService {
 
         return DtoProjectDetail.of(project);
     }
+
+    // 프로젝트 지원자 목록 조회
+    public List<DtoProjectApplicants> getProjectApplicants(Long projectId, String token) throws UnauthorizedException {
+
+        List<Apply> applyList = applyRepository.findRecentByProjectId(projectId);
+
+        String accessToken = token.replace("Bearer ", "");
+        String loginId = jwtUtil.getUsername(accessToken);
+
+        log.info(loginId);
+        boolean checkCompany = companyRespository.existsByEmail(loginId);
+
+        if(!checkCompany){
+            throw new UnauthorizedException("기업 회원만 접근할 수 있는 페이지입니다.");
+        }
+
+        return applyList.stream()
+                .map(apply -> new DtoProjectApplicants(
+                        apply.getAccount().getName(),
+                        apply.getResume().getPhoto(),
+                        apply.getResume().getDevposition(),
+                        apply.getStatus(),
+                        apply.getAppliedAt()
+                ))
+                .toList();
+    }
+
 }

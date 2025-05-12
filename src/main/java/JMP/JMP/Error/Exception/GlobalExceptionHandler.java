@@ -1,5 +1,7 @@
-package JMP.JMP.Error;
+package JMP.JMP.Error.Exception;
 
+import JMP.JMP.Error.ErrorCode;
+import JMP.JMP.Error.ErrorResponse;
 import jakarta.validation.ConstraintViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -46,6 +48,12 @@ public class GlobalExceptionHandler {
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)
                 .body(ErrorResponse.of(ErrorCode.INVALID_PROJECT_DEADLINE));
+    }
+
+    @ExceptionHandler(UnauthorizedException.class)
+    public ResponseEntity<?> handleUnauthorized(UnauthorizedException ex) {
+        return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                .body(ErrorResponse.of(ErrorCode.UNAUTHORIZED_ACCESS));
     }
 
 }

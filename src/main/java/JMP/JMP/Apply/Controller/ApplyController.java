@@ -13,12 +13,12 @@ public class ApplyController {
     private final ApplyService applyService;
 
     //  프로젝트 공고 지원
-    // To Do: 이력서 추가하여 저장
-    @PostMapping("/project/{projectId}/apply")
+    @PostMapping("/project/{projectId}/apply/{resumeId}")
     public ResponseEntity<?> projectApply(@RequestHeader(value = "Authorization", required = false) String token,
-                                          @PathVariable Long projectId) {
+                                          @PathVariable Long projectId,
+                                          @PathVariable Long resumeId) {
 
-        ResponseEntity<?> response = applyService.projectApply(token, projectId);
+        ResponseEntity<?> response = applyService.projectApply(token, projectId, resumeId);
 
         return response;
     }

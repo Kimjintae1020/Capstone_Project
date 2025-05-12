@@ -2,7 +2,6 @@ package JMP.JMP.Project.Dto;
 
 import JMP.JMP.Enum.RequiredSkill;
 import JMP.JMP.Validation.ValidRecruitDeadline;
-import jakarta.persistence.Column;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;

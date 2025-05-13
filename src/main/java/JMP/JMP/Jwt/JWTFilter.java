@@ -34,6 +34,11 @@ public class JWTFilter extends OncePerRequestFilter {
         String requestUri = request.getRequestURI();
         log.info("JWT Filter URI: {}", requestUri);
 
+        if (requestUri.startsWith("/api/gemini")) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+
         if (requestUri.equals("/api/logout")) {
             filterChain.doFilter(request, response);
             return;

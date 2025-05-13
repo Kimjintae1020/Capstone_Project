@@ -28,3 +28,7 @@ logging:
 file:
   dir: src/main/resources/static/uploads
 
+gemini:
+  baseurl: ${GOOGLEAI_BASE_URL}
+  api:
+    key: ${GOOGLEAI_API_KEY}

@@ -21,6 +21,7 @@ configurations {
 
 repositories {
 	mavenCentral()
+	maven { url "https://repo.spring.io/snapshot" }
 }
 
 dependencies {
@@ -40,6 +41,9 @@ dependencies {
 	implementation 'io.jsonwebtoken:jjwt-jackson:0.12.3'
 }
 
-tasks.named('test') {
+//tasks.named('test') {
+//	useJUnitPlatform()
+//}
+tasks.test {
 	useJUnitPlatform()
 }

@@ -31,6 +31,8 @@ public class ProjectRecommendationService {
             String prompt = promptService.generatePrompt(resume, posting, duration, account);
             String response = promptService.callGemini(prompt);
 
+            log.info(" Gemini 응답 (공고 ID: {}, 제목: {}): {}", posting.getProjectId(), posting.getTitle(), response);
+
             int score = extractTotalScore(response);
             scoreMap.put(posting, score);
         }

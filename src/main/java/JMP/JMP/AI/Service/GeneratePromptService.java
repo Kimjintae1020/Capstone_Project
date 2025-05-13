@@ -22,6 +22,7 @@ public class GeneratePromptService {
 
     public String generatePrompt(Resume resume, Project project, String desiredDuration, Account account) {
 
+
         String projectTechStack = resume.getProjects().isEmpty()
                 ? "없음"
                 : resume.getProjects().stream()
@@ -34,6 +35,7 @@ public class GeneratePromptService {
                 .map(Enum::name)
                 .collect(Collectors.joining(", "));
 
+        log.info("projectTechStack {}",projectTechStack);
         return """
             아래는 한 구직자의 이력서와 한 프로젝트 공고입니다.
             두 정보를 비교하여 다음 다섯 가지 기준에 따라 적합도를 평가해 주세요:

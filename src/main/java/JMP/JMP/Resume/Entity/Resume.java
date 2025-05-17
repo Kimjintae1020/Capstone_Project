@@ -6,7 +6,9 @@ import JMP.JMP.Enum.RequiredSkill;
 import JMP.JMP.Resume.Dto.DtoUpdateResume;
 import jakarta.persistence.*;
 import lombok.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -46,7 +48,7 @@ public class Resume {
     @Column(name = "RESUME_DEVPOSITION")
     private DevPosition devposition;        // 개발 직무, 포지션
 
-    @Column(name = "RESUME_PHOTO", columnDefinition = "LONGTEXT")
+    @Column(name = "RESUME_PHOTO")
     private String photo;                   // 사진
 
     @Column(name = "RESUME_INTRODUCE")
@@ -76,13 +78,14 @@ public class Resume {
         this.updatedAt = LocalDate.now();
     }
 
-    public void UpdateResume(DtoUpdateResume dto) {
+    public void UpdateResume(DtoUpdateResume dto, String photo){
         this.title = dto.getTitle();
         this.intro = dto.getIntro();
         this.skills = dto.getSkills();
         this.githuburl = dto.getGithubUrl();
         this.visible = dto.isVisible();
         this.devposition = dto.getDevposition();
+        this.photo = photo;
         this.introduce = dto.getIntroduce();
         this.updatedAt = LocalDate.now();
     }

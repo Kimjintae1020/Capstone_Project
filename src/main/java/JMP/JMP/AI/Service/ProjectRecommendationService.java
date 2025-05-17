@@ -1,5 +1,3 @@
-// ✅ 서비스 역할 분리: generatePromptService → ProjectRecommendationService로 점수 계산 책임 이동
-
 package JMP.JMP.AI.Service;
 
 import JMP.JMP.Account.Entity.Account;

@@ -72,14 +72,28 @@ public class ResumeController {
         return response;
     }
 
+
     // 이력서 수정
-    @PutMapping("/resume/{resumeId}/update")
+    @PutMapping(value = "/resume/{resumeId}/update", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> updateResume(@RequestHeader(value = "Authorization", required = false) String token,
                                           @PathVariable Long resumeId,
-                                          @RequestBody DtoUpdateResume dtoUpdateResume){
+                                          @RequestPart("dto") DtoUpdateResume dtoUpdateResume,
+                                          @RequestPart(value = "photo", required = false) MultipartFile photo) throws IOException {
 
         String email = jwtUtil.getUsername(token.replace("Bearer ", ""));
-        ResponseEntity<?> response = resumeService.updateResume(email,resumeId,dtoUpdateResume);
+
+        String savedPath = null;
+        if (photo != null && !photo.isEmpty()) {
+
+            String fileName = UUID.randomUUID() + "_" + photo.getOriginalFilename();
+            String resolvedPath = new File(uploadDir).getAbsolutePath();
+            File file = new File(resolvedPath, fileName);
+
+            photo.transferTo(file);
+            savedPath = fileName;
+        }
+
+        ResponseEntity<?> response = resumeService.updateResume(email,resumeId,dtoUpdateResume,savedPath);
 
         return response;
     }
@@ -95,4 +109,8 @@ public class ResumeController {
 
         return response;
     }
+
+
+
+
 }

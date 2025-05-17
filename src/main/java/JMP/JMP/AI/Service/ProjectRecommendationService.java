@@ -1,5 +1,3 @@
-// ✅ 서비스 역할 분리: generatePromptService → ProjectRecommendationService로 점수 계산 책임 이동
-
 package JMP.JMP.AI.Service;
 
 import JMP.JMP.Account.Entity.Account;
@@ -30,6 +28,8 @@ public class ProjectRecommendationService {
         for (Project posting : allPostings) {
             String prompt = promptService.generatePrompt(resume, posting, duration, account);
             String response = promptService.callGemini(prompt);
+
+            log.info(" Gemini 응답 (공고 ID: {}, 제목: {}): {}", posting.getProjectId(), posting.getTitle(), response);
 
             int score = extractTotalScore(response);
             scoreMap.put(posting, score);

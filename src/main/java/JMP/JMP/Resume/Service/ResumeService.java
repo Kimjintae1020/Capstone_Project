@@ -38,7 +38,6 @@ public class ResumeService {
 
     // 이력서 등록
     @Transactional
-    // To Do: 매칭 데이터 -> 매칭 API -> AI 분석 -> 공고 추천
     public ResponseEntity<?> createResume(String token, DtoCreateResume dtoCreateResume, String savedPath) {
 
         String accessToken = token.replace("Bearer ", "");
@@ -132,7 +131,7 @@ public class ResumeService {
 
     // 이력서 수정 기능
     @Transactional
-    public ResponseEntity<?> updateResume(String email, Long resumeId, DtoUpdateResume dtoUpdateResume) {
+    public ResponseEntity<?> updateResume(String email, Long resumeId, DtoUpdateResume dtoUpdateResume, String photo) {
 
         Optional<Account> optionalAccount = accountRepository.findByEmail(email);
 
@@ -152,7 +151,7 @@ public class ResumeService {
 
         Resume resume = optionalResume.get();
 
-        resume.UpdateResume(dtoUpdateResume);
+        resume.UpdateResume(dtoUpdateResume,photo);
 
         return ResponseEntity.ok(SuccessResponse.of(200, "이력서가 성공적으로 수정되었습니다."));
     }

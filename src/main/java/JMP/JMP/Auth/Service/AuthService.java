@@ -78,6 +78,7 @@ public class AuthService {
         return issueToken(company.getEmail(), company.getRole(), response);
     }
 
+
     private ResponseEntity<?> issueToken(String email, Role role, HttpServletResponse response) {
 
         String accessToken = jwtUtil.createJwt("access", email, role.toString(), ACCESS_TOKEN_VALIDITY);
@@ -244,4 +245,6 @@ public class AuthService {
         cookie.setMaxAge((int) (REFRESH_TOKEN_VALIDITY / 1000));
         return cookie;
     }
+
+
 }

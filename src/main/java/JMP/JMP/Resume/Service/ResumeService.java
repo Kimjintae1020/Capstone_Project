@@ -1,15 +1,13 @@
 package JMP.JMP.Resume.Service;
 
+import JMP.JMP.Auth.Dto.DtoMypageAccount;
 import JMP.JMP.Error.ErrorResponse;
 import JMP.JMP.Account.Entity.Account;
 import JMP.JMP.Account.Repository.AccountRepository;
 import JMP.JMP.Auth.Dto.SuccessResponse;
 import JMP.JMP.Error.ErrorCode;
 import JMP.JMP.Jwt.JWTUtil;
-import JMP.JMP.Resume.Dto.CreateResumeSuccessResponse;
-import JMP.JMP.Resume.Dto.DtoCreateResume;
-import JMP.JMP.Resume.Dto.DtoResumeList;
-import JMP.JMP.Resume.Dto.DtoUpdateResume;
+import JMP.JMP.Resume.Dto.*;
 import JMP.JMP.Resume.Entity.Resume;
 import JMP.JMP.Resume.Entity.ResumeProject;
 import JMP.JMP.Resume.Repository.ResumeRepository;
@@ -180,5 +178,19 @@ public class ResumeService {
         resume.UpdateResumeVisible(visible);
 
         return ResponseEntity.ok(SuccessResponse.of(200, "공개범위 수정되었습니다."));
+    }
+
+    // 이력서 상세 조회
+    @Transactional(readOnly = true)
+    public DtoResumeDetail getResumeDetail(String email, Long resumeId) {
+
+        Optional<Resume> optionalResume = resumeRepository.findById(resumeId);
+
+        Resume resume = optionalResume.get();
+
+        DtoResumeDetail dtoResumeDetail = new DtoResumeDetail(resume);
+
+        log.info("getGithubUrl: " + dtoResumeDetail.getGithubUrl());
+        return dtoResumeDetail;
     }
 }

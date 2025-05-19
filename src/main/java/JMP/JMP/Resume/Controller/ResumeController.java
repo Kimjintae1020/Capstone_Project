@@ -2,6 +2,7 @@ package JMP.JMP.Resume.Controller;
 
 import JMP.JMP.Jwt.JWTUtil;
 import JMP.JMP.Resume.Dto.DtoCreateResume;
+import JMP.JMP.Resume.Dto.DtoResumeDetail;
 import JMP.JMP.Resume.Dto.DtoResumeList;
 import JMP.JMP.Resume.Dto.DtoUpdateResume;
 import JMP.JMP.Resume.Service.ResumeService;
@@ -57,6 +58,17 @@ public class ResumeController {
 
         String email = jwtUtil.getUsername(token.replace("Bearer ", ""));
         List<DtoResumeList> response = resumeService.getResumeList(email);
+
+        return response;
+    }
+
+    //  이력서 상세 조회
+    @GetMapping("/resume/{resumeId}/detail")
+    public DtoResumeDetail getResumeDetail(@RequestHeader(value = "Authorization", required = false) String token,
+                                           @PathVariable Long resumeId){
+
+        String email = jwtUtil.getUsername(token.replace("Bearer ", ""));
+        DtoResumeDetail response = resumeService.getResumeDetail(email,resumeId);
 
         return response;
     }

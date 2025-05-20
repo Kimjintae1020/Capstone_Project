@@ -97,7 +97,10 @@ public class ResumeController {
         String savedPath = null;
         if (photo != null && !photo.isEmpty()) {
 
-            String fileName = UUID.randomUUID() + "_" + photo.getOriginalFilename();
+            String originalFilename = photo.getOriginalFilename();
+            String extension = originalFilename.substring(originalFilename.lastIndexOf("."));
+            String fileName = UUID.randomUUID() + extension;
+
             String resolvedPath = new File(uploadDir).getAbsolutePath();
             File file = new File(resolvedPath, fileName);
 

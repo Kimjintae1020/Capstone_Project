@@ -5,7 +5,6 @@ public enum Major {
     LANGUAGE_CULTURE("어문학부"),
     SOCIAL_WELFARE("사회복지학부"),
     POLICE_SCIENCE("경찰학부"),
-    BUSINESS_ADMINISTRATION("경찰학부"),
     TOURISM("관광학부"),
     EDUCATION("사범학부"),
     EARLY_CHILDHOOD_EDUCATION("유아교육과"),

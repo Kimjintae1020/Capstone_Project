@@ -22,7 +22,6 @@ public class DtoCreateResume {
     private boolean visible;
     private DevPosition devposition;
 
-    @Size(max = 500, message = "자기소개서는 500자 이내로 작성해주세요.")
     private String introduce;
 
     private List<DtoResumeProject> projects;

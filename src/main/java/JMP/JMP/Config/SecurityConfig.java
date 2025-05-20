@@ -80,6 +80,7 @@ public class SecurityConfig {
         http
                 .authorizeHttpRequests((auth) -> auth
                         .requestMatchers("/api/**", "/").permitAll()      // 개발 편의를 위해 전체 허용
+                        .requestMatchers("/uploads/**").permitAll()
                         .requestMatchers("/admin").hasRole("ADMIN")
                         .anyRequest().authenticated());
 

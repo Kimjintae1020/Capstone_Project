@@ -1,6 +1,5 @@
 package JMP.JMP.Resume.Service;
 
-import JMP.JMP.Auth.Dto.DtoMypageAccount;
 import JMP.JMP.Error.ErrorResponse;
 import JMP.JMP.Account.Entity.Account;
 import JMP.JMP.Account.Repository.AccountRepository;
@@ -147,10 +146,33 @@ public class ResumeService {
                     .body(ErrorResponse.of(ErrorCode.RESUME_NOT_OWNED));
         }
 
-        Resume resume = optionalResume.get();
+        Resume resume = new Resume();
+        resume.setAccount(account);
+        resume.setTitle(dtoUpdateResume.getTitle());
+        resume.setIntro(dtoUpdateResume.getIntro());
+        resume.setSkills(dtoUpdateResume.getSkills());
+        resume.setGithuburl(dtoUpdateResume.getGithubUrl());
+        resume.setVisible(dtoUpdateResume.isVisible());
+        resume.setDevposition(dtoUpdateResume.getDevposition());
+        resume.setPhoto(photo);
+        resume.setIntroduce(dtoUpdateResume.getIntroduce());
 
-        resume.UpdateResume(dtoUpdateResume,photo);
+        List<ResumeProject> resumeProjects = dtoUpdateResume.getProjects().stream()
+                .map(dtoProject -> ResumeProject.builder()
+                        .name(dtoProject.getName())
+                        .description(dtoProject.getDescription())
+                        .techStack(dtoProject.getTechStack())
+                        .githubLink(dtoProject.getGithubLink())
+                        .resume(resume)
+                        .build())
+                .collect(Collectors.toList());
 
+        resume.setProjects(resumeProjects);
+
+        resume.setCreatedAt(LocalDate.now());
+        resume.setUpdatedAt(LocalDate.now());
+
+        resumeRepository.save(resume);
         return ResponseEntity.ok(SuccessResponse.of(200, "이력서가 성공적으로 수정되었습니다."));
     }
 

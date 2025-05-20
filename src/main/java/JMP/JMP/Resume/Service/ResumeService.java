@@ -146,7 +146,8 @@ public class ResumeService {
                     .body(ErrorResponse.of(ErrorCode.RESUME_NOT_OWNED));
         }
 
-        Resume resume = new Resume();
+        Resume resume = optionalResume.get();
+
         resume.setAccount(account);
         resume.setTitle(dtoUpdateResume.getTitle());
         resume.setIntro(dtoUpdateResume.getIntro());
@@ -156,6 +157,8 @@ public class ResumeService {
         resume.setDevposition(dtoUpdateResume.getDevposition());
         resume.setPhoto(photo);
         resume.setIntroduce(dtoUpdateResume.getIntroduce());
+
+        resume.getProjects().clear();
 
         List<ResumeProject> resumeProjects = dtoUpdateResume.getProjects().stream()
                 .map(dtoProject -> ResumeProject.builder()
@@ -167,9 +170,8 @@ public class ResumeService {
                         .build())
                 .collect(Collectors.toList());
 
-        resume.setProjects(resumeProjects);
+        resume.getProjects().addAll(resumeProjects);
 
-        resume.setCreatedAt(LocalDate.now());
         resume.setUpdatedAt(LocalDate.now());
 
         resumeRepository.save(resume);

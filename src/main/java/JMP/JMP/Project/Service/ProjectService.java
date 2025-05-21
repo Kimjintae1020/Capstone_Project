@@ -10,12 +10,11 @@ import JMP.JMP.Error.ErrorCode;
 import JMP.JMP.Enum.PostRole;
 import JMP.JMP.Error.Exception.UnauthorizedException;
 import JMP.JMP.Jwt.JWTUtil;
-import JMP.JMP.Project.Dto.DtoProjectApplicants;
-import JMP.JMP.Project.Dto.DtoProjectDetail;
-import JMP.JMP.Project.Dto.ProjectPageResponse;
-import JMP.JMP.Project.Dto.DtoCreateProject;
+import JMP.JMP.Project.Dto.*;
 import JMP.JMP.Project.Entity.Project;
 import JMP.JMP.Project.Repository.ProjectRepository;
+import JMP.JMP.Resume.Dto.DtoResumeProject;
+import JMP.JMP.Resume.Entity.Resume;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -27,6 +26,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -112,14 +112,35 @@ public class ProjectService {
         }
 
         return applyList.stream()
-                .map(apply -> new DtoProjectApplicants(
-                        apply.getAccount().getName(),
-                        apply.getResume().getPhoto(),
-                        apply.getResume().getDevposition(),
-                        apply.getStatus(),
-                        apply.getAppliedAt()
-                ))
-                .toList();
-    }
+                .map(apply -> {
+                    Resume resume = apply.getResume();  // 이력서를 꺼내옴
 
+                    DtoResumeApplicant resumeDto = DtoResumeApplicant.builder()
+                            .resumeId(resume.getResumeId())
+                            .title(resume.getTitle())
+                            .intro(resume.getIntro())
+                            .devposition(resume.getDevposition())
+                            .skills(resume.getSkills())
+                            .photo(resume.getPhoto())
+                            .visible(resume.isVisible())
+                            .projects(resume.getProjects().stream()
+                                    .map(DtoResumeProject::new)
+                                    .collect(Collectors.toList()))
+                            .githubUrl(resume.getGithuburl())
+                            .introduce(resume.getIntroduce())
+                            .build();
+
+                    return new DtoProjectApplicants(
+                            apply.getAccount().getId(),
+                            apply.getAccount().getName(),
+                            resume.getPhoto(),
+                            resume.getDevposition(),
+                            apply.getStatus(),
+                            apply.getAppliedAt(),
+                            resumeDto
+                    );
+                })
+                .toList();
+
+    }
 }

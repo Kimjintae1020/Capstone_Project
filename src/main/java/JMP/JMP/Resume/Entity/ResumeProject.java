@@ -4,6 +4,7 @@ import JMP.JMP.Enum.RequiredSkill;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Entity
@@ -22,6 +23,8 @@ public class ResumeProject {
     private String name;
     private String description;
     private String githubLink;
+    private LocalDate startDate; // 프로젝트 시작일
+    private LocalDate endDate;   // 프로젝트 마감일
 
     @ElementCollection(targetClass = RequiredSkill.class, fetch = FetchType.LAZY)
     // 기본값 EAGER 이기 때문에 프로젝트 조호할 때마 모든 기술스택 조회하게 됨 -> LAZY 전략으로 변경하여 필요한 것만 조회하도록 설정

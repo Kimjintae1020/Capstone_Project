@@ -9,6 +9,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Getter
@@ -23,13 +24,17 @@ public class DtoResumeProject {
     private String description;
 
     private List<RequiredSkill> techStack;
-    private String githubLink;
+    private String githubLink;   // 프로젝트 깃허브 링크
+    private LocalDate startDate; // 프로젝트 시작일
+    private LocalDate endDate;   // 프로젝트 마감일
 
     public DtoResumeProject(ResumeProject resume) {
         this.name = resume.getName();
         this.description = resume.getDescription();
         this.techStack = resume.getTechStack();
         this.githubLink = resume.getGithubLink();
+        this.startDate = resume.getStartDate();
+        this.endDate = resume.getEndDate();
     }
 
 }

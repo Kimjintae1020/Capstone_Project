@@ -77,4 +77,6 @@ public class ProjectController {
         List<DtoProjectApplicants> applicants = projectService.getProjectApplicants(projectId, token);
         return ResponseEntity.ok(applicants);
     }
+
+
 }

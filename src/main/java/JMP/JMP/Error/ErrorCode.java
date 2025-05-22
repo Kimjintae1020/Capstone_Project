@@ -19,6 +19,7 @@ public enum ErrorCode {
         DUPLICATE_COMPANY_EMAIL(409, "COMPANY-001", "이미 사용 중인 기업 담당자 이메일입니다."),
         DUPLICATE_COMPANY_PHONE(409, "COMPANY-002", "이미 사용 중인 기업 담당자 핸드폰입니다."),
         DUPLICATE_BUSSINESS_NUMBER(409, "COMPANY-003", "이미 등록되어 있는 사업자 번호입니다."),
+        COMPANY_NOT_FOUND(404, "COMPANY-004", "찾을 수 없는 기업 담당자입니다."),
 
         // 권한 관련
         INVALID_ROLE(400, "ROLE-001", "잘못된 권한 입니다."),
@@ -34,6 +35,11 @@ public enum ErrorCode {
         // 지원 관련
         APPLICATION_CLOSED(400, "APPLY-001", "지원 마감된 프로젝트입니다."),
         ALREADY_APPLIED(400, "APPLY-002", "이미 지원한 공고입니다."),
+        APPLY_NOT_FOUND(404, "APPLY-003", "찾을 수 없는 지원처리입니다."),
+        INVALID_ACCESS(403, "APPLY-004", "접근 권한이 없습니다."),
+        INVALID_STATUS(400, "APPLY-005", "지원 상태 값이 유효하지 않습니다."),
+        ALREADY_SET_STATUS(400, "APPLY-006", "이미 해당 상태로 처리된 지원자입니다."),
+
 
         // 기업 공고글 관련
         PROJECT_NOT_FOUND(404, "PROJECT_001", "프로젝트가 존재하지 않습니다."),
@@ -44,7 +50,12 @@ public enum ErrorCode {
 
         // 이력서 관련
         RESUME_NOT_FOUND(404, "RESUME-001", "이력서를 찾을 수 없습니다."),
-        RESUME_NOT_OWNED(403, "RESUME-002", "해당 이력서에 접근할 수 없습니다.");
+        RESUME_NOT_OWNED(403, "RESUME-002", "해당 이력서에 접근할 수 없습니다."),
+
+        // 관리자 관련
+        INVALID_ADMIN_ROLE(400, "ADMIN-001", "잘못된 권한 입니다."),
+        ALREADY_SET_POST_STATUS(400, "ADMIN-002", "이미 승인된 기업 담당자입니다.");
+
 
 
 

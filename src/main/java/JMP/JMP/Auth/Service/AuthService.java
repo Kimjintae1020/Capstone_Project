@@ -5,7 +5,7 @@ import JMP.JMP.Error.ErrorResponse;
 import JMP.JMP.Account.Entity.Account;
 import JMP.JMP.Account.Entity.RefreshEntity;
 import JMP.JMP.Company.Entity.Company;
-import JMP.JMP.Company.Repository.CompanyRespository;
+import JMP.JMP.Company.Repository.CompanyRepository;
 import JMP.JMP.Enum.Role;
 import JMP.JMP.Account.Repository.AccountRepository;
 import JMP.JMP.Account.Repository.RefreshRepository;
@@ -33,7 +33,7 @@ import java.util.Optional;
 public class AuthService {
 
     private final AccountRepository accountRepository;
-    private final CompanyRespository companyRespository;
+    private final CompanyRepository companyRepository;
     private final PasswordEncoder passwordEncoder;
     private final JWTUtil jwtUtil;
     private final RefreshRepository refreshRepository;
@@ -64,7 +64,7 @@ public class AuthService {
     // 기업 당당자 로그인
     public ResponseEntity<?> loginCompany(DtoLogin dto, HttpServletResponse response) {
 
-        Optional<Company> optional = companyRespository.findByEmail(dto.getEmail());
+        Optional<Company> optional = companyRepository.findByEmail(dto.getEmail());
 
         if (optional.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
@@ -113,7 +113,7 @@ public class AuthService {
             return ResponseEntity.status(HttpStatus.CONFLICT)
                     .body(ErrorResponse.of(ErrorCode.DUPLICATE_EMAIL));
         }
-        if (companyRespository.existsByEmail(email)) {
+        if (companyRepository.existsByEmail(email)) {
             return ResponseEntity.status(HttpStatus.CONFLICT)
                     .body(ErrorResponse.of(ErrorCode.DUPLICATE_EMAIL));
         }
@@ -140,7 +140,7 @@ public class AuthService {
 
         }
         else if (role == Role.COMPANY) {
-            Optional<Company> optionalCompany = companyRespository.findByEmail(loginId);
+            Optional<Company> optionalCompany = companyRepository.findByEmail(loginId);
 
             if (optionalCompany.isEmpty()) {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND)

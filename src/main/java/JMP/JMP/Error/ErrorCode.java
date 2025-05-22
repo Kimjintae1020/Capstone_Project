@@ -49,7 +49,11 @@ public enum ErrorCode {
 
         // 이력서 관련
         RESUME_NOT_FOUND(404, "RESUME-001", "이력서를 찾을 수 없습니다."),
-        RESUME_NOT_OWNED(403, "RESUME-002", "해당 이력서에 접근할 수 없습니다.");
+        RESUME_NOT_OWNED(403, "RESUME-002", "해당 이력서에 접근할 수 없습니다."),
+
+        // 관리자 관련
+        INVALID_ADMIN_ROLE(400, "ADMIN-001", "잘못된 권한 입니다.");
+
 
 
 

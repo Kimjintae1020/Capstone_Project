@@ -1,6 +1,6 @@
 package JMP.JMP.Apply.Service;
 
-import JMP.JMP.Company.Repository.CompanyRespository;
+import JMP.JMP.Company.Repository.CompanyRepository;
 import JMP.JMP.Error.ErrorResponse;
 import JMP.JMP.Auth.Dto.SuccessResponse;
 import JMP.JMP.Account.Entity.Account;
@@ -33,7 +33,7 @@ public class ApplyService {
     private final JWTUtil jwtUtil;
     private final ProjectRepository projectRepository;
     private final AccountRepository accountRepository;
-    private final CompanyRespository companyRespository;
+    private final CompanyRepository companyRepository;
     private final ResumeRepository resumeRepository;
 
     @Transactional
@@ -86,7 +86,7 @@ public class ApplyService {
         String loginId = jwtUtil.getUsername(accessToken);
 
         log.info(loginId);
-        boolean checkCompany = companyRespository.existsByEmail(loginId);
+        boolean checkCompany = companyRepository.existsByEmail(loginId);
 
         // 기업 담당자만 접근 가능
         if (!checkCompany) {

@@ -5,7 +5,7 @@ import JMP.JMP.Apply.Repository.ApplyRepository;
 import JMP.JMP.Error.ErrorResponse;
 import JMP.JMP.Auth.Dto.SuccessResponse;
 import JMP.JMP.Company.Entity.Company;
-import JMP.JMP.Company.Repository.CompanyRespository;
+import JMP.JMP.Company.Repository.CompanyRepository;
 import JMP.JMP.Error.ErrorCode;
 import JMP.JMP.Enum.PostRole;
 import JMP.JMP.Error.Exception.UnauthorizedException;
@@ -34,7 +34,7 @@ import java.util.stream.Collectors;
 public class ProjectService {
 
     private final ProjectRepository projectRepository;
-    private final CompanyRespository companyRespository;
+    private final CompanyRepository companyRepository;
     private final ApplyRepository applyRepository;
     private final JWTUtil jwtUtil;
 
@@ -42,7 +42,7 @@ public class ProjectService {
     @Transactional
     public ResponseEntity<?> createProject(DtoCreateProject dtoCreateProject, String loginId) {
 
-        Optional<Company> companyOptional = companyRespository.findByEmail(loginId);
+        Optional<Company> companyOptional = companyRepository.findByEmail(loginId);
 
         if (companyOptional.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
@@ -105,7 +105,7 @@ public class ProjectService {
         String loginId = jwtUtil.getUsername(accessToken);
 
         log.info(loginId);
-        boolean checkCompany = companyRespository.existsByEmail(loginId);
+        boolean checkCompany = companyRepository.existsByEmail(loginId);
 
         if(!checkCompany){
             throw new UnauthorizedException("기업 회원만 접근할 수 있는 페이지입니다.");

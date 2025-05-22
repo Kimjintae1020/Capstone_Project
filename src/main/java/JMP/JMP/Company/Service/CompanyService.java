@@ -6,7 +6,7 @@ import JMP.JMP.Enum.PostRole;
 import JMP.JMP.Enum.Role;
 import JMP.JMP.Company.Entity.Company;
 import JMP.JMP.Company.Dto.DtoCompanyRegister;
-import JMP.JMP.Company.Repository.CompanyRespository;
+import JMP.JMP.Company.Repository.CompanyRepository;
 import JMP.JMP.Error.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -20,7 +20,7 @@ import org.springframework.stereotype.Service;
 @Slf4j
 public class CompanyService {
 
-    private final CompanyRespository companyRespository;
+    private final CompanyRepository companyRepository;
     private final PasswordEncoder passwordEncoder;
 
 
@@ -28,21 +28,21 @@ public class CompanyService {
     public ResponseEntity<?> registerCompany(DtoCompanyRegister dtoCompanyRegister) {
 
         // 이메일 중복검사
-        if (companyRespository.existsByEmail(dtoCompanyRegister.getEmail())) {
+        if (companyRepository.existsByEmail(dtoCompanyRegister.getEmail())) {
             log.info("기업 담당자 이메일 중복");
             return ResponseEntity.status(HttpStatus.CONFLICT)
                     .body(ErrorResponse.of(ErrorCode.DUPLICATE_COMPANY_EMAIL));
         }
 
         // 사업자 번호 중복 검사
-        if (companyRespository.existsByBusinessNumber(dtoCompanyRegister.getBusinessNumber())) {
+        if (companyRepository.existsByBusinessNumber(dtoCompanyRegister.getBusinessNumber())) {
             log.info("사업자 번호 중복");
             return ResponseEntity.status(HttpStatus.CONFLICT)
                     .body(ErrorResponse.of(ErrorCode.DUPLICATE_BUSSINESS_NUMBER));
         }
 
         // 핸드폰 중복검사
-        if (companyRespository.existsByPhone(dtoCompanyRegister.getPhone())) {
+        if (companyRepository.existsByPhone(dtoCompanyRegister.getPhone())) {
             log.info("핸드폰번호 중복");
             return ResponseEntity.status(HttpStatus.CONFLICT)
                     .body(ErrorResponse.of(ErrorCode.DUPLICATE_COMPANY_PHONE));
@@ -63,7 +63,7 @@ public class CompanyService {
                 .postRole(PostRole.PENDING)
                 .role(Role.COMPANY)
                 .build();
-        companyRespository.save(savedCompany);
+        companyRepository.save(savedCompany);
 
         log.info("기업 담당자 회원가입 완료");
 

@@ -70,6 +70,8 @@ public class ResumeService {
                         .description(dtoProject.getDescription())
                         .techStack(dtoProject.getTechStack())
                         .githubLink(dtoProject.getGithubLink())
+                        .startDate(dtoProject.getStartDate())
+                        .endDate(dtoProject.getEndDate())
                         .resume(resume)
                         .build())
                 .collect(Collectors.toList());
@@ -166,6 +168,8 @@ public class ResumeService {
                         .description(dtoProject.getDescription())
                         .techStack(dtoProject.getTechStack())
                         .githubLink(dtoProject.getGithubLink())
+                        .startDate(dtoProject.getStartDate())
+                        .endDate(dtoProject.getEndDate())
                         .resume(resume)
                         .build())
                 .collect(Collectors.toList());

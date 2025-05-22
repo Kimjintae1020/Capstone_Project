@@ -35,7 +35,6 @@ public class Apply {
     @JoinColumn(name = "RESUME_ID")
     private Resume resume;
 
-
     @Enumerated(EnumType.STRING)
     private ApplyStatus status; // 지원 상태
 

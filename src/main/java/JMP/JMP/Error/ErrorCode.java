@@ -34,6 +34,11 @@ public enum ErrorCode {
         // 지원 관련
         APPLICATION_CLOSED(400, "APPLY-001", "지원 마감된 프로젝트입니다."),
         ALREADY_APPLIED(400, "APPLY-002", "이미 지원한 공고입니다."),
+        APPLY_NOT_FOUND(400, "APPLY-003", "찾을 수 없는 지원처리입니다."),
+        INVALID_ACCESS(403, "APPLY-004", "접근 권한이 없습니다."),
+        INVALID_STATUS(400, "APPLY-005", "지원 상태 값이 유효하지 않습니다."),
+        ALREADY_SET_STATUS(400, "APPLY-005", "이미 해당 상태로 처리된 지원자입니다."),
+
 
         // 기업 공고글 관련
         PROJECT_NOT_FOUND(404, "PROJECT_001", "프로젝트가 존재하지 않습니다."),

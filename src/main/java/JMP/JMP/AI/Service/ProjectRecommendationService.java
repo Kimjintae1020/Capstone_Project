@@ -6,8 +6,10 @@ import JMP.JMP.Project.Repository.ProjectRepository;
 import JMP.JMP.Resume.Entity.Resume;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -18,15 +20,15 @@ public class ProjectRecommendationService {
 
     private final ProjectRepository projectRepository;
     private final GeneratePromptService promptService;
-    private final GeminiService geminiService;
 
-    public List<Project> recommendTopPostings(Resume resume, Account account, String duration, int topN) {
+    @Async
+    public List<Project> recommendTopPostings(Resume resume, Account account, LocalDate startDate, LocalDate endDate, int topN) {
         List<Project> allPostings = projectRepository.findAll();
 
         Map<Project, Integer> scoreMap = new LinkedHashMap<>();
 
         for (Project posting : allPostings) {
-            String prompt = promptService.generatePrompt(resume, posting, duration, account);
+            String prompt = promptService.generatePrompt(resume, posting, startDate, endDate, account);
             String response = promptService.callGemini(prompt);
 
             log.info(" Gemini 응답 (공고 ID: {}, 제목: {}): {}", posting.getProjectId(), posting.getTitle(), response);
@@ -51,10 +53,6 @@ public class ProjectRecommendationService {
         } catch (Exception e) {
             return 0;
         }
-    }
-
-    public String callGemini(String prompt) {
-        return geminiService.getCompletion(prompt);
     }
 
 }

@@ -37,7 +37,7 @@ public class AuthController {
             return authService.loginCompany(dtoLogin, response);
         }
 
-        // 기업 담당자 로그인
+        // 관리자 로그인
         else if (dtoLogin.getRole() == Role.ADMIN) {
             return authService.loginUser(dtoLogin, response);
         }
@@ -47,6 +47,7 @@ public class AuthController {
                 .body(ErrorResponse.of(ErrorCode.INVALID_ROLE));
 
     }
+    
     // 이메일 중복 검사
     @GetMapping("/email/exist")
     public ResponseEntity<?> existEmailCheck(@RequestParam String email) {

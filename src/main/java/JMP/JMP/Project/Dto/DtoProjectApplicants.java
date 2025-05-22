@@ -17,7 +17,7 @@ public class DtoProjectApplicants {
     private DevPosition devposition; // 지원 포지션
     private ApplyStatus status; // 상태 (예: 검토중, 합격, 불합격)
     private LocalDate appliedAt;  // 지원 날짜
-    private DtoResumeApplicant resume;        // 지원자 이력서 상세정보
+    private DtoResume resume;        // 지원자 이력서 상세정보
 
 
 }

@@ -11,7 +11,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class DtoResumeApplicant {
+public class DtoResume {
 
     private Long resumeId;
     private String title;               // 이력서 제목

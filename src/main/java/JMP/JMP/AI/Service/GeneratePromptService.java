@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.stream.Collectors;
 
 @Service
@@ -20,7 +21,7 @@ public class GeneratePromptService {
         return geminiService.getCompletion(prompt);
     }
 
-    public String generatePrompt(Resume resume, Project project, String desiredDuration, Account account) {
+    public String generatePrompt(Resume resume, Project project, LocalDate startDate, LocalDate endDate, Account account) {
 
 
         String projectTechStack = resume.getProjects().isEmpty()
@@ -59,7 +60,7 @@ public class GeneratePromptService {
             [이력서]
             기술 스택: %s
             학력: %s
-            가능 기간: %s
+            가능 기간: %s ~ %s
             희망 직무: %s
             프로젝트 경험 기술: %s
 
@@ -73,7 +74,8 @@ public class GeneratePromptService {
                 .formatted(
                 resume.getSkills(),
                 account.getEducation(),
-                desiredDuration,
+                startDate,
+                endDate,
                 resume.getDevposition(),
                 projectTechStack,
                 project.getTitle(),

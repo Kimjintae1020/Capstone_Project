@@ -115,7 +115,7 @@ public class ProjectService {
                 .map(apply -> {
                     Resume resume = apply.getResume();  // 이력서를 꺼내옴
 
-                    DtoResumeApplicant resumeDto = DtoResumeApplicant.builder()
+                    DtoResume resumeDto = DtoResume.builder()
                             .resumeId(resume.getResumeId())
                             .title(resume.getTitle())
                             .intro(resume.getIntro())

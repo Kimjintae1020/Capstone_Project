@@ -10,6 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 import java.util.LinkedHashMap;
@@ -26,13 +27,15 @@ public class GeminiController {
 
     @PostMapping("/completion/top3/{resumeId}")
     public ResponseEntity<List<Map<String, Object>>> getTop3Postings(@PathVariable Long resumeId,
-                                                                     @RequestParam String duration) {
+                                                                     @RequestParam LocalDate startDate,
+                                                                     @RequestParam LocalDate endDate
+                                                                     ) {
         Resume resume = resumeRepository.findById(resumeId)
                 .orElseThrow(() -> new IllegalArgumentException("이력서 없음"));
 
         Account account = resume.getAccount();
 
-        List<Project> topPostings = projectRecommendationService.recommendTopPostings(resume, account, duration, 3);
+        List<Project> topPostings = projectRecommendationService.recommendTopPostings(resume, account, startDate, endDate, 3);
 
         List<Map<String, Object>> result = topPostings.stream().map(posting -> {
             Map<String, Object> map = new LinkedHashMap<>();

@@ -84,9 +84,18 @@ public class AdminCompanyService {
                     .body(ErrorResponse.of(ErrorCode.ALREADY_SET_POST_STATUS));
         }
 
-        findCompany.setPostRole(PostRole.APPROVED);
-        return ResponseEntity.ok(SuccessResponse.of(200, findCompany.getCompanyName() + "님 승인처리 되었습니다."));
+        if (status == PostRole.APPROVED) {
+            findCompany.setPostRole(PostRole.APPROVED);
+        }
+        else if (status == PostRole.REJECTED) {
+            findCompany.setPostRole(PostRole.REJECTED);
+        }
+
+        return ResponseEntity.ok(SuccessResponse.of(200, findCompany.getCompanyName() + "님 " + status +"처리 되었습니다."));
+
     }
+
+
 }
 
 

@@ -36,14 +36,13 @@ dependencies {
 	testImplementation 'org.springframework.security:spring-security-test'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 
+	implementation 'com.google.guava:guava:33.0.0-jre'
+
 	implementation 'io.jsonwebtoken:jjwt-api:0.12.3'
 	implementation 'io.jsonwebtoken:jjwt-impl:0.12.3'
 	implementation 'io.jsonwebtoken:jjwt-jackson:0.12.3'
 }
 
-//tasks.named('test') {
-//	useJUnitPlatform()
-//}
 tasks.test {
 	useJUnitPlatform()
 }

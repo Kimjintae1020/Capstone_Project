@@ -1,17 +1,16 @@
 package JMP.JMP.AI.Controller;
 
-import JMP.JMP.AI.Dto.ProjectEvaluationResult;
 import JMP.JMP.AI.Service.ProjectRecommendationService;
 import JMP.JMP.Resume.Entity.Resume;
 import JMP.JMP.Resume.Repository.ResumeRepository;
 import JMP.JMP.Account.Entity.Account;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import java.util.Map;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/gemini")
@@ -23,7 +22,7 @@ public class GeminiController {
     private final ProjectRecommendationService projectRecommendationService;
 
     @PostMapping("/completion/top3/{resumeId}")
-    public ResponseEntity<List<Object>> getTop3Postings(
+    public ResponseEntity<Map<String, Object>> getTop3Postings(
             @PathVariable Long resumeId,
             @RequestParam LocalDate startDate,
             @RequestParam LocalDate endDate) {
@@ -33,10 +32,11 @@ public class GeminiController {
 
         Account account = resume.getAccount();
 
-        List<Object> result = projectRecommendationService.recommendTopPostings(resume, account, startDate, endDate, 3);
+        Map<String, Object> result = projectRecommendationService.recommendTopPostings(resume, account, startDate, endDate, 3);
 
         return ResponseEntity.ok(result);
     }
+
 
 
 }

@@ -21,12 +21,12 @@ public class ProjectRecommendationService {
     private final ProjectRepository projectRepository;
     private final GeneratePromptService promptService;
 
-    public List<Object> recommendTopPostings(
+    public Map<String, Object> recommendTopPostings(
             Resume resume, Account account, LocalDate startDate, LocalDate endDate, int topN) {
 
         List<Project> allPostings = projectRepository.findAll();
 
-        List<Object> results = new ArrayList<>();
+        List<ProjectEvaluationResult> projectResults = new ArrayList<>();
 
         for (Project posting : allPostings) {
             String prompt = promptService.generatePrompt(resume, posting, startDate, endDate, account);
@@ -37,7 +37,7 @@ public class ProjectRecommendationService {
             int score = extractTotalScore(response);
             String details = extractSummaryDetails(response);
 
-            results.add(new ProjectEvaluationResult(
+            projectResults.add(new ProjectEvaluationResult(
                     posting.getProjectId(),
                     posting.getTitle(),
                     posting.getRequiredSkill().stream().map(Enum::name).toList(),
@@ -46,14 +46,17 @@ public class ProjectRecommendationService {
             ));
         }
 
-        // 마지막에 userSkills 추가
-        results.add(Map.of(
-                "userSkills", resume.getSkills().stream().map(Enum::name).toList()
-        ));
+        List<ProjectEvaluationResult> topProjects = projectResults.stream()
+                .sorted(Comparator.comparingInt(ProjectEvaluationResult::getScore).reversed())
+                .limit(topN)
+                .collect(Collectors.toList());
 
-        return results;
+        Map<String, Object> result = new LinkedHashMap<>();
+        result.put("recommendations", topProjects);
+        result.put("userSkills", resume.getSkills().stream().map(Enum::name).toList());
+
+        return result;
     }
-
 
     // 종합점수 산정
     private int extractTotalScore(String response) {

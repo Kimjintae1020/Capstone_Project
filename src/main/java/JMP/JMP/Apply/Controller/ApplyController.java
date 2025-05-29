@@ -30,7 +30,6 @@ public class ApplyController {
                                                @PathVariable Long projectId,
                                                @PathVariable Long applyId,
                                                @RequestParam("status") ApplyStatus status ){
-
         ResponseEntity<?> response = applyService.updateApplyStatus(token, projectId,applyId,status);
 
         return response;

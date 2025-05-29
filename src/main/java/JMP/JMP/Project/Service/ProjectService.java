@@ -18,7 +18,9 @@ import JMP.JMP.Resume.Entity.Resume;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -143,5 +145,15 @@ public class ProjectService {
                 })
                 .toList();
 
+    }
+
+    // 최근 등록한 프로젝트 공고 목록 조회
+    public List<DtoProjectRecent> getProjectRecent() {
+        Pageable pageale = PageRequest.of(0, 3, Sort.by(Sort.Direction.DESC, "createdAt"));
+
+        return projectRepository.findAll(pageale)
+                .stream()
+                .map(DtoProjectRecent::new)
+                .collect(Collectors.toList());
     }
 }

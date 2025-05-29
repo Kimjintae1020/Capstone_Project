@@ -131,6 +131,7 @@ public class ProjectService {
                             .build();
 
                     return new DtoProjectApplicants(
+                            apply.getId(),
                             apply.getAccount().getId(),
                             apply.getAccount().getName(),
                             resume.getPhoto(),

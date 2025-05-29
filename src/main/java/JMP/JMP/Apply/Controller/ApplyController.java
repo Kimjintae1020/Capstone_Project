@@ -2,8 +2,6 @@ package JMP.JMP.Apply.Controller;
 
 import JMP.JMP.Apply.Service.ApplyService;
 import JMP.JMP.Enum.ApplyStatus;
-import JMP.JMP.Error.Exception.UnauthorizedException;
-import JMP.JMP.Project.Service.ProjectService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

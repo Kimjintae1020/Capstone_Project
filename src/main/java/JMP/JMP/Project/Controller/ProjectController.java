@@ -4,10 +4,7 @@ import JMP.JMP.Error.ErrorResponse;
 import JMP.JMP.Error.ErrorCode;
 import JMP.JMP.Error.Exception.UnauthorizedException;
 import JMP.JMP.Jwt.JWTUtil;
-import JMP.JMP.Project.Dto.DtoCreateProject;
-import JMP.JMP.Project.Dto.DtoProjectApplicants;
-import JMP.JMP.Project.Dto.DtoProjectDetail;
-import JMP.JMP.Project.Dto.ProjectPageResponse;
+import JMP.JMP.Project.Dto.*;
 import JMP.JMP.Project.Service.ProjectService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -18,7 +15,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Slf4j
 @RestController
@@ -57,6 +56,19 @@ public class ProjectController {
         ProjectPageResponse response = projectService.getProjectList(pageable);
 
         return ResponseEntity.ok(response);
+
+    }
+
+    // 최근 등록한 프로젝트 공고 목록 조회
+    @GetMapping("/projects/recent")
+    public ResponseEntity<?> getProjectRecent() {
+
+        List<DtoProjectRecent> projects = projectService.getProjectRecent();
+
+        Map<String, Object> result = new HashMap<>();
+        result.put("recentProjects", projects);
+
+        return ResponseEntity.ok(result);
 
     }
 

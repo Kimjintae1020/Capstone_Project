@@ -11,6 +11,7 @@ import java.time.LocalDate;
 @AllArgsConstructor
 public class DtoProjectApplicants {
 
+    private Long applyId;
     private Long accountId; // 지원자 아이디
     private String name;   // 지원자 이름
     private String photo; // 증명 사진

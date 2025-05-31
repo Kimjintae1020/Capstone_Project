@@ -51,4 +51,24 @@ public class BoardService {
                 projects.getContent()
         );
     }
+
+    // 게시글 삭제
+    @Transactional
+    public ResponseEntity<?> deleteBoard(String loginId, Long boardId) {
+
+        Account findAccount = accountRepository.findByEmail(loginId)
+                .orElseThrow(() -> new CustomException(ErrorCode.INVALID_COMPANY));
+
+        Board findBoard = boardRepository.findById(boardId)
+                .orElseThrow(() -> new CustomException(ErrorCode.BOARD_NOT_FOUND));
+
+        if (!findAccount.getId().equals(findBoard.getWriter().getId())) {
+            throw new CustomException(ErrorCode.INVALID_ACCESS);
+        }
+
+        boardRepository.delete(findBoard);
+
+        log.info("게시글 삭제 성공");
+        return ResponseEntity.ok(SuccessResponse.of(200, "게시글이 삭제되었습니다."));
+    }
 }

@@ -49,6 +49,24 @@ public class BoardController {
         BoardPageResponse response = boardServie.getBoardList(pageable);
 
         return ResponseEntity.ok(response);
-
     }
+
+    @DeleteMapping("/boards/{boardId}/delete")
+    public ResponseEntity<?> deleteBoard(@RequestHeader(value = "Authorization", required = false) String token,
+                                         @PathVariable Long boardId){
+
+        if (token == null || !token.startsWith("Bearer ")) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(ErrorResponse.of(ErrorCode.NOT_AUTHENTICATED));
+        }
+
+        String accessToken = token.replace("Bearer ", "");
+        String loginId = jwtUtil.getUsername(accessToken);
+
+
+        ResponseEntity<?> response = boardServie.deleteBoard(loginId,boardId);
+
+        return response;
+    }
+
 }

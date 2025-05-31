@@ -47,6 +47,7 @@ public enum ErrorCode {
 
         // 게시글 관련
         INVALID_COMPANY(400, "BOARD-001", "기업 담당자는 게시글을 작성할 수 없습니다."),
+        BOARD_NOT_FOUND(404, "BOARD-002", "게시글을 찾을 수 없습니다."),
 
         // JWT 관련
         JWT_EXPIRED(401, "JWT-001", "로그인이 만료되었습니다. 다시 로그인 해주세요."),

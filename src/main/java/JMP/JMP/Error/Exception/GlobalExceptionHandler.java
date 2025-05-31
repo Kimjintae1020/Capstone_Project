@@ -56,4 +56,10 @@ public class GlobalExceptionHandler {
                 .body(ErrorResponse.of(ErrorCode.UNAUTHORIZED_ACCESS));
     }
 
+    @ExceptionHandler(CustomException.class)
+    public ResponseEntity<ErrorResponse> handleCustomException(CustomException e) {
+        ErrorCode errorCode = e.getErrorCode();
+        return ResponseEntity.status(errorCode.getStatus())
+                .body(ErrorResponse.of(errorCode));
+    }
 }

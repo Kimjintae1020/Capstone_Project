@@ -1,11 +1,15 @@
 package JMP.JMP.Board.Controller;
 
+import JMP.JMP.Board.Dto.BoardPageResponse;
 import JMP.JMP.Board.Service.BoardService;
 import JMP.JMP.Board.Dto.DtoCreateBoard;
 import JMP.JMP.Error.ErrorCode;
 import JMP.JMP.Error.ErrorResponse;
 import JMP.JMP.Jwt.JWTUtil;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -28,11 +32,23 @@ public class BoardController {
         }
 
         String accessToken = token.replace("Bearer ", "");
-        String loginId = jwtUtil.getUsername(accessToken);      // ex) loginId: company@gmail.com
+        String loginId = jwtUtil.getUsername(accessToken);
 
 
         ResponseEntity<?> response = boardServie.createBoard(loginId,dtoCreateBoard);
 
         return response;
+    }
+
+    // 게시글 목록 조회 [페이징]
+    @GetMapping("/board/list")
+    public ResponseEntity<BoardPageResponse> getboardList(@RequestParam(defaultValue = "1") int page,      // 기본값 0, Service 단에서 +1 설정
+                                                          @RequestParam(defaultValue = "10") int size) {
+
+        Pageable pageable = PageRequest.of(page -1, size, Sort.by(Sort.Direction.DESC, "createdAt"));
+        BoardPageResponse response = boardServie.getBoardList(pageable);
+
+        return ResponseEntity.ok(response);
+
     }
 }

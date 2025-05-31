@@ -2,7 +2,10 @@ package JMP.JMP.Board.Entity;
 
 import JMP.JMP.Account.Entity.Account;
 import JMP.JMP.Board.Dto.DtoCreateBoard;
+import JMP.JMP.Board.Dto.DtoUpdateBoard;
 import JMP.JMP.Enum.BoardCategory;
+import JMP.JMP.Error.ErrorCode;
+import JMP.JMP.Error.Exception.CustomException;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -52,6 +55,15 @@ public class Board {
         board.description = dto.getDescription();
         board.boardCategory = dto.getBoardCategory();
         return board;
+    }
+
+    public void updateBoard(Account findAccount, DtoUpdateBoard dtoUpdateBoard) {
+        if (!this.writer.getId().equals(findAccount.getId())){
+            throw new CustomException(ErrorCode.INVALID_ACCESS);
+        }
+        this.title = dtoUpdateBoard.getTitle();
+        this.description = dtoUpdateBoard.getDescription();
+        this.updatedAt = LocalDate.now();
     }
 
     @PrePersist

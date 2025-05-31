@@ -1,6 +1,7 @@
 package JMP.JMP.Board.Controller;
 
 import JMP.JMP.Board.Dto.BoardPageResponse;
+import JMP.JMP.Board.Dto.DtoUpdateBoard;
 import JMP.JMP.Board.Service.BoardService;
 import JMP.JMP.Board.Dto.DtoCreateBoard;
 import JMP.JMP.Error.ErrorCode;
@@ -68,5 +69,25 @@ public class BoardController {
 
         return response;
     }
+
+    @PutMapping("/boards/{boardId}/update")
+    public ResponseEntity<?> updateBoard(@RequestHeader(value = "Authorization", required = false) String token,
+                                         @PathVariable Long boardId,
+                                         @RequestBody DtoUpdateBoard dtoUpdateBoard){
+
+        if (token == null || !token.startsWith("Bearer ")) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(ErrorResponse.of(ErrorCode.NOT_AUTHENTICATED));
+        }
+
+        String accessToken = token.replace("Bearer ", "");
+        String loginId = jwtUtil.getUsername(accessToken);
+
+
+        ResponseEntity<?> response = boardServie.updateBoard(loginId,dtoUpdateBoard,boardId);
+
+        return response;
+    }
+
 
 }

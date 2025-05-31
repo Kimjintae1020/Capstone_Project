@@ -4,6 +4,7 @@ import JMP.JMP.Account.Entity.Account;
 import JMP.JMP.Account.Repository.AccountRepository;
 import JMP.JMP.Auth.Dto.SuccessResponse;
 import JMP.JMP.Board.Dto.BoardPageResponse;
+import JMP.JMP.Board.Dto.DtoUpdateBoard;
 import JMP.JMP.Board.Entity.Board;
 import JMP.JMP.Board.Repository.BoardRepository;
 import JMP.JMP.Board.Dto.DtoCreateBoard;
@@ -70,5 +71,21 @@ public class BoardService {
 
         log.info("게시글 삭제 성공");
         return ResponseEntity.ok(SuccessResponse.of(200, "게시글이 삭제되었습니다."));
+    }
+
+    // 게시글 수정
+    @Transactional
+    public ResponseEntity<?> updateBoard(String loginId, DtoUpdateBoard dtoUpdateBoard, Long boardId) {
+
+        Account findAccount = accountRepository.findByEmail(loginId)
+                .orElseThrow(() -> new CustomException(ErrorCode.INVALID_COMPANY));
+
+        Board board = boardRepository.findById(boardId)
+                        .orElseThrow(() -> new CustomException(ErrorCode.BOARD_NOT_FOUND));
+
+        board.updateBoard(findAccount, dtoUpdateBoard);
+        boardRepository.save(board);
+
+        return ResponseEntity.ok(SuccessResponse.of(200, "게시글이 수정되었습니다."));
     }
 }

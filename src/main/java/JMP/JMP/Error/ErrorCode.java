@@ -45,6 +45,9 @@ public enum ErrorCode {
         PROJECT_NOT_FOUND(404, "PROJECT_001", "프로젝트가 존재하지 않습니다."),
         INVALID_PROJECT_DEADLINE(400, "PROJECT-002", "모집 마감일은 프로젝트 시작일보다 이전이어야 합니다."),
 
+        // 게시글 관련
+        INVALID_COMPANY(400, "BOARD-001", "기업 담당자는 게시글을 작성할 수 없습니다."),
+
         // JWT 관련
         JWT_EXPIRED(401, "JWT-001", "로그인이 만료되었습니다. 다시 로그인 해주세요."),
 

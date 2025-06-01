@@ -1,6 +1,6 @@
 package JMP.JMP.Enum;
 
-public enum BoardCategory {
+public enum BoardType {
 
     GENERAL("일반 게시글"),
     PROJECT_RECRUIT("프로젝트 모집"),
@@ -8,7 +8,7 @@ public enum BoardCategory {
 
     private final String description;
 
-    BoardCategory(String description) {
+    BoardType(String description) {
         this.description = description;
     }
 

@@ -1,4 +1,4 @@
-package JMP.JMP.Board.Entity;
+package JMP.JMP.Enum;
 
 public enum Tag {
     INDUSTRY_NEWS("업계소식"),

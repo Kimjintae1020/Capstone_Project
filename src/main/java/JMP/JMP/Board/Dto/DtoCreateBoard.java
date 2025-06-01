@@ -1,6 +1,6 @@
 package JMP.JMP.Board.Dto;
 
-import JMP.JMP.Board.Entity.Tag;
+import JMP.JMP.Enum.Tag;
 import JMP.JMP.Enum.BoardType;
 import JMP.JMP.Enum.RequiredSkill;
 import lombok.Getter;

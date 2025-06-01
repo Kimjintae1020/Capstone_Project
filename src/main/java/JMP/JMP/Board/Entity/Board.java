@@ -5,6 +5,7 @@ import JMP.JMP.Board.Dto.DtoCreateBoard;
 import JMP.JMP.Board.Dto.DtoUpdateBoard;
 import JMP.JMP.Enum.BoardType;
 import JMP.JMP.Enum.RequiredSkill;
+import JMP.JMP.Enum.Tag;
 import JMP.JMP.Error.ErrorCode;
 import JMP.JMP.Error.Exception.CustomException;
 import jakarta.persistence.*;
@@ -94,11 +95,32 @@ public class Board {
     public static Board createBoard(Account writer, DtoCreateBoard dto) {
         Board board = new Board();
         board.writer = writer;
+        board.boardType = dto.getBoardType();
         board.title = dto.getTitle();
         board.description = dto.getDescription();
-        board.boardType = dto.getBoardType();
+
+        if (dto.getBoardType() == BoardType.GENERAL) {
+            board.tags = dto.getTags();
+        } else if (dto.getBoardType() == BoardType.PROJECT_RECRUIT) {
+            board.recruitCount = dto.getRecruitCount();
+            board.requiredSkill = dto.getRequiredSkill();
+            board.projectStartDate = dto.getProjectStartDate();
+            board.projectEndDate = dto.getProjectEndDate();
+            board.projectWarning = dto.getProjectWarning();
+            board.applyMethod = dto.getApplyMethod();
+        } else if (dto.getBoardType() == BoardType.STUDY_RECRUIT) {
+            board.recruitCount = dto.getRecruitCount();
+            board.requiredSkill = dto.getRequiredSkill();
+            board.studyStartDate = dto.getStudyStartDate();
+            board.studyEndDate = dto.getStudyEndDate();
+            board.studyCurriculum = dto.getStudyCurriculum();
+            board.studyWarning = dto.getStudyWarning();
+            board.applyMethod = dto.getApplyMethod();
+        }
+
         return board;
     }
+
 
     public void updateBoard(Account findAccount, DtoUpdateBoard dtoUpdateBoard) {
         if (!this.writer.getId().equals(findAccount.getId())){

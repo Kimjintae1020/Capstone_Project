@@ -4,6 +4,7 @@ import JMP.JMP.Board.Dto.BoardPageResponse;
 import JMP.JMP.Board.Dto.DtoUpdateBoard;
 import JMP.JMP.Board.Service.BoardService;
 import JMP.JMP.Board.Dto.DtoCreateBoard;
+import JMP.JMP.Enum.BoardType;
 import JMP.JMP.Error.ErrorCode;
 import JMP.JMP.Error.ErrorResponse;
 import JMP.JMP.Jwt.JWTUtil;
@@ -43,11 +44,12 @@ public class BoardController {
 
     // 게시글 목록 조회 [페이징]
     @GetMapping("/board/list")
-    public ResponseEntity<BoardPageResponse> getboardList(@RequestParam(defaultValue = "1") int page,      // 기본값 0, Service 단에서 +1 설정
+    public ResponseEntity<BoardPageResponse> getboardList(@RequestParam(required = false) BoardType boardType,
+                                                          @RequestParam(defaultValue = "1") int page,      // 기본값 0, Service 단에서 +1 설정
                                                           @RequestParam(defaultValue = "10") int size) {
 
         Pageable pageable = PageRequest.of(page -1, size, Sort.by(Sort.Direction.DESC, "createdAt"));
-        BoardPageResponse response = boardServie.getBoardList(pageable);
+        BoardPageResponse response = boardServie.getBoardList(boardType,pageable);
 
         return ResponseEntity.ok(response);
     }

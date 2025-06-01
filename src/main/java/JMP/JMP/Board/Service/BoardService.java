@@ -8,6 +8,7 @@ import JMP.JMP.Board.Dto.DtoUpdateBoard;
 import JMP.JMP.Board.Entity.Board;
 import JMP.JMP.Board.Repository.BoardRepository;
 import JMP.JMP.Board.Dto.DtoCreateBoard;
+import JMP.JMP.Enum.BoardType;
 import JMP.JMP.Error.ErrorCode;
 import JMP.JMP.Error.Exception.CustomException;
 import lombok.RequiredArgsConstructor;
@@ -42,8 +43,8 @@ public class BoardService {
 
 
     // 게시글 목록 조회
-    public BoardPageResponse getBoardList(Pageable pageable) {
-        Page<Board> projects = boardRepository.findAll(pageable);
+    public BoardPageResponse getBoardList(BoardType boardType, Pageable pageable) {
+        Page<Board> projects = boardRepository.findByBoardType(boardType,pageable);
 
         return new BoardPageResponse(
                 pageable.getPageNumber() + 1,

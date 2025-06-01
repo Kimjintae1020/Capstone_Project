@@ -122,13 +122,33 @@ public class Board {
     }
 
 
-    public void updateBoard(Account findAccount, DtoUpdateBoard dtoUpdateBoard) {
+    public void updateBoard(Account findAccount, DtoUpdateBoard dto) {
         if (!this.writer.getId().equals(findAccount.getId())){
             throw new CustomException(ErrorCode.INVALID_ACCESS);
         }
-        this.title = dtoUpdateBoard.getTitle();
-        this.description = dtoUpdateBoard.getDescription();
+        this.title = dto.getTitle();
+        this.description = dto.getDescription();
         this.updatedAt = LocalDate.now();
+
+        if (dto.getBoardType() == BoardType.GENERAL) {
+            this.tags = dto.getTags();
+        } else if (dto.getBoardType() == BoardType.PROJECT_RECRUIT) {
+            this.recruitCount = dto.getRecruitCount();
+            this.requiredSkills = dto.getRequiredSkills();
+            this.projectStartDate = dto.getProjectStartDate();
+            this.projectEndDate = dto.getProjectEndDate();
+            this.projectWarning = dto.getProjectWarning();
+            this.applyMethod = dto.getApplyMethod();
+        } else if (dto.getBoardType() == BoardType.STUDY_RECRUIT) {
+            this.recruitCount = dto.getRecruitCount();
+            this.requiredSkills = dto.getRequiredSkills();
+            this.studyStartDate = dto.getStudyStartDate();
+            this.studyEndDate = dto.getStudyEndDate();
+            this.studyCurriculum = dto.getStudyCurriculum();
+            this.studyWarning = dto.getStudyWarning();
+            this.applyMethod = dto.getApplyMethod();
+        }
+
     }
 
     @PrePersist

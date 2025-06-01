@@ -26,6 +26,6 @@ public class DtoBoardPage {
         this.description = board.getDescription();
         this.createdAt = board.getCreatedAt();
         this.updatedAt = board.getUpdatedAt();
-        this.boardType = board.getBoardCategory();
+        this.boardType = board.getBoardType();
     }
 }

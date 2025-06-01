@@ -21,7 +21,7 @@ public class DtoCreateBoard {
 
     // 프로젝트 게시글 / 스터디 게시글 공용
     private Integer recruitCount;
-    private List<RequiredSkill> requiredSkill;
+    private List<RequiredSkill> requiredSkills;
     private LocalDate projectStartDate;
     private LocalDate projectEndDate;
     private String applyMethod;

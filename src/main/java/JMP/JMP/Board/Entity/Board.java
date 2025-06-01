@@ -57,7 +57,7 @@ public class Board {
     @CollectionTable(name = "BOARD_SKILLS", joinColumns = @JoinColumn(name = "BOARD_ID"))
     @Column(name = "REQUIRED_SKILL")
     @Enumerated(EnumType.STRING)
-    private List<RequiredSkill> requiredSkill;
+    private List<RequiredSkill> requiredSkills;
 
     @Column(name = "PROJECT_START_DATE")
     private LocalDate projectStartDate;
@@ -103,14 +103,14 @@ public class Board {
             board.tags = dto.getTags();
         } else if (dto.getBoardType() == BoardType.PROJECT_RECRUIT) {
             board.recruitCount = dto.getRecruitCount();
-            board.requiredSkill = dto.getRequiredSkill();
+            board.requiredSkills = dto.getRequiredSkills();
             board.projectStartDate = dto.getProjectStartDate();
             board.projectEndDate = dto.getProjectEndDate();
             board.projectWarning = dto.getProjectWarning();
             board.applyMethod = dto.getApplyMethod();
         } else if (dto.getBoardType() == BoardType.STUDY_RECRUIT) {
             board.recruitCount = dto.getRecruitCount();
-            board.requiredSkill = dto.getRequiredSkill();
+            board.requiredSkills = dto.getRequiredSkills();
             board.studyStartDate = dto.getStudyStartDate();
             board.studyEndDate = dto.getStudyEndDate();
             board.studyCurriculum = dto.getStudyCurriculum();

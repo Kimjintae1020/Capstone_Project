@@ -3,23 +3,22 @@ package JMP.JMP.Board.Entity;
 import JMP.JMP.Account.Entity.Account;
 import JMP.JMP.Board.Dto.DtoCreateBoard;
 import JMP.JMP.Board.Dto.DtoUpdateBoard;
-import JMP.JMP.Enum.BoardCategory;
+import JMP.JMP.Enum.BoardType;
+import JMP.JMP.Enum.RequiredSkill;
 import JMP.JMP.Error.ErrorCode;
 import JMP.JMP.Error.Exception.CustomException;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
+import java.util.List;
 
 import java.time.LocalDate;
 
 @Entity
 @Table(name = "BOARD")
 @Getter
-@Setter
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
+@Builder
 public class Board {
 
     @Id
@@ -32,6 +31,9 @@ public class Board {
     @JoinColumn(name = "WRITER_ID", nullable = false)
     private Account writer;
 
+    @Enumerated(EnumType.STRING)
+    private BoardType boardType;  // GENERAL, PROJECT_RECRUIT, STUDY_RECRUIT
+
     @Column(name = "BOARD_TITLE", nullable = false)
     private String title;           // 제목
 
@@ -39,8 +41,49 @@ public class Board {
     private String description;     // 내용
 
 
+    // 일반 글 전용
+    @ElementCollection(targetClass = Tag.class, fetch = FetchType.LAZY)
+    @CollectionTable(name = "BOARD_TAGS", joinColumns = @JoinColumn(name = "BOARD_ID"))
+    @Column(name = "TAG")
     @Enumerated(EnumType.STRING)
-    private BoardCategory boardCategory; // 카테고리
+    private List<Tag> tags;
+
+    // 프로젝트/스터디 공용
+    @Column(name = "RECRUITCOUNT")
+    private int recruitCount;  // 모집인원 (프로젝트, 스터디)
+
+    @ElementCollection(targetClass = RequiredSkill.class, fetch = FetchType.LAZY)
+    @CollectionTable(name = "BOARD_SKILLS", joinColumns = @JoinColumn(name = "BOARD_ID"))
+    @Column(name = "REQUIRED_SKILL")
+    @Enumerated(EnumType.STRING)
+    private List<RequiredSkill> requiredSkill;
+
+    @Column(name = "PROJECT_START_DATE")
+    private LocalDate projectStartDate;
+
+    @Column(name = "PROJECT_END_DATE")
+    private LocalDate projectEndDate;
+
+    // 프로젝트 전용
+    @Column(name = "PROJECT_WARNING", columnDefinition = "TEXT")
+    private String projectWarning;
+
+    // 스터디 전용
+    @Column(name = "STUDY_START_DATE")
+    private LocalDate studyStartDate;   // 시작일 (스터디)
+
+    @Column(name = "STUDY_END_DATE")
+    private LocalDate studyEndDate;    // 마감일 (스터디)
+
+    @Column(name = "STUDY_CURRICULM", columnDefinition = "TEXT")
+    private String studyCurriculum;   // 에상 커리큘럼 (스터디)
+
+    @Column(name = "STUDY_WARNING", columnDefinition = "TEXT")
+    private String studyWarning;    // 관련 주의사항 (스터디)
+
+    // 공통
+    @Column(name = "APPLY_METHOD")
+    private String applyMethod;    // 지원 방법
 
     @Column(name = "CREATED_AT")
     private LocalDate createdAt;
@@ -53,7 +96,7 @@ public class Board {
         board.writer = writer;
         board.title = dto.getTitle();
         board.description = dto.getDescription();
-        board.boardCategory = dto.getBoardCategory();
+        board.boardType = dto.getBoardType();
         return board;
     }
 

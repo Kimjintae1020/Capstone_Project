@@ -1,7 +1,7 @@
 package JMP.JMP.Board.Dto;
 
 import JMP.JMP.Board.Entity.Board;
-import JMP.JMP.Enum.BoardCategory;
+import JMP.JMP.Enum.BoardType;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -15,7 +15,7 @@ public class DtoBoardPage {
     private String writer;
     private String title;           // 제목
     private String description;     // 내용
-    private BoardCategory boardCategory; // 카테고리
+    private BoardType boardType; // 카테고리
     private LocalDate createdAt;
     private LocalDate updatedAt;
 
@@ -26,6 +26,6 @@ public class DtoBoardPage {
         this.description = board.getDescription();
         this.createdAt = board.getCreatedAt();
         this.updatedAt = board.getUpdatedAt();
-        this.boardCategory = board.getBoardCategory();
+        this.boardType = board.getBoardCategory();
     }
 }

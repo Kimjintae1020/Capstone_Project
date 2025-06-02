@@ -1,10 +1,13 @@
 package JMP.JMP.Apply.Controller;
 
+import JMP.JMP.Apply.Dto.DtoAppliedProject;
 import JMP.JMP.Apply.Service.ApplyService;
 import JMP.JMP.Enum.ApplyStatus;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -34,4 +37,14 @@ public class ApplyController {
 
         return response;
     }
+
+    // 지원한 프로젝트 공고 조회
+    @GetMapping("/projects/applied")
+    public List<DtoAppliedProject> getProjectsApplied(@RequestHeader(value = "Authorization", required = false) String token){
+
+        List<DtoAppliedProject> response = applyService.getProjectsApplied(token);
+
+        return response;
+    }
+
 }

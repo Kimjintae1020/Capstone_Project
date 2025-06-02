@@ -1,7 +1,11 @@
 package JMP.JMP.Project.Entity;
 
+import JMP.JMP.Account.Entity.Account;
+import JMP.JMP.Board.Dto.DtoCreateBoard;
+import JMP.JMP.Board.Entity.Board;
 import JMP.JMP.Company.Entity.Company;
 import JMP.JMP.Enum.RequiredSkill;
+import JMP.JMP.Project.Dto.DtoCreateProject;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -33,6 +37,9 @@ public class Project {
 
     @Column(name = "DESCRIPTION", columnDefinition = "TEXT")
     private String description;
+
+    @Column(name = "VIEW_COUNT")
+    private int viewCount;          // 조회수
 
     @ElementCollection(targetClass = RequiredSkill.class, fetch = FetchType.LAZY)
     @CollectionTable(name = "PROJECT_SKILLS", joinColumns = @JoinColumn(name = "PROJECT_ID"))
@@ -66,5 +73,21 @@ public class Project {
     @PreUpdate
     protected void onUpdate() {
         this.updatedAt = LocalDate.now();
+    }
+
+    public static Project createProject(Company writer, DtoCreateProject dto) {
+        Project project = new Project();
+        project.setManager(writer);
+        project.setTitle(dto.getTitle());
+        project.setDescription(dto.getDescription());
+        project.setViewCount(0);
+        project.setRequiredSkill(dto.getRequiredSkill());
+        project.setStartDate(dto.getStartDate());
+        project.setEndDate(dto.getEndDate());
+        project.setRecruitCount(dto.getRecruitCount());
+        project.setRecruitDeadline(dto.getRecruitDeadline());
+        project.setCreatedAt(LocalDate.now());
+        project.setUpdatedAt(LocalDate.now());
+        return project;
     }
 }

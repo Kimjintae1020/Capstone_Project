@@ -16,6 +16,7 @@ public class DtoProjectPage {
     private String managername;        // 작성자 이름
     private String title;
     private String description;
+    private int viewCount;          // 조회수
     private List<RequiredSkill> requiredSkill;
     private LocalDate startDate;
     private LocalDate endDate;
@@ -23,17 +24,21 @@ public class DtoProjectPage {
     private LocalDate createdAt;
     private LocalDate updatedAt;
 
-    public DtoProjectPage(Project project) {
+    private boolean isScrapped;
+
+    public DtoProjectPage(Project project, boolean isScrapped) {
         this.projectId = project.getProjectId();
         this.managername = project.getManager().getName();
         this.title = project.getTitle();
         this.description = project.getDescription();
+        this.viewCount = project.getViewCount();
         this.requiredSkill = project.getRequiredSkill();
         this.startDate = project.getStartDate();
         this.endDate = project.getEndDate();
         this.recruitDeadline = project.getRecruitDeadline();
         this.createdAt = project.getCreatedAt();
         this.updatedAt = project.getUpdatedAt();
+        this.isScrapped = isScrapped;
     }
 
 }

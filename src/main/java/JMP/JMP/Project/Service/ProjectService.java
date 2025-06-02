@@ -1,5 +1,7 @@
 package JMP.JMP.Project.Service;
 
+import JMP.JMP.Account.Entity.Account;
+import JMP.JMP.Account.Repository.AccountRepository;
 import JMP.JMP.Apply.Entity.Apply;
 import JMP.JMP.Apply.Repository.ApplyRepository;
 import JMP.JMP.Error.ErrorResponse;
@@ -8,11 +10,15 @@ import JMP.JMP.Company.Entity.Company;
 import JMP.JMP.Company.Repository.CompanyRepository;
 import JMP.JMP.Error.ErrorCode;
 import JMP.JMP.Enum.PostRole;
+import JMP.JMP.Error.Exception.CustomException;
 import JMP.JMP.Error.Exception.UnauthorizedException;
 import JMP.JMP.Jwt.JWTUtil;
 import JMP.JMP.Project.Dto.*;
 import JMP.JMP.Project.Entity.Project;
+import JMP.JMP.Project.Entity.ProjectBookmark;
+import JMP.JMP.Project.Repository.ProjectBookmardRepository;
 import JMP.JMP.Project.Repository.ProjectRepository;
+import JMP.JMP.Resume.Dto.DtoResume;
 import JMP.JMP.Resume.Dto.DtoResumeProject;
 import JMP.JMP.Resume.Entity.Resume;
 import lombok.RequiredArgsConstructor;
@@ -27,7 +33,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -36,7 +41,9 @@ import java.util.stream.Collectors;
 public class ProjectService {
 
     private final ProjectRepository projectRepository;
+    private final ProjectBookmardRepository projectBookmardRepository;
     private final CompanyRepository companyRepository;
+    private final AccountRepository accountRepository;
     private final ApplyRepository applyRepository;
     private final JWTUtil jwtUtil;
 
@@ -44,14 +51,8 @@ public class ProjectService {
     @Transactional
     public ResponseEntity<?> createProject(DtoCreateProject dtoCreateProject, String loginId) {
 
-        Optional<Company> companyOptional = companyRepository.findByEmail(loginId);
-
-        if (companyOptional.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(ErrorResponse.of(ErrorCode.EMAIL_NOT_FOUND));
-        }
-
-        Company company = companyOptional.get();
+        Company company = companyRepository.findByEmail(loginId)
+                .orElseThrow(() -> new CustomException(ErrorCode.COMPANY_NOT_FOUND));
 
         // 관리자가 승인하지 않은 기업 담당자일 경우
         if (company.getPostRole() == PostRole.PENDING) {
@@ -60,16 +61,7 @@ public class ProjectService {
                     .body(ErrorResponse.of(ErrorCode.NO_POST_PERMISSION));
         }
 
-        Project project = new Project();
-        project.setManager(company);
-        project.setTitle(dtoCreateProject.getTitle());
-        project.setDescription(dtoCreateProject.getDescription());
-        project.setRequiredSkill(dtoCreateProject.getRequiredSkill());
-        project.setStartDate(dtoCreateProject.getStartDate());
-        project.setEndDate(dtoCreateProject.getEndDate());
-        project.setRecruitCount(dtoCreateProject.getRecruitCount());
-        project.setRecruitDeadline(dtoCreateProject.getRecruitDeadline());
-
+        Project project = Project.createProject(company, dtoCreateProject);
         projectRepository.save(project);
 
         log.info("프로젝트 공고 작성 성공");
@@ -77,23 +69,40 @@ public class ProjectService {
     }
 
     // 프로젝트 공고 목록 조회
-    public ProjectPageResponse getProjectList(Pageable pageable) {
+    @Transactional(readOnly = true)
+    public ProjectPageResponse getProjectList(String token, Pageable pageable) {
 
-            Page<Project> projects = projectRepository.findAll(pageable);
+        String accessToken = token.replace("Bearer ", "");
+        String loginId = jwtUtil.getUsername(accessToken);
 
-            return new ProjectPageResponse(
-                    pageable.getPageNumber() + 1,
-                    projects.getTotalPages(),
-                    (int) projects.getTotalElements(),
-                    projects.getContent()
-            );
-        }
+        Account account = accountRepository.findByEmail(loginId)
+                .orElseThrow(() -> new CustomException(ErrorCode.ACCOUNT_NOT_FOUND));
+
+        Page<Project> projects = projectRepository.findAll(pageable);
+
+        List<DtoProjectPage> postits = projects.getContent().stream()
+                .map(project -> {
+                    boolean isScrapped = projectBookmardRepository.existsByAccountAndProject(account, project);
+                    return new DtoProjectPage(project, isScrapped);
+                })
+                .toList();
+
+        return new ProjectPageResponse(
+                pageable.getPageNumber() + 1,
+                projects.getTotalPages(),
+                (int) projects.getTotalElements(),
+                postits
+        );
+    }
 
     // 프로젝트 공고 상세 조회
+    @Transactional
     public DtoProjectDetail getProjectDetail(Long projectId) {
 
         Project project = projectRepository.findById(projectId)
-                .orElseThrow(() -> new RuntimeException("공고 없음"));
+                .orElseThrow(() -> new CustomException(ErrorCode.PROJECT_NOT_FOUND));
+
+        project.setViewCount(project.getViewCount() + 1);
 
         return DtoProjectDetail.of(project);
     }
@@ -155,5 +164,67 @@ public class ProjectService {
                 .stream()
                 .map(DtoProjectRecent::new)
                 .collect(Collectors.toList());
+    }
+
+    // 프로젝트 공고 스크랩
+    @Transactional
+    public ResponseEntity<?> getProjectScrap(String token, Long projectId) {
+
+        String accessToken = token.replace("Bearer ", "");
+        String loginId = jwtUtil.getUsername(accessToken);
+
+        Account account = accountRepository.findByEmail(loginId)
+                .orElseThrow(() -> new CustomException(ErrorCode.ACCOUNT_NOT_FOUND));
+
+
+        Project project = projectRepository.findById(projectId)
+                .orElseThrow(() -> new CustomException(ErrorCode.PROJECT_NOT_FOUND));
+
+        boolean isAlreadyScrapped = projectBookmardRepository.findByAccountAndProject(account, project).isPresent();
+        if (isAlreadyScrapped) {
+            throw new CustomException(ErrorCode.ALREADY_BOOKMARKED);
+        }
+
+        ProjectBookmark bookmark = ProjectBookmark.addProjectBookmark(account,project);
+        projectBookmardRepository.save(bookmark);
+
+        return ResponseEntity.ok(SuccessResponse.of(200, "프로젝트 공고를 스크랩하였습니다."));
+    }
+
+    // 프로젝트 공고 스크랩 목록 조회
+    @Transactional(readOnly = true)
+    public ResponseEntity<List<DtoProjectScrap>> getProjectScrapList(String token) {
+
+        String accessToken = token.replace("Bearer ", "");
+        String loginId = jwtUtil.getUsername(accessToken);
+
+        Account account = accountRepository.findByEmail(loginId)
+                .orElseThrow(() -> new CustomException(ErrorCode.ACCOUNT_NOT_FOUND));
+
+        List<ProjectBookmark> bookmarks = projectBookmardRepository.findByAccount(account);
+
+        List<DtoProjectScrap> scrapList = bookmarks.stream()
+                .map(DtoProjectScrap::of)
+                .toList();
+
+        return ResponseEntity.ok(scrapList);
+    }
+
+    // 프로젝트 스크랩 삭제
+    @Transactional
+    public ResponseEntity<?> getProjectScrapDelete(String token, Long bookmarkId) {
+
+        String accessToken = token.replace("Bearer ", "");
+        String loginId = jwtUtil.getUsername(accessToken);
+
+        Account account = accountRepository.findByEmail(loginId)
+                .orElseThrow(() -> new CustomException(ErrorCode.ACCOUNT_NOT_FOUND));
+
+        ProjectBookmark projectBookmark = projectBookmardRepository.findById(bookmarkId)
+                .orElseThrow(() -> new CustomException(ErrorCode.SCRAP_NOT_FOUND));
+
+         projectBookmardRepository.delete(projectBookmark);
+
+        return ResponseEntity.ok(SuccessResponse.of(200, "스크랩 취소되었습니다."));
     }
 }

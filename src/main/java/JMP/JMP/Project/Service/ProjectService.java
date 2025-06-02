@@ -1,5 +1,7 @@
 package JMP.JMP.Project.Service;
 
+import JMP.JMP.Account.Entity.Account;
+import JMP.JMP.Account.Repository.AccountRepository;
 import JMP.JMP.Apply.Entity.Apply;
 import JMP.JMP.Apply.Repository.ApplyRepository;
 import JMP.JMP.Error.ErrorResponse;
@@ -8,6 +10,7 @@ import JMP.JMP.Company.Entity.Company;
 import JMP.JMP.Company.Repository.CompanyRepository;
 import JMP.JMP.Error.ErrorCode;
 import JMP.JMP.Enum.PostRole;
+import JMP.JMP.Error.Exception.CustomException;
 import JMP.JMP.Error.Exception.UnauthorizedException;
 import JMP.JMP.Jwt.JWTUtil;
 import JMP.JMP.Project.Dto.*;
@@ -37,6 +40,7 @@ public class ProjectService {
 
     private final ProjectRepository projectRepository;
     private final CompanyRepository companyRepository;
+    private final AccountRepository accountRepository;
     private final ApplyRepository applyRepository;
     private final JWTUtil jwtUtil;
 
@@ -44,14 +48,8 @@ public class ProjectService {
     @Transactional
     public ResponseEntity<?> createProject(DtoCreateProject dtoCreateProject, String loginId) {
 
-        Optional<Company> companyOptional = companyRepository.findByEmail(loginId);
-
-        if (companyOptional.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(ErrorResponse.of(ErrorCode.EMAIL_NOT_FOUND));
-        }
-
-        Company company = companyOptional.get();
+        Company company = companyRepository.findByEmail(loginId)
+                .orElseThrow(() -> new CustomException(ErrorCode.COMPANY_NOT_FOUND));
 
         // 관리자가 승인하지 않은 기업 담당자일 경우
         if (company.getPostRole() == PostRole.PENDING) {
@@ -60,16 +58,7 @@ public class ProjectService {
                     .body(ErrorResponse.of(ErrorCode.NO_POST_PERMISSION));
         }
 
-        Project project = new Project();
-        project.setManager(company);
-        project.setTitle(dtoCreateProject.getTitle());
-        project.setDescription(dtoCreateProject.getDescription());
-        project.setRequiredSkill(dtoCreateProject.getRequiredSkill());
-        project.setStartDate(dtoCreateProject.getStartDate());
-        project.setEndDate(dtoCreateProject.getEndDate());
-        project.setRecruitCount(dtoCreateProject.getRecruitCount());
-        project.setRecruitDeadline(dtoCreateProject.getRecruitDeadline());
-
+        Project project = Project.createProject(company, dtoCreateProject);
         projectRepository.save(project);
 
         log.info("프로젝트 공고 작성 성공");
@@ -90,10 +79,13 @@ public class ProjectService {
         }
 
     // 프로젝트 공고 상세 조회
+    @Transactional
     public DtoProjectDetail getProjectDetail(Long projectId) {
 
         Project project = projectRepository.findById(projectId)
-                .orElseThrow(() -> new RuntimeException("공고 없음"));
+                .orElseThrow(() -> new CustomException(ErrorCode.PROJECT_NOT_FOUND));
+
+        project.setViewCount(project.getViewCount() + 1);
 
         return DtoProjectDetail.of(project);
     }

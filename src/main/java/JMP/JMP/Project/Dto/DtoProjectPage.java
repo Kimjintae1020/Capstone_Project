@@ -16,6 +16,7 @@ public class DtoProjectPage {
     private String managername;        // 작성자 이름
     private String title;
     private String description;
+    private int viewCount;          // 조회수
     private List<RequiredSkill> requiredSkill;
     private LocalDate startDate;
     private LocalDate endDate;
@@ -28,6 +29,7 @@ public class DtoProjectPage {
         this.managername = project.getManager().getName();
         this.title = project.getTitle();
         this.description = project.getDescription();
+        this.viewCount = project.getViewCount();
         this.requiredSkill = project.getRequiredSkill();
         this.startDate = project.getStartDate();
         this.endDate = project.getEndDate();

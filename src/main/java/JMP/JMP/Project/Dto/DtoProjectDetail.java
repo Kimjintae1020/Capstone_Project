@@ -15,6 +15,7 @@ public class DtoProjectDetail {
     private String managername;        // 작성자 이름
     private String title;
     private String description;
+    private int viewCount;          // 조회수
     private List<RequiredSkill> requiredSkill;
     private LocalDate startDate;
     private LocalDate endDate;
@@ -28,6 +29,7 @@ public class DtoProjectDetail {
                 project.getManager().getName(),
                 project.getTitle(),
                 project.getDescription(),
+                project.getViewCount(),
                 project.getRequiredSkill(),
                 project.getStartDate(),
                 project.getEndDate(),

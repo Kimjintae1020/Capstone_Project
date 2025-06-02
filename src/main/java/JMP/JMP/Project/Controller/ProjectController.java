@@ -90,5 +90,15 @@ public class ProjectController {
         return ResponseEntity.ok(applicants);
     }
 
+    // 프로젝트 공고 스크랩
+    @PostMapping("/project/{projectId}/scrap")
+    public ResponseEntity<?> getProjectScrap(@RequestHeader(value = "Authorization", required = false) String token,
+                                             @PathVariable Long projectId) {
+
+        ResponseEntity<?> response = projectService.getProjectScrap(token, projectId);
+
+        return response;
+    }
+
 
 }

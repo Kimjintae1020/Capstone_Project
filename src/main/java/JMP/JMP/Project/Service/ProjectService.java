@@ -15,6 +15,8 @@ import JMP.JMP.Error.Exception.UnauthorizedException;
 import JMP.JMP.Jwt.JWTUtil;
 import JMP.JMP.Project.Dto.*;
 import JMP.JMP.Project.Entity.Project;
+import JMP.JMP.Project.Entity.ProjectBookmark;
+import JMP.JMP.Project.Repository.ProjectBookmardRepository;
 import JMP.JMP.Project.Repository.ProjectRepository;
 import JMP.JMP.Resume.Dto.DtoResumeProject;
 import JMP.JMP.Resume.Entity.Resume;
@@ -30,7 +32,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -39,6 +40,7 @@ import java.util.stream.Collectors;
 public class ProjectService {
 
     private final ProjectRepository projectRepository;
+    private final ProjectBookmardRepository projectBookmardRepository;
     private final CompanyRepository companyRepository;
     private final AccountRepository accountRepository;
     private final ApplyRepository applyRepository;
@@ -147,5 +149,24 @@ public class ProjectService {
                 .stream()
                 .map(DtoProjectRecent::new)
                 .collect(Collectors.toList());
+    }
+
+    // 프로젝트 공고 스크랩
+    @Transactional
+    public ResponseEntity<?> getProjectScrap(String token, Long projectId) {
+
+        String accessToken = token.replace("Bearer ", "");
+        String loginId = jwtUtil.getUsername(accessToken);
+
+        Account account = accountRepository.findByEmail(loginId)
+                .orElseThrow(() -> new CustomException(ErrorCode.ACCOUNT_NOT_FOUND));
+
+        Project project = projectRepository.findById(projectId)
+                .orElseThrow(() -> new CustomException(ErrorCode.PROJECT_NOT_FOUND));
+
+        ProjectBookmark bookmark = ProjectBookmark.addProjectBookmark(account,project);
+        projectBookmardRepository.save(bookmark);
+
+        return ResponseEntity.ok(SuccessResponse.of(200, "프로젝트 공고를 스크랩하였습니다."));
     }
 }

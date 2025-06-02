@@ -13,12 +13,11 @@ public class ProjectPageResponse {
     private int total_items;  // 전체 아이템 개수
     private List<DtoProjectPage> postits;
 
-    public ProjectPageResponse(int page, int totalPages, int totalItems, List<Project> posts) {
+    public ProjectPageResponse(int page, int totalPages, int totalItems, List<DtoProjectPage> postits) {
         this.page = page;
         this.total_pages = totalPages;
         this.total_items = totalItems;
-        this.postits = posts.stream()
-                .map(DtoProjectPage::new)
-                .collect(Collectors.toList());
+        this.postits = postits;
     }
+
 }

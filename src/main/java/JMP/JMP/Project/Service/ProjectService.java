@@ -69,17 +69,31 @@ public class ProjectService {
     }
 
     // 프로젝트 공고 목록 조회
-    public ProjectPageResponse getProjectList(Pageable pageable) {
+    @Transactional(readOnly = true)
+    public ProjectPageResponse getProjectList(String token, Pageable pageable) {
 
-            Page<Project> projects = projectRepository.findAll(pageable);
+        String accessToken = token.replace("Bearer ", "");
+        String loginId = jwtUtil.getUsername(accessToken);
 
-            return new ProjectPageResponse(
-                    pageable.getPageNumber() + 1,
-                    projects.getTotalPages(),
-                    (int) projects.getTotalElements(),
-                    projects.getContent()
-            );
-        }
+        Account account = accountRepository.findByEmail(loginId)
+                .orElseThrow(() -> new CustomException(ErrorCode.ACCOUNT_NOT_FOUND));
+
+        Page<Project> projects = projectRepository.findAll(pageable);
+
+        List<DtoProjectPage> postits = projects.getContent().stream()
+                .map(project -> {
+                    boolean isScrapped = projectBookmardRepository.existsByAccountAndProject(account, project);
+                    return new DtoProjectPage(project, isScrapped);
+                })
+                .toList();
+
+        return new ProjectPageResponse(
+                pageable.getPageNumber() + 1,
+                projects.getTotalPages(),
+                (int) projects.getTotalElements(),
+                postits
+        );
+    }
 
     // 프로젝트 공고 상세 조회
     @Transactional
@@ -162,8 +176,14 @@ public class ProjectService {
         Account account = accountRepository.findByEmail(loginId)
                 .orElseThrow(() -> new CustomException(ErrorCode.ACCOUNT_NOT_FOUND));
 
+
         Project project = projectRepository.findById(projectId)
                 .orElseThrow(() -> new CustomException(ErrorCode.PROJECT_NOT_FOUND));
+
+        boolean isAlreadyScrapped = projectBookmardRepository.findByAccountAndProject(account, project).isPresent();
+        if (isAlreadyScrapped) {
+            throw new CustomException(ErrorCode.ALREADY_BOOKMARKED);
+        }
 
         ProjectBookmark bookmark = ProjectBookmark.addProjectBookmark(account,project);
         projectBookmardRepository.save(bookmark);
@@ -188,5 +208,23 @@ public class ProjectService {
                 .toList();
 
         return ResponseEntity.ok(scrapList);
+    }
+
+    // 프로젝트 스크랩 삭제
+    @Transactional
+    public ResponseEntity<?> getProjectScrapDelete(String token, Long bookmarkId) {
+
+        String accessToken = token.replace("Bearer ", "");
+        String loginId = jwtUtil.getUsername(accessToken);
+
+        Account account = accountRepository.findByEmail(loginId)
+                .orElseThrow(() -> new CustomException(ErrorCode.ACCOUNT_NOT_FOUND));
+
+        ProjectBookmark projectBookmark = projectBookmardRepository.findById(bookmarkId)
+                .orElseThrow(() -> new CustomException(ErrorCode.SCRAP_NOT_FOUND));
+
+         projectBookmardRepository.delete(projectBookmark);
+
+        return ResponseEntity.ok(SuccessResponse.of(200, "스크랩 취소되었습니다."));
     }
 }

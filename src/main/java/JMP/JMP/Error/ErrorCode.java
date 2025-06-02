@@ -60,7 +60,12 @@ public enum ErrorCode {
         // 관리자 관련
         INVALID_ADMIN_ROLE(400, "ADMIN-001", "잘못된 권한 입니다."),
         INVALID_STATUS_ADMIN(400, "ADMIN-002", "유효하지 않은 상태 값입니다."),
-        ALREADY_SET_POST_STATUS(400, "ADMIN-003", "이미 승인된 기업 담당자입니다.");
+        ALREADY_SET_POST_STATUS(400, "ADMIN-003", "이미 승인된 기업 담당자입니다."),
+
+        // 스크랩 관련
+        SCRAP_NOT_FOUND(404, "SCRAP-001", "스크랩한 프로젝트를 찾을 수 없습니다."),
+        ALREADY_BOOKMARKED(400, "SCRAP-002", "이미 스크랩한 공고입니다.");
+
 
 
 

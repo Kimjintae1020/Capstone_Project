@@ -49,11 +49,12 @@ public class ProjectController {
 
     // 프로젝트 공고 목록 조회
     @GetMapping("/project/list")
-    public ResponseEntity<ProjectPageResponse> getProjectList(@RequestParam(defaultValue = "1") int page,      // 기본값 0, Service 단에서 +1 설정
+    public ResponseEntity<ProjectPageResponse> getProjectList(@RequestHeader(value = "Authorization", required = false) String token,
+                                                        @RequestParam(defaultValue = "1") int page,      // 기본값 0, Service 단에서 +1 설정
                                                         @RequestParam(defaultValue = "10") int size) {
 
         Pageable pageable = PageRequest.of(page -1, size);
-        ProjectPageResponse response = projectService.getProjectList(pageable);
+        ProjectPageResponse response = projectService.getProjectList(token,pageable);
 
         return ResponseEntity.ok(response);
 
@@ -105,6 +106,16 @@ public class ProjectController {
     public ResponseEntity<List<DtoProjectScrap>> getProjectScrapList(@RequestHeader(value = "Authorization", required = false) String token) {
 
         ResponseEntity<List<DtoProjectScrap>> response = projectService.getProjectScrapList(token);
+
+        return response;
+    }
+
+    // 프로젝트 공고 스크랩 삭제
+    @DeleteMapping("/project/{bookmarkId}/scrap/delete")
+    public ResponseEntity<?> getProjectScrapDelete(@RequestHeader(value = "Authorization", required = false) String token,
+                                                                       @PathVariable Long bookmarkId) {
+
+        ResponseEntity<?> response = projectService.getProjectScrapDelete(token,bookmarkId);
 
         return response;
     }

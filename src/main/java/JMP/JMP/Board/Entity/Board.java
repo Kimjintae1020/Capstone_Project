@@ -17,6 +17,7 @@ import java.time.LocalDate;
 @Entity
 @Table(name = "BOARD")
 @Getter
+@Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Builder
@@ -41,6 +42,8 @@ public class Board {
     @Column(name = "DESCRIPTION", columnDefinition = "TEXT")
     private String description;     // 내용
 
+    @Column(name = "VIEW_COUNT")
+    private int viewCount;          // 조회수
 
     // 일반 글 전용
     @ElementCollection(targetClass = Tag.class, fetch = FetchType.LAZY)
@@ -98,6 +101,7 @@ public class Board {
         board.boardType = dto.getBoardType();
         board.title = dto.getTitle();
         board.description = dto.getDescription();
+        board.viewCount = 0;
 
         if (dto.getBoardType() == BoardType.GENERAL) {
             board.tags = dto.getTags();
@@ -161,5 +165,6 @@ public class Board {
     public void preUpdate() {
         this.updatedAt = LocalDate.now();
     }
+
 
 }

@@ -3,11 +3,9 @@ package JMP.JMP.Board.Service;
 import JMP.JMP.Account.Entity.Account;
 import JMP.JMP.Account.Repository.AccountRepository;
 import JMP.JMP.Auth.Dto.SuccessResponse;
-import JMP.JMP.Board.Dto.BoardPageResponse;
-import JMP.JMP.Board.Dto.DtoUpdateBoard;
+import JMP.JMP.Board.Dto.*;
 import JMP.JMP.Board.Entity.Board;
 import JMP.JMP.Board.Repository.BoardRepository;
-import JMP.JMP.Board.Dto.DtoCreateBoard;
 import JMP.JMP.Enum.BoardType;
 import JMP.JMP.Error.ErrorCode;
 import JMP.JMP.Error.Exception.CustomException;
@@ -89,4 +87,58 @@ public class BoardService {
 
         return ResponseEntity.ok(SuccessResponse.of(200, "게시글이 수정되었습니다."));
     }
+
+    // 게시글 상세 조회
+    public ResponseEntity<?> getBoardDetail(String loginId, Long boardId) {
+        Account findAccount = accountRepository.findByEmail(loginId)
+                .orElseThrow(() -> new CustomException(ErrorCode.INVALID_COMPANY));
+
+        Board board = boardRepository.findById(boardId)
+                .orElseThrow(() -> new CustomException(ErrorCode.BOARD_NOT_FOUND));
+
+        board.setViewCount(board.getViewCount() + 1);
+
+        if (board.getBoardType() == BoardType.GENERAL) {
+            return ResponseEntity.ok(new DtoBoardDetailGeneral(
+                    board.getBoardId(),
+                    board.getTitle(),
+                    board.getDescription(),
+                    board.getTags(),
+                    board.getViewCount(),
+                    board.getCreatedAt()
+            ));
+        } else if (board.getBoardType() == BoardType.PROJECT_RECRUIT) {
+            return ResponseEntity.ok(new DtoBoardDetailProject(
+                    board.getBoardId(),
+                    board.getTitle(),
+                    board.getDescription(),
+                    board.getRecruitCount(),
+                    board.getRequiredSkills(),
+                    board.getProjectStartDate(),
+                    board.getProjectEndDate(),
+                    board.getProjectWarning(),
+                    board.getApplyMethod(),
+                    board.getViewCount(),
+                    board.getCreatedAt()
+            ));
+        } else if (board.getBoardType() == BoardType.STUDY_RECRUIT) {
+            return ResponseEntity.ok(new DtoBoardDetailStudy(
+                    board.getBoardId(),
+                    board.getTitle(),
+                    board.getDescription(),
+                    board.getRecruitCount(),
+                    board.getRequiredSkills(),
+                    board.getStudyStartDate(),
+                    board.getStudyEndDate(),
+                    board.getStudyCurriculum(),
+                    board.getStudyWarning(),
+                    board.getApplyMethod(),
+                    board.getViewCount(),
+                    board.getCreatedAt()
+            ));
+        } else {
+            throw new CustomException(ErrorCode.INVALID_INPUT_VALUE);
+        }
+    }
+
 }

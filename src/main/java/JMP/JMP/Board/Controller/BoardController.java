@@ -93,5 +93,22 @@ public class BoardController {
         return response;
     }
 
+    // 게시글 상세 조회
+    @GetMapping("/boards/{boardId}/detail")
+    public ResponseEntity<?> getBoardDetail(@RequestHeader(value = "Authorization", required = false) String token,
+                                            @PathVariable Long boardId){
 
+        if (token == null || !token.startsWith("Bearer ")) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(ErrorResponse.of(ErrorCode.NOT_AUTHENTICATED));
+        }
+
+        String accessToken = token.replace("Bearer ", "");
+        String loginId = jwtUtil.getUsername(accessToken);
+
+
+        ResponseEntity<?> response = boardServie.getBoardDetail(loginId,boardId);
+
+        return response;
+    }
 }

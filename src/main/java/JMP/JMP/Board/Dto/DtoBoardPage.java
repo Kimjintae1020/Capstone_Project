@@ -16,6 +16,7 @@ public class DtoBoardPage {
     private String title;           // 제목
     private String description;     // 내용
     private BoardType boardType; // 카테고리
+    private int viewCount;
     private LocalDate createdAt;
     private LocalDate updatedAt;
 
@@ -27,5 +28,6 @@ public class DtoBoardPage {
         this.createdAt = board.getCreatedAt();
         this.updatedAt = board.getUpdatedAt();
         this.boardType = board.getBoardType();
+        this.viewCount = board.getViewCount();
     }
 }

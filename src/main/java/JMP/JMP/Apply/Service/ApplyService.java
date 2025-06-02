@@ -1,5 +1,6 @@
 package JMP.JMP.Apply.Service;
 
+import JMP.JMP.Apply.Dto.DtoAppliedProject;
 import JMP.JMP.Company.Repository.CompanyRepository;
 import JMP.JMP.Error.ErrorResponse;
 import JMP.JMP.Auth.Dto.SuccessResponse;
@@ -22,6 +23,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -132,5 +134,43 @@ public class ApplyService {
 
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                 .body(ErrorResponse.of(ErrorCode.INVALID_STATUS));
+    }
+
+    // 지원한 프로젝트 공고 조회
+    @Transactional(readOnly = true)
+    public List<DtoAppliedProject> getProjectsApplied(String token) {
+
+        String accessToken = token.replace("Bearer ", "");
+        String loginId = jwtUtil.getUsername(accessToken);
+
+        Account account = accountRepository.findByEmail(loginId).orElse(null);
+
+        List<Apply> applyList =  applyRepository.findByAccountId(account.getId());
+
+        return applyList.stream()
+                .map(apply -> {
+                    Project project = apply.getProject();
+
+                    // 진행 상태 계산 (프론트에서 할 거면 날짜만 전달)
+                    LocalDate today = LocalDate.now();
+                    String status = "모집중";
+                    if (project.getRecruitDeadline() != null) {
+                        if (project.getRecruitDeadline().isBefore(today)) {
+                            status = "모집마감";
+                        } else if (project.getRecruitDeadline().minusDays(3).isBefore(today)) {
+                            status = "마감임박";
+                        }
+                    }
+
+                    return new DtoAppliedProject(
+                            project.getProjectId(),
+                            project.getTitle(),
+                            project.getRequiredSkill(),
+                            project.getRecruitDeadline(),
+                            project.getViewCount(),
+                            apply.getAppliedAt()
+                    );
+                })
+                .toList();
     }
 }

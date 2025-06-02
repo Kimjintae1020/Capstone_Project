@@ -18,4 +18,7 @@ public interface ApplyRepository extends JpaRepository<Apply, Long> {
     @Query("SELECT a FROM Apply a WHERE a.project.projectId = :projectId ORDER BY a.appliedAt DESC")
     List<Apply> findRecentByProjectId(@Param("projectId") Long projectId);
 
+    @Query("SELECT a FROM Apply a WHERE a.account.id = :accountId")
+    List<Apply> findByAccountId(@Param("accountId") Long accountId);
+
 }

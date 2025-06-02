@@ -18,6 +18,7 @@ import JMP.JMP.Project.Entity.Project;
 import JMP.JMP.Project.Entity.ProjectBookmark;
 import JMP.JMP.Project.Repository.ProjectBookmardRepository;
 import JMP.JMP.Project.Repository.ProjectRepository;
+import JMP.JMP.Resume.Dto.DtoResume;
 import JMP.JMP.Resume.Dto.DtoResumeProject;
 import JMP.JMP.Resume.Entity.Resume;
 import lombok.RequiredArgsConstructor;
@@ -168,5 +169,24 @@ public class ProjectService {
         projectBookmardRepository.save(bookmark);
 
         return ResponseEntity.ok(SuccessResponse.of(200, "프로젝트 공고를 스크랩하였습니다."));
+    }
+
+    // 프로젝트 공고 스크랩 목록 조회
+    @Transactional(readOnly = true)
+    public ResponseEntity<List<DtoProjectScrap>> getProjectScrapList(String token) {
+
+        String accessToken = token.replace("Bearer ", "");
+        String loginId = jwtUtil.getUsername(accessToken);
+
+        Account account = accountRepository.findByEmail(loginId)
+                .orElseThrow(() -> new CustomException(ErrorCode.ACCOUNT_NOT_FOUND));
+
+        List<ProjectBookmark> bookmarks = projectBookmardRepository.findByAccount(account);
+
+        List<DtoProjectScrap> scrapList = bookmarks.stream()
+                .map(DtoProjectScrap::of)
+                .toList();
+
+        return ResponseEntity.ok(scrapList);
     }
 }

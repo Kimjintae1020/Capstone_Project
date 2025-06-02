@@ -100,5 +100,13 @@ public class ProjectController {
         return response;
     }
 
+    // 프로젝트 공고 스크랩 목록 조회
+    @GetMapping("/project/scrap/list")
+    public ResponseEntity<List<DtoProjectScrap>> getProjectScrapList(@RequestHeader(value = "Authorization", required = false) String token) {
+
+        ResponseEntity<List<DtoProjectScrap>> response = projectService.getProjectScrapList(token);
+
+        return response;
+    }
 
 }

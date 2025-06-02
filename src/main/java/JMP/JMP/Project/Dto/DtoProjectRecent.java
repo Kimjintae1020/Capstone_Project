@@ -23,6 +23,7 @@ public class DtoProjectRecent {
         this.description = project.getDescription();
         this.viewCount = project.getViewCount();
         this.createdAt = project.getCreatedAt();
+        this.createdAt = project.getCreatedAt();
         this.recruitDeadline = project.getRecruitDeadline();
     }
 }

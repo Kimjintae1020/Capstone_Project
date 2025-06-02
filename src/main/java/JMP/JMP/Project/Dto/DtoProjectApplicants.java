@@ -2,6 +2,7 @@ package JMP.JMP.Project.Dto;
 
 import JMP.JMP.Enum.ApplyStatus;
 import JMP.JMP.Enum.DevPosition;
+import JMP.JMP.Resume.Dto.DtoResume;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 

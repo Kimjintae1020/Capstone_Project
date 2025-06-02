@@ -1,8 +1,7 @@
-package JMP.JMP.Project.Dto;
+package JMP.JMP.Resume.Dto;
 
 import JMP.JMP.Enum.DevPosition;
 import JMP.JMP.Enum.RequiredSkill;
-import JMP.JMP.Resume.Dto.DtoResumeProject;
 import lombok.*;
 
 import java.util.List;

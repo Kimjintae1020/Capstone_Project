@@ -111,11 +111,11 @@ public class ProjectController {
     }
 
     // 프로젝트 공고 스크랩 삭제
-    @DeleteMapping("/project/{bookmarkId}/scrap/delete")
+    @DeleteMapping("/project/{projectId}/scrap/delete")
     public ResponseEntity<?> getProjectScrapDelete(@RequestHeader(value = "Authorization", required = false) String token,
-                                                                       @PathVariable Long bookmarkId) {
+                                                                       @PathVariable Long projectId) {
 
-        ResponseEntity<?> response = projectService.getProjectScrapDelete(token,bookmarkId);
+        ResponseEntity<?> response = projectService.getProjectScrapDelete(token,projectId);
 
         return response;
     }

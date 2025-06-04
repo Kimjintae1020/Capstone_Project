@@ -14,7 +14,8 @@ public interface ProjectBookmardRepository extends JpaRepository<ProjectBookmark
 
     List<ProjectBookmark> findByAccount(Account account);
 
-    Optional<Object> findByAccountAndProject(Account account, Project project);
+    Optional<ProjectBookmark> findByAccountAndProject(Account account, Project project);
+
 
     boolean existsByAccountAndProject(Account account, Project project);
 }

@@ -212,7 +212,7 @@ public class ProjectService {
 
     // 프로젝트 스크랩 삭제
     @Transactional
-    public ResponseEntity<?> getProjectScrapDelete(String token, Long bookmarkId) {
+    public ResponseEntity<?> getProjectScrapDelete(String token, Long projectId) {
 
         String accessToken = token.replace("Bearer ", "");
         String loginId = jwtUtil.getUsername(accessToken);
@@ -220,10 +220,13 @@ public class ProjectService {
         Account account = accountRepository.findByEmail(loginId)
                 .orElseThrow(() -> new CustomException(ErrorCode.ACCOUNT_NOT_FOUND));
 
-        ProjectBookmark projectBookmark = projectBookmardRepository.findById(bookmarkId)
+        Project project = projectRepository.findById(projectId)
+                .orElseThrow(() -> new CustomException(ErrorCode.PROJECT_NOT_FOUND));
+
+        ProjectBookmark bookmark = projectBookmardRepository.findByAccountAndProject(account, project)
                 .orElseThrow(() -> new CustomException(ErrorCode.SCRAP_NOT_FOUND));
 
-         projectBookmardRepository.delete(projectBookmark);
+         projectBookmardRepository.delete(bookmark);
 
         return ResponseEntity.ok(SuccessResponse.of(200, "스크랩 취소되었습니다."));
     }

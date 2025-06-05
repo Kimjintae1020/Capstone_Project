@@ -10,6 +10,8 @@ import JMP.JMP.Error.ErrorCode;
 import JMP.JMP.Error.Exception.CustomException;
 import jakarta.persistence.*;
 import lombok.*;
+
+import java.time.LocalDateTime;
 import java.util.List;
 
 import java.time.LocalDate;
@@ -54,7 +56,7 @@ public class Board {
 
     // 프로젝트/스터디 공용
     @Column(name = "RECRUITCOUNT")
-    private int recruitCount;  // 모집인원 (프로젝트, 스터디)
+    private Integer recruitCount;  // 모집인원 (프로젝트, 스터디)
 
     @ElementCollection(targetClass = RequiredSkill.class, fetch = FetchType.LAZY)
     @CollectionTable(name = "BOARD_SKILLS", joinColumns = @JoinColumn(name = "BOARD_ID"))
@@ -90,10 +92,10 @@ public class Board {
     private String applyMethod;    // 지원 방법
 
     @Column(name = "CREATED_AT")
-    private LocalDate createdAt;
+    private LocalDateTime createdAt;
 
     @Column(name = "UPDATED_AT")
-    private LocalDate updatedAt;
+    private LocalDateTime updatedAt;
 
     public static Board createBoard(Account writer, DtoCreateBoard dto) {
         Board board = new Board();
@@ -132,7 +134,7 @@ public class Board {
         }
         this.title = dto.getTitle();
         this.description = dto.getDescription();
-        this.updatedAt = LocalDate.now();
+        this.updatedAt = LocalDateTime.now();
 
         if (dto.getBoardType() == BoardType.GENERAL) {
             this.tags = dto.getTags();
@@ -157,13 +159,13 @@ public class Board {
 
     @PrePersist
     public void prePersist() {
-        this.createdAt = LocalDate.now();
-        this.updatedAt = LocalDate.now();
+        this.createdAt = LocalDateTime.now();
+        this.updatedAt = LocalDateTime.now();
     }
 
     @PreUpdate
     public void preUpdate() {
-        this.updatedAt = LocalDate.now();
+        this.updatedAt = LocalDateTime.now();
     }
 
 

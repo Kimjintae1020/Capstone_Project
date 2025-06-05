@@ -1,15 +1,17 @@
-package JMP.JMP.Board.Dto;
+package JMP.JMP.Board.Dto.Paging;
 
 import JMP.JMP.Board.Entity.Board;
 import JMP.JMP.Enum.BoardType;
+import JMP.JMP.Enum.Tag;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.List;
 
 @Getter
 @AllArgsConstructor
-public class DtoBoardPage {
+public class DtoBoardGeneralPage {
 
     private Long boardId;
     private String writer;
@@ -17,17 +19,21 @@ public class DtoBoardPage {
     private String description;     // 내용
     private BoardType boardType; // 카테고리
     private int viewCount;
-    private LocalDate createdAt;
-    private LocalDate updatedAt;
+    private List<Tag> tags;
+    private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
+    private boolean isMine;         // 본인이 작성한 글인지 여부를 알려주는 컬럼
 
-    public DtoBoardPage(Board board) {
+    public DtoBoardGeneralPage(Board board, Long currentAccountId) {
         this.boardId = board.getBoardId();
         this.writer = board.getWriter().getName();
         this.title = board.getTitle();
         this.description = board.getDescription();
+        this.tags = board.getTags();
         this.createdAt = board.getCreatedAt();
         this.updatedAt = board.getUpdatedAt();
         this.boardType = board.getBoardType();
         this.viewCount = board.getViewCount();
+        this.isMine = board.getWriter().getId().equals(currentAccountId);
     }
 }

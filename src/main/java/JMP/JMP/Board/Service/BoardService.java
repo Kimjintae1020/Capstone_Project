@@ -4,6 +4,12 @@ import JMP.JMP.Account.Entity.Account;
 import JMP.JMP.Account.Repository.AccountRepository;
 import JMP.JMP.Auth.Dto.SuccessResponse;
 import JMP.JMP.Board.Dto.*;
+import JMP.JMP.Board.Dto.Detail.DtoBoardDetailGeneral;
+import JMP.JMP.Board.Dto.Detail.DtoBoardDetailProject;
+import JMP.JMP.Board.Dto.Detail.DtoBoardDetailStudy;
+import JMP.JMP.Board.Dto.Response.BoardGeneralPageResponse;
+import JMP.JMP.Board.Dto.Response.BoardProjectPageResponse;
+import JMP.JMP.Board.Dto.Response.BoardStudyPageResponse;
 import JMP.JMP.Board.Entity.Board;
 import JMP.JMP.Board.Repository.BoardRepository;
 import JMP.JMP.Enum.BoardType;
@@ -41,15 +47,45 @@ public class BoardService {
 
 
     // 게시글 목록 조회
-    public BoardPageResponse getBoardList(BoardType boardType, Pageable pageable) {
+    public Object getBoardList(BoardType boardType, Pageable pageable, String loginId) {
         Page<Board> projects = boardRepository.findByBoardType(boardType,pageable);
 
-        return new BoardPageResponse(
-                pageable.getPageNumber() + 1,
-                projects.getTotalPages(),
-                (int) projects.getTotalElements(),
-                projects.getContent()
-        );
+        Account account = accountRepository.findByEmail(loginId)
+                .orElseThrow(() -> new CustomException(ErrorCode.ACCOUNT_NOT_FOUND));
+
+        // 일반 게시글일 때
+        if (boardType.equals(BoardType.GENERAL)){
+            return new BoardGeneralPageResponse(
+                    pageable.getPageNumber() + 1,
+                    projects.getTotalPages(),
+                    (int) projects.getTotalElements(),
+                    projects.getContent(),
+                    account.getId()
+            );
+        }
+        // 프로젝트 게시글 일때
+        else if (boardType.equals(BoardType.PROJECT_RECRUIT)){
+            return new BoardProjectPageResponse(
+                    pageable.getPageNumber() + 1,
+                    projects.getTotalPages(),
+                    (int) projects.getTotalElements(),
+                    projects.getContent(),
+                    account.getId()
+            );
+        }
+        // 스터디 모집 게시글 일때
+        else if (boardType.equals(BoardType.STUDY_RECRUIT)) {
+            return new BoardStudyPageResponse(
+                    pageable.getPageNumber() + 1,
+                    projects.getTotalPages(),
+                    (int) projects.getTotalElements(),
+                    projects.getContent(),
+                    account.getId()
+            );
+
+        }
+
+        throw new CustomException(ErrorCode.BOARD_NOT_FOUND);
     }
 
     // 게시글 삭제
@@ -103,6 +139,7 @@ public class BoardService {
                     board.getBoardId(),
                     board.getTitle(),
                     board.getDescription(),
+                    board.getBoardType(),
                     board.getTags(),
                     board.getViewCount(),
                     board.getCreatedAt()
@@ -112,6 +149,7 @@ public class BoardService {
                     board.getBoardId(),
                     board.getTitle(),
                     board.getDescription(),
+                    board.getBoardType(),
                     board.getRecruitCount(),
                     board.getRequiredSkills(),
                     board.getProjectStartDate(),
@@ -126,6 +164,7 @@ public class BoardService {
                     board.getBoardId(),
                     board.getTitle(),
                     board.getDescription(),
+                    board.getBoardType(),
                     board.getRecruitCount(),
                     board.getRequiredSkills(),
                     board.getStudyStartDate(),

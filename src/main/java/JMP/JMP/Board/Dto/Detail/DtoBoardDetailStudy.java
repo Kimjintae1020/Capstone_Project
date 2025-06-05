@@ -1,10 +1,12 @@
-package JMP.JMP.Board.Dto;
+package JMP.JMP.Board.Dto.Detail;
 
+import JMP.JMP.Enum.BoardType;
 import JMP.JMP.Enum.RequiredSkill;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Getter
@@ -13,6 +15,7 @@ public class DtoBoardDetailStudy {
     private Long boardId;
     private String title;
     private String description;
+    private BoardType boardType; // 카테고리
     private int recruitCount;
     private List<RequiredSkill> requiredSkills;
     private LocalDate studyStartDate;
@@ -21,6 +24,6 @@ public class DtoBoardDetailStudy {
     private String studyWarning;
     private String applyMethod;
     private int viewCount;
-    private LocalDate createdAt;
+    private LocalDateTime createdAt;
 }
 

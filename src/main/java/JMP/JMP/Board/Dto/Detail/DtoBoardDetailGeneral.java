@@ -1,10 +1,10 @@
-package JMP.JMP.Board.Dto;
+package JMP.JMP.Board.Dto.Detail;
 
 import JMP.JMP.Enum.Tag;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Getter
@@ -15,6 +15,6 @@ public class DtoBoardDetailGeneral {
     private String description;
     private List<Tag> tags;
     private int viewCount;
-    private LocalDate createdAt;
+    private LocalDateTime createdAt;
 }
 

@@ -1,10 +1,11 @@
-package JMP.JMP.Board.Dto;
+package JMP.JMP.Board.Dto.Detail;
 
 import JMP.JMP.Enum.RequiredSkill;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Getter
@@ -20,6 +21,6 @@ public class DtoBoardDetailProject {
     private String projectWarning;
     private String applyMethod;
     private int viewCount;
-    private LocalDate createdAt;
+    private LocalDateTime createdAt;
 }
 

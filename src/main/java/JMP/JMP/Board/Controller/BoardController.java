@@ -1,6 +1,5 @@
 package JMP.JMP.Board.Controller;
 
-import JMP.JMP.Board.Dto.BoardPageResponse;
 import JMP.JMP.Board.Dto.DtoUpdateBoard;
 import JMP.JMP.Board.Service.BoardService;
 import JMP.JMP.Board.Dto.DtoCreateBoard;
@@ -44,12 +43,21 @@ public class BoardController {
 
     // 게시글 목록 조회 [페이징]
     @GetMapping("/board/list")
-    public ResponseEntity<BoardPageResponse> getboardList(@RequestParam(required = false) BoardType boardType,
-                                                          @RequestParam(defaultValue = "1") int page,      // 기본값 0, Service 단에서 +1 설정
-                                                          @RequestParam(defaultValue = "10") int size) {
+    public ResponseEntity<Object> getboardList(@RequestHeader(value = "Authorization", required = false) String token,
+                                               @RequestParam(required = false) BoardType boardType,
+                                               @RequestParam(defaultValue = "1") int page,      // 기본값 0, Service 단에서 +1 설정
+                                               @RequestParam(defaultValue = "10") int size) {
+
+        if (token == null || !token.startsWith("Bearer ")) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(ErrorResponse.of(ErrorCode.NOT_AUTHENTICATED));
+        }
+
+        String accessToken = token.replace("Bearer ", "");
+        String loginId = jwtUtil.getUsername(accessToken);
 
         Pageable pageable = PageRequest.of(page -1, size, Sort.by(Sort.Direction.DESC, "createdAt"));
-        BoardPageResponse response = boardServie.getBoardList(boardType,pageable);
+        Object response = boardServie.getBoardList(boardType,pageable,loginId);
 
         return ResponseEntity.ok(response);
     }

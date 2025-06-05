@@ -139,6 +139,7 @@ public class BoardService {
                     board.getBoardId(),
                     board.getTitle(),
                     board.getDescription(),
+                    board.getBoardType(),
                     board.getTags(),
                     board.getViewCount(),
                     board.getCreatedAt()
@@ -148,6 +149,7 @@ public class BoardService {
                     board.getBoardId(),
                     board.getTitle(),
                     board.getDescription(),
+                    board.getBoardType(),
                     board.getRecruitCount(),
                     board.getRequiredSkills(),
                     board.getProjectStartDate(),
@@ -162,6 +164,7 @@ public class BoardService {
                     board.getBoardId(),
                     board.getTitle(),
                     board.getDescription(),
+                    board.getBoardType(),
                     board.getRecruitCount(),
                     board.getRequiredSkills(),
                     board.getStudyStartDate(),

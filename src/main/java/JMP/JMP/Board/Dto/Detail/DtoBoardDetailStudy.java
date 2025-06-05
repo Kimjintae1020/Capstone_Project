@@ -1,5 +1,6 @@
 package JMP.JMP.Board.Dto.Detail;
 
+import JMP.JMP.Enum.BoardType;
 import JMP.JMP.Enum.RequiredSkill;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -14,6 +15,7 @@ public class DtoBoardDetailStudy {
     private Long boardId;
     private String title;
     private String description;
+    private BoardType boardType; // 카테고리
     private int recruitCount;
     private List<RequiredSkill> requiredSkills;
     private LocalDate studyStartDate;

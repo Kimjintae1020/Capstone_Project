@@ -21,6 +21,7 @@ public class DtoBoardStudyPage {
     private String description;     // 내용
     private BoardType boardType; // 카테고리
     private int viewCount;
+    private int likeCount;
     private Integer recruitCount;
     private List<RequiredSkill> skills;
     private LocalDate studyStartDate;   // 시작일 (스터디)
@@ -31,6 +32,7 @@ public class DtoBoardStudyPage {
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
     private boolean isMine;         // 본인이 작성한 글인지 여부를 알려주는 컬럼
+    private int commentCount;       // 게시글 댓글 개수
 
     public DtoBoardStudyPage(Board board, Long currentAccountId) {
         this.boardId = board.getBoardId();
@@ -39,6 +41,7 @@ public class DtoBoardStudyPage {
         this.description = board.getDescription();
         this.boardType = board.getBoardType();
         this.viewCount = board.getViewCount();
+        this.likeCount = board.getLikeCount();
         this.recruitCount = board.getRecruitCount();
         this.skills = board.getRequiredSkills();
         this.studyStartDate = board.getStudyStartDate();
@@ -49,6 +52,7 @@ public class DtoBoardStudyPage {
         this.createdAt = board.getCreatedAt();
         this.updatedAt = board.getUpdatedAt();
         this.isMine = board.getWriter().getId().equals(currentAccountId);
+        this.commentCount = board.getComments().size();
     }
 
 

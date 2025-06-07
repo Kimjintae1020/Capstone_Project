@@ -3,6 +3,7 @@ package JMP.JMP.Board.Entity;
 import JMP.JMP.Account.Entity.Account;
 import JMP.JMP.Board.Dto.DtoCreateBoard;
 import JMP.JMP.Board.Dto.DtoUpdateBoard;
+import JMP.JMP.Comment.Entity.Comment;
 import JMP.JMP.Enum.BoardType;
 import JMP.JMP.Enum.RequiredSkill;
 import JMP.JMP.Enum.Tag;
@@ -12,6 +13,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 import java.time.LocalDate;
@@ -46,6 +48,9 @@ public class Board {
 
     @Column(name = "VIEW_COUNT")
     private int viewCount;          // 조회수
+
+    @Column(name = "LIKE_COUNT", nullable = false)
+    private int likeCount;                                  // 좋아요
 
     // 일반 글 전용
     @ElementCollection(targetClass = Tag.class, fetch = FetchType.LAZY)
@@ -96,6 +101,11 @@ public class Board {
 
     @Column(name = "UPDATED_AT")
     private LocalDateTime updatedAt;
+
+    @OneToMany(mappedBy = "board", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Comment> comments = new ArrayList<>();         // 댓글
+
+
 
     public static Board createBoard(Account writer, DtoCreateBoard dto) {
         Board board = new Board();

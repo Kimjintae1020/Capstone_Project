@@ -8,6 +8,7 @@ public enum ErrorCode {
         // 공통 오류
         INVALID_INPUT_VALUE(400, "COMMON-001", "유효성 검증에 실패한 경우"),
         INTERNAL_SERVER_ERROR(500, "COMMON-002", "서버에서 처리할 수 없는 경우"),
+        INVALID_ACCOUNT_ROLE(404,"COMMON-003","해당 계정을 찾을 수 없습니다."),
 
         // 계정 관련 (사용자)
         DUPLICATE_EMAIL(409, "ACCOUNT-001", "이미 사용 중인 이메일입니다."),

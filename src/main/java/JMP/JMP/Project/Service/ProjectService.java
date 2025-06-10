@@ -75,8 +75,12 @@ public class ProjectService {
         String accessToken = token.replace("Bearer ", "");
         String loginId = jwtUtil.getUsername(accessToken);
 
-        Account account = accountRepository.findByEmail(loginId)
-                .orElseThrow(() -> new CustomException(ErrorCode.ACCOUNT_NOT_FOUND));
+        Account account = accountRepository.findByEmail(loginId).orElse(null);
+        Company company = companyRepository.findByEmail(loginId).orElse(null);
+
+        if (company == null && account == null) {
+            throw new CustomException(ErrorCode.INVALID_ACCOUNT_ROLE);
+        }
 
         Page<Project> projects = projectRepository.findAll(pageable);
 

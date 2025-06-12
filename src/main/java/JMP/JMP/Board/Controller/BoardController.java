@@ -120,4 +120,23 @@ public class BoardController {
 
         return response;
     }
+
+    // 본인이 작성한 게시글 조회
+    @GetMapping("/boards/mine")
+    public ResponseEntity<?> getBoardMine(@RequestHeader(value = "Authorization", required = false) String token,
+                                          @RequestParam(required = false) BoardType boardType) {
+
+        if (token == null || !token.startsWith("Bearer ")) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(ErrorResponse.of(ErrorCode.NOT_AUTHENTICATED));
+        }
+
+        String accessToken = token.replace("Bearer ", "");
+        String loginId = jwtUtil.getUsername(accessToken);
+
+
+        ResponseEntity<?> response = boardServie.getBoardMine(loginId, boardType);
+
+        return response;
+    }
 }

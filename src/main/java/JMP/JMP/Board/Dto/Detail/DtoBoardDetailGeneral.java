@@ -14,6 +14,7 @@ import java.util.List;
 public class DtoBoardDetailGeneral {
     private Long boardId;
     private String title;
+    private String writer;
     private String description;
     private BoardType boardType; // 카테고리
     private List<Tag> tags;
@@ -26,6 +27,7 @@ public class DtoBoardDetailGeneral {
         return new DtoBoardDetailGeneral(
                 board.getBoardId(),
                 board.getTitle(),
+                board.getWriter().getName(),
                 board.getDescription(),
                 board.getBoardType(),
                 board.getTags(),

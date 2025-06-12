@@ -15,6 +15,7 @@ import java.util.List;
 public class DtoBoardDetailStudy {
     private Long boardId;
     private String title;
+    private String writer;
     private String description;
     private BoardType boardType; // 카테고리
     private int recruitCount;
@@ -32,6 +33,7 @@ public class DtoBoardDetailStudy {
         return new DtoBoardDetailStudy(
                 board.getBoardId(),
                 board.getTitle(),
+                board.getWriter().getName(),
                 board.getDescription(),
                 board.getBoardType(),
                 board.getRecruitCount(),

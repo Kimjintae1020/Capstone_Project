@@ -125,6 +125,7 @@ public class BoardService {
     }
 
     // 게시글 상세 조회
+    @Transactional(readOnly = true)
     public ResponseEntity<?> getBoardDetail(String loginId, Long boardId) {
         Account findAccount = accountRepository.findByEmail(loginId)
                 .orElseThrow(() -> new CustomException(ErrorCode.INVALID_COMPANY));
@@ -135,47 +136,18 @@ public class BoardService {
         board.setViewCount(board.getViewCount() + 1);
 
         if (board.getBoardType() == BoardType.GENERAL) {
-            return ResponseEntity.ok(new DtoBoardDetailGeneral(
-                    board.getBoardId(),
-                    board.getTitle(),
-                    board.getDescription(),
-                    board.getBoardType(),
-                    board.getTags(),
-                    board.getViewCount(),
-                    board.getCreatedAt()
-            ));
-        } else if (board.getBoardType() == BoardType.PROJECT_RECRUIT) {
-            return ResponseEntity.ok(new DtoBoardDetailProject(
-                    board.getBoardId(),
-                    board.getTitle(),
-                    board.getDescription(),
-                    board.getBoardType(),
-                    board.getRecruitCount(),
-                    board.getRequiredSkills(),
-                    board.getProjectStartDate(),
-                    board.getProjectEndDate(),
-                    board.getProjectWarning(),
-                    board.getApplyMethod(),
-                    board.getViewCount(),
-                    board.getCreatedAt()
-            ));
-        } else if (board.getBoardType() == BoardType.STUDY_RECRUIT) {
-            return ResponseEntity.ok(new DtoBoardDetailStudy(
-                    board.getBoardId(),
-                    board.getTitle(),
-                    board.getDescription(),
-                    board.getBoardType(),
-                    board.getRecruitCount(),
-                    board.getRequiredSkills(),
-                    board.getStudyStartDate(),
-                    board.getStudyEndDate(),
-                    board.getStudyCurriculum(),
-                    board.getStudyWarning(),
-                    board.getApplyMethod(),
-                    board.getViewCount(),
-                    board.getCreatedAt()
-            ));
-        } else {
+            return ResponseEntity.ok(DtoBoardDetailGeneral.of(board, findAccount.getId()));
+        }
+
+        else if (board.getBoardType() == BoardType.PROJECT_RECRUIT) {
+            return ResponseEntity.ok(DtoBoardDetailProject.of(board, findAccount.getId()));
+        }
+
+        else if (board.getBoardType() == BoardType.STUDY_RECRUIT) {
+            return ResponseEntity.ok(DtoBoardDetailStudy.of(board, findAccount.getId()));
+        }
+
+        else {
             throw new CustomException(ErrorCode.INVALID_INPUT_VALUE);
         }
     }

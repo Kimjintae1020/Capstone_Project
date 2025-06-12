@@ -1,5 +1,6 @@
 package JMP.JMP.Board.Dto.Detail;
 
+import JMP.JMP.Board.Entity.Board;
 import JMP.JMP.Enum.BoardType;
 import JMP.JMP.Enum.Tag;
 import lombok.AllArgsConstructor;
@@ -18,5 +19,21 @@ public class DtoBoardDetailGeneral {
     private List<Tag> tags;
     private int viewCount;
     private LocalDateTime createdAt;
+    private boolean isMine;
+
+
+    public static DtoBoardDetailGeneral of(Board board, Long currentAccountId) {
+        return new DtoBoardDetailGeneral(
+                board.getBoardId(),
+                board.getTitle(),
+                board.getDescription(),
+                board.getBoardType(),
+                board.getTags(),
+                board.getViewCount(),
+                board.getCreatedAt(),
+                board.getWriter().getId().equals(currentAccountId)
+        );
+
+    }
 }
 

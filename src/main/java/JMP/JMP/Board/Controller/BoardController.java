@@ -23,6 +23,7 @@ public class BoardController {
     private final BoardService boardServie;
     private final JWTUtil jwtUtil;
 
+    // 게시글 생성
     @PostMapping("/create/board")
     public ResponseEntity<?> createBoard(@RequestHeader(value = "Authorization", required = false) String token,
                                            @RequestBody DtoCreateBoard dtoCreateBoard){

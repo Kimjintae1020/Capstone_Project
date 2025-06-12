@@ -1,5 +1,6 @@
 package JMP.JMP.Board.Dto.Detail;
 
+import JMP.JMP.Board.Entity.Board;
 import JMP.JMP.Enum.BoardType;
 import JMP.JMP.Enum.RequiredSkill;
 import lombok.AllArgsConstructor;
@@ -25,5 +26,25 @@ public class DtoBoardDetailStudy {
     private String applyMethod;
     private int viewCount;
     private LocalDateTime createdAt;
+    private boolean isMine;
+
+    public static DtoBoardDetailStudy of(Board board, Long currentAccountId) {
+        return new DtoBoardDetailStudy(
+                board.getBoardId(),
+                board.getTitle(),
+                board.getDescription(),
+                board.getBoardType(),
+                board.getRecruitCount(),
+                board.getRequiredSkills(),
+                board.getStudyStartDate(),
+                board.getStudyEndDate(),
+                board.getStudyCurriculum(),
+                board.getStudyWarning(),
+                board.getApplyMethod(),
+                board.getViewCount(),
+                board.getCreatedAt(),
+                board.getWriter().getId().equals(currentAccountId)
+        );
+    }
 }
 

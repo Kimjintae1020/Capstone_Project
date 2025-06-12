@@ -52,4 +52,21 @@ public class CommentController {
 
         return response;
     }
+
+    // 댓글 조회
+    @GetMapping("/boards/{boardId}/comment/list")
+    public ResponseEntity<?> getCommentList(@RequestHeader(value = "Authorization", required = false) String token,
+                                           @PathVariable Long boardId) {
+        if (token == null || !token.startsWith("Bearer ")) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(ErrorResponse.of(ErrorCode.NOT_AUTHENTICATED));
+        }
+
+        String accessToken = token.replace("Bearer ", "");
+        String loginId = jwtUtil.getUsername(accessToken);
+
+        ResponseEntity<?> response = commentService.getCommentList(loginId, boardId);
+
+        return response;
+    }
 }

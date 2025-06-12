@@ -5,6 +5,7 @@ import JMP.JMP.Account.Repository.AccountRepository;
 import JMP.JMP.Auth.Dto.SuccessResponse;
 import JMP.JMP.Board.Entity.Board;
 import JMP.JMP.Board.Repository.BoardRepository;
+import JMP.JMP.Comment.Dto.DtoCommentList;
 import JMP.JMP.Comment.Repository.CommentRepository;
 import JMP.JMP.Comment.Dto.DtoCreateComment;
 import JMP.JMP.Comment.Entity.Comment;
@@ -16,6 +17,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -63,5 +66,19 @@ public class CommentService {
 
         log.info("댓글 삭제 성공");
         return ResponseEntity.ok(SuccessResponse.of(200, "댓글이 삭제되었습니다."));
+    }
+
+    // 댓글 조회
+    @Transactional(readOnly = true)
+    public ResponseEntity<?> getCommentList(String loginId, Long boardId) {
+        Account account = accountRepository.findByEmail(loginId)
+                .orElseThrow(() -> new CustomException(ErrorCode.ACCOUNT_NOT_FOUND));
+
+        List<DtoCommentList> commentList = commentRepository.findAllByBoard_BoardId(boardId)
+                .stream()
+                .map(comment -> DtoCommentList.createEntity(comment, account.getId()))
+                .toList();
+
+        return ResponseEntity.ok(commentList);
     }
 }

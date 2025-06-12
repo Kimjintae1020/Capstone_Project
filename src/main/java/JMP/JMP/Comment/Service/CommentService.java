@@ -43,4 +43,25 @@ public class CommentService {
                 .status(HttpStatus.CREATED)
                 .body(SuccessResponse.of(201, "댓글작성 완료"));
     }
+
+    // 댓글 삭제
+    @Transactional
+    public ResponseEntity<?> deleteComment(String loginId, Long commentId) {
+        Account account = accountRepository.findByEmail(loginId)
+                .orElseThrow(() -> new CustomException(ErrorCode.ACCOUNT_NOT_FOUND));
+
+
+        Comment comment = commentRepository.findById(commentId)
+                        .orElseThrow(()-> new CustomException(ErrorCode.COMMENT_NOT_FOUND));
+
+        // 본인이 작성한 댓글 검증
+        if (!account.getId().equals(comment.getAccount().getId())) {
+            throw new CustomException(ErrorCode.INVALID_COMMENT_ACCESS);
+        }
+
+        commentRepository.deleteById(commentId);
+
+        log.info("댓글 삭제 성공");
+        return ResponseEntity.ok(SuccessResponse.of(200, "댓글이 삭제되었습니다."));
+    }
 }

@@ -42,6 +42,9 @@ public enum ErrorCode {
         INVALID_STATUS(400, "APPLY-005", "지원 상태 값이 유효하지 않습니다."),
         ALREADY_SET_STATUS(400, "APPLY-006", "이미 해당 상태로 처리된 지원자입니다."),
 
+        // 댓글 관련
+        COMMENT_NOT_FOUND(404, "COMMENT-001", "댓글을 찾을 수 없습니다."),
+        INVALID_COMMENT_ACCESS(403, "COMMENT-002", "본인이 작성한 댓글만 삭제할 수 있습니다."),
 
         // 기업 공고글 관련
         PROJECT_NOT_FOUND(404, "PROJECT_001", "프로젝트가 존재하지 않습니다."),

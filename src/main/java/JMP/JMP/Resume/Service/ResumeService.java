@@ -87,7 +87,7 @@ public class ResumeService {
     }
 
     //  이력서 목록 조회
-    @Transactional
+    @Transactional(readOnly = true)
     public List<DtoResumeList> getResumeList(String email) {
 
         Optional<Account> accountOptional = accountRepository.findByEmail(email);

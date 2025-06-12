@@ -12,6 +12,7 @@ import JMP.JMP.Board.Dto.Response.BoardProjectPageResponse;
 import JMP.JMP.Board.Dto.Response.BoardStudyPageResponse;
 import JMP.JMP.Board.Entity.Board;
 import JMP.JMP.Board.Repository.BoardRepository;
+import JMP.JMP.Comment.Repository.CommentRepository;
 import JMP.JMP.Enum.BoardType;
 import JMP.JMP.Error.ErrorCode;
 import JMP.JMP.Error.Exception.CustomException;
@@ -23,6 +24,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -30,6 +33,7 @@ public class BoardService {
 
     private final BoardRepository boardRepository;
     private final AccountRepository accountRepository;
+    private final CommentRepository commentRepository;
 
     // 게시글 생성
     @Transactional
@@ -152,4 +156,23 @@ public class BoardService {
         }
     }
 
+    // 본인이 작성한 게시글 조회
+    @Transactional(readOnly = true)
+    public ResponseEntity<?> getBoardMine(String loginId, BoardType boardType) {
+
+        Account findAccount = accountRepository.findByEmail(loginId)
+                .orElseThrow(() -> new CustomException(ErrorCode.ACCOUNT_NOT_FOUND));
+
+        List<Board> boards = boardRepository.findAllByWriter_IdAndBoardType(findAccount.getId(), boardType);
+
+        List<DtoBoardMineList> response = boards.stream()
+                .map(board -> DtoBoardMineList.of(
+                        board,
+                        commentRepository.countByBoard(board)
+                ))
+                .toList();
+
+
+        return ResponseEntity.ok(response);
+    }
 }

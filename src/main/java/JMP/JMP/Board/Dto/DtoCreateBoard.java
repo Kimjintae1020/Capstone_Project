@@ -3,12 +3,14 @@ package JMP.JMP.Board.Dto;
 import JMP.JMP.Enum.Tag;
 import JMP.JMP.Enum.BoardType;
 import JMP.JMP.Enum.RequiredSkill;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 import java.time.LocalDate;
 import java.util.List;
 
 @Getter
+@AllArgsConstructor
 public class DtoCreateBoard {
 
     // 공통

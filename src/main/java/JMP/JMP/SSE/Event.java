@@ -27,6 +27,7 @@ public class Event {
     @Column(name = "MESSAGE")
     private String message;   // 알림 메시지 내용
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "ROLE")
     private Role role;   // 알림 메시지 내용
 

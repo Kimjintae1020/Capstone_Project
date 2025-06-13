@@ -88,6 +88,7 @@ public class ApplyService {
         String role = project.getManager().getRole().name();
 
 
+        log.info(role);
         EventPayload payload = new EventPayload(
                 "apply",
                 senderName + " 님이 '" + project.getTitle() + "' 프로젝트에 지원하셨습니다.",

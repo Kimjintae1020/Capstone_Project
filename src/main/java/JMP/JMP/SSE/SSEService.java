@@ -53,6 +53,7 @@ public class SSEService {
 
     // 구독되어 있는 클라이언트에게 데이터 전송
     public void broadcast(Long receiverId, EventPayload eventPayload) {
+        log.info(eventPayload.getRole());
         Event event = Event.builder()
                 .eventType(eventPayload.getEventType())
                 .message(eventPayload.getMessage())

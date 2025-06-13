@@ -2,6 +2,8 @@ package JMP.JMP.SSE;
 
 import JMP.JMP.Account.Entity.Account;
 import JMP.JMP.Account.Repository.AccountRepository;
+import JMP.JMP.Company.Entity.Company;
+import JMP.JMP.Company.Repository.CompanyRepository;
 import JMP.JMP.Enum.Role;
 import JMP.JMP.Error.ErrorCode;
 import JMP.JMP.Error.Exception.CustomException;
@@ -13,6 +15,7 @@ import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -24,6 +27,7 @@ public class SSEService {
     private static final Long DEFAULT_TIMEOUT = 60L * 1000 * 60;
     private final JWTUtil jwtUtil;
     private final AccountRepository accountRepository;
+    private final CompanyRepository companyRepository;
 
 
     public SseEmitter subscribe(String token) {
@@ -53,20 +57,25 @@ public class SSEService {
 
     // 구독되어 있는 클라이언트에게 데이터 전송
     public void broadcast(Long receiverId, EventPayload eventPayload) {
-        log.info(eventPayload.getRole());
+        log.info("상대방 역할1111: " + eventPayload.getRole()); // null
+
+        if (eventPayload.getRole() == null) {
+            throw new CustomException(ErrorCode.INVALID_ROLE); // 직접 정의한 에러코드로 대체 가능
+        }
+
         Event event = Event.builder()
                 .eventType(eventPayload.getEventType())
                 .message(eventPayload.getMessage())
-                .role(Role.valueOf(eventPayload.getRole()))
+                .role(Role.valueOf(eventPayload.getRole())) // 여기서 null이면 에러
                 .receiverId(eventPayload.getReceiverId())
                 .senderName(eventPayload.getSenderName())
                 .createdAt(LocalDateTime.now())
                 .build();
 
         eventRepository.save(event);
-
-        sendToClient(receiverId, eventPayload);
+//        sendToClient(receiverId, eventPayload);
     }
+
 
     // 클라이언트에게 이벤트 전송
     private void sendToClient(Long receiverId, Object data) {
@@ -90,4 +99,39 @@ public class SSEService {
         }
     }
 
+    public List<EventResponse> getReceivedEvents(String token, Role role) {
+        if (token == null || !token.startsWith("Bearer ")) {
+            throw new CustomException(ErrorCode.NOT_AUTHENTICATED);
+        }
+
+        String accessToken = token.replace("Bearer ", "");
+        String loginId = jwtUtil.getUsername(accessToken);
+
+        Long receiverId;
+
+        // 역할에 따라 receiverId 조회
+        if (role == Role.ADMIN || role == Role.USER) {
+            Account account = accountRepository.findByEmail(loginId)
+                    .orElseThrow(() -> new CustomException(ErrorCode.ACCOUNT_NOT_FOUND));
+            receiverId = account.getId();
+        } else if (role == Role.COMPANY) {
+            Company company = companyRepository.findByEmail(loginId)
+                    .orElseThrow(() -> new CustomException(ErrorCode.COMPANY_NOT_FOUND));
+            receiverId = company.getId();
+        } else {
+            throw new CustomException(ErrorCode.INVALID_ROLE);
+        }
+
+        List<Event> events = eventRepository.findByReceiverIdAndRole(receiverId, role);
+
+        return events.stream()
+                .map(event -> EventResponse.builder()
+                        .eventId(event.getEventId())
+                        .eventType(event.getEventType())
+                        .message(event.getMessage())
+                        .senderName(event.getSenderName())
+                        .createdAt(event.getCreatedAt().toString())
+                        .build()
+                ).toList();
+    }
 }

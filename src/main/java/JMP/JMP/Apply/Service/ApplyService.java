@@ -88,7 +88,6 @@ public class ApplyService {
         String role = project.getManager().getRole().name();
 
 
-        log.info(role);
         EventPayload payload = new EventPayload(
                 "apply",
                 senderName + " 님이 '" + project.getTitle() + "' 프로젝트에 지원하셨습니다.",
@@ -100,7 +99,7 @@ public class ApplyService {
 
         // 알림 전송
         SSEService.broadcast(receiverId, payload);
-
+        log.info("상대방 역할 " + role);
 
         log.info("프로젝트 지원 성공");
         return ResponseEntity.ok(SuccessResponse.of(200, "프로젝트 지원 성공"));

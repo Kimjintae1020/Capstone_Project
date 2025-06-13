@@ -1,9 +1,13 @@
 package JMP.JMP.SSE;
 
+import JMP.JMP.Enum.Role;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api")
@@ -23,7 +27,19 @@ public class SSEController {
     @PostMapping("/sse/broadcast/{receiverId}")
     public void broadcast(@RequestBody EventPayload eventPayload,
                           @PathVariable Long receiverId) {
+
+        if (receiverId == null) {
+            log.info("controller null 입니다!");
+        }
         SSEService.broadcast(receiverId, eventPayload);
         log.info(eventPayload.getMessage());
+    }
+
+    // 받은 알림 목록 조회
+    @GetMapping("/received")
+    public ResponseEntity<?> getReceivedEvents(@RequestHeader(value = "Authorization", required = false) String token,
+                                               @RequestParam Role role) {
+        List<EventResponse> events = SSEService.getReceivedEvents(token,role);
+        return ResponseEntity.ok(events);
     }
 }

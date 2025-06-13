@@ -28,8 +28,9 @@ public class DtoBoardDetailStudy {
     private int viewCount;
     private LocalDateTime createdAt;
     private boolean isMine;
+    private int commentCount;
 
-    public static DtoBoardDetailStudy of(Board board, Long currentAccountId) {
+    public static DtoBoardDetailStudy of(Board board, Long currentAccountId, int commentCount) {
         return new DtoBoardDetailStudy(
                 board.getBoardId(),
                 board.getTitle(),
@@ -45,7 +46,8 @@ public class DtoBoardDetailStudy {
                 board.getApplyMethod(),
                 board.getViewCount(),
                 board.getCreatedAt(),
-                board.getWriter().getId().equals(currentAccountId)
+                board.getWriter().getId().equals(currentAccountId),
+                commentCount
         );
     }
 }

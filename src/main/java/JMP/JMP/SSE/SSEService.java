@@ -2,23 +2,25 @@ package JMP.JMP.SSE;
 
 import JMP.JMP.Account.Entity.Account;
 import JMP.JMP.Account.Repository.AccountRepository;
+import JMP.JMP.Enum.Role;
 import JMP.JMP.Error.ErrorCode;
-import JMP.JMP.Error.ErrorResponse;
 import JMP.JMP.Error.Exception.CustomException;
 import JMP.JMP.Jwt.JWTUtil;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class SSEService {
 
-    private final SSERepository SSERepository;
+    private final SSEEmitterRepository SSERepository;   // Map 기반 리포지토리
+    private final EventRepository eventRepository;  // 저장용 리포지토리
     private static final Long DEFAULT_TIMEOUT = 60L * 1000 * 60;
     private final JWTUtil jwtUtil;
     private final AccountRepository accountRepository;
@@ -51,22 +53,40 @@ public class SSEService {
 
     // 구독되어 있는 클라이언트에게 데이터 전송
     public void broadcast(Long receiverId, EventPayload eventPayload) {
+        Event event = Event.builder()
+                .eventType(eventPayload.getEventType())
+                .message(eventPayload.getMessage())
+                .role(Role.valueOf(eventPayload.getRole()))
+                .receiverId(eventPayload.getReceiverId())
+                .senderName(eventPayload.getSenderName())
+                .createdAt(LocalDateTime.now())
+                .build();
+
+        eventRepository.save(event);
+
         sendToClient(receiverId, eventPayload);
     }
 
     // 클라이언트에게 이벤트 전송
-    private void sendToClient(Long accountId, Object data) {
-        SseEmitter sseEmitter = SSERepository.findById(accountId);
+    private void sendToClient(Long receiverId, Object data) {
+        SseEmitter sseEmitter = SSERepository.findById(receiverId);
+        if (sseEmitter == null) {
+            // 접속중인 상대 없음: DB 저장만 하고 전송은 생략
+            log.info("상대방이 실시간 접속중이지 않음: " + receiverId);
+            return;
+        }
+
         try {
             sseEmitter.send(
                     SseEmitter.event()
-                            .id(accountId.toString())
+                            .id(receiverId.toString())
                             .name("sse")
                             .data(data)
             );
         } catch (IOException ex) {
-            SSERepository.deleteById(accountId);
-            throw new RuntimeException("연결 오류 발생");
+            SSERepository.deleteById(receiverId);
+            throw new RuntimeException("SSE 전송 실패", ex);
         }
     }
+
 }

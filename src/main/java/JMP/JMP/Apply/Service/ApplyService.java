@@ -60,6 +60,7 @@ public class ApplyService {
 
         // 프로젝트 시작일이 오늘보다 이전이면 (이미 사작이라면?)
         if (project.getStartDate().isBefore(LocalDate.now())) {
+            log.info("프로젝트 시작일이 오늘보다 이전");
             return ResponseEntity.status(HttpStatus.FORBIDDEN)
                     .body(ErrorResponse.of(ErrorCode.APPLICATION_CLOSED));
         }
@@ -80,14 +81,18 @@ public class ApplyService {
                 .build();
         applyRepository.save(savedApply);
 
+
         // SSE 기반 알림  지원자 -> 프로젝트 작성자  message: "[지원자 이름] 님이 프로젝트에 지원하셨습니다."
         String senderName = account.getName(); // 지원자 이름
         Long receiverId = project.getManager().getId(); // 프로젝트 작성자
+        String role = project.getManager().getRole().name();
+
 
         EventPayload payload = new EventPayload(
                 "apply",
                 senderName + " 님이 '" + project.getTitle() + "' 프로젝트에 지원하셨습니다.",
-                project.getProjectId(),
+                role,
+                receiverId,
                 senderName,
                 LocalDate.now().toString()
         );

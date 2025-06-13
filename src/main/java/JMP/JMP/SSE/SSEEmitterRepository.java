@@ -7,16 +7,16 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Repository
-public class SSERepository {
+public class SSEEmitterRepository {
 
     private final Map<Long, SseEmitter> emitters = new ConcurrentHashMap<>();
 
-    public SseEmitter findById(Long userId) {
-        return emitters.get(userId);
+    public SseEmitter save(Long userId, SseEmitter emitter) {
+        emitters.put(userId, emitter);
+        return emitter;
     }
 
-    public SseEmitter save(Long userId, SseEmitter sseEmitter) {
-        emitters.put(userId, sseEmitter);
+    public SseEmitter findById(Long userId) {
         return emitters.get(userId);
     }
 

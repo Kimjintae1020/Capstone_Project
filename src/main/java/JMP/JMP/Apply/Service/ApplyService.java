@@ -10,11 +10,14 @@ import JMP.JMP.Apply.Entity.Apply;
 import JMP.JMP.Apply.Repository.ApplyRepository;
 import JMP.JMP.Enum.ApplyStatus;
 import JMP.JMP.Error.ErrorCode;
+import JMP.JMP.Error.Exception.CustomException;
 import JMP.JMP.Jwt.JWTUtil;
 import JMP.JMP.Project.Entity.Project;
 import JMP.JMP.Project.Repository.ProjectRepository;
 import JMP.JMP.Resume.Entity.Resume;
 import JMP.JMP.Resume.Repository.ResumeRepository;
+import JMP.JMP.SSE.EventPayload;
+import JMP.JMP.SSE.SSEService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -37,7 +40,9 @@ public class ApplyService {
     private final AccountRepository accountRepository;
     private final CompanyRepository companyRepository;
     private final ResumeRepository resumeRepository;
+    private final SSEService SSEService;
 
+    // 프로젝트 지원
     @Transactional
     public ResponseEntity<?> projectApply(String token, Long projectId, Long resumeId) {
 
@@ -55,12 +60,14 @@ public class ApplyService {
 
         // 프로젝트 시작일이 오늘보다 이전이면 (이미 사작이라면?)
         if (project.getStartDate().isBefore(LocalDate.now())) {
+            log.info("프로젝트 시작일이 오늘보다 이전");
             return ResponseEntity.status(HttpStatus.FORBIDDEN)
                     .body(ErrorResponse.of(ErrorCode.APPLICATION_CLOSED));
         }
 
         // 지원 중복 오류
         if (applyRepository.existsByAccountAndProject(account, project)) {
+            log.info("이미 지원한 공고입니다.");
             return ResponseEntity.status(HttpStatus.FORBIDDEN)
                     .body(ErrorResponse.of(ErrorCode.ALREADY_APPLIED));
         }
@@ -74,6 +81,25 @@ public class ApplyService {
                 .build();
         applyRepository.save(savedApply);
 
+
+        // SSE 기반 알림  지원자 -> 프로젝트 작성자  message: "[지원자 이름] 님이 프로젝트에 지원하셨습니다."
+        String senderName = account.getName(); // 지원자 이름
+        Long receiverId = project.getManager().getId(); // 프로젝트 작성자
+        String role = project.getManager().getRole().name();
+
+
+        EventPayload payload = new EventPayload(
+                "apply",
+                senderName + " 님이 '" + project.getTitle() + "' 프로젝트에 지원하셨습니다.",
+                role,
+                receiverId,
+                senderName,
+                LocalDate.now().toString()
+        );
+
+        // 알림 전송
+        SSEService.broadcast(receiverId, payload);
+        log.info("상대방 역할 " + role);
 
         log.info("프로젝트 지원 성공");
         return ResponseEntity.ok(SuccessResponse.of(200, "프로젝트 지원 성공"));

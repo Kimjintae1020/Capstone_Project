@@ -21,9 +21,10 @@ public class DtoBoardDetailGeneral {
     private int viewCount;
     private LocalDateTime createdAt;
     private boolean isMine;
+    private int commentCount;
 
 
-    public static DtoBoardDetailGeneral of(Board board, Long currentAccountId) {
+    public static DtoBoardDetailGeneral of(Board board, Long currentAccountId, int commentCount) {
         return new DtoBoardDetailGeneral(
                 board.getBoardId(),
                 board.getTitle(),
@@ -33,7 +34,8 @@ public class DtoBoardDetailGeneral {
                 board.getTags(),
                 board.getViewCount(),
                 board.getCreatedAt(),
-                board.getWriter().getId().equals(currentAccountId)
+                board.getWriter().getId().equals(currentAccountId),
+                commentCount
         );
 
     }

@@ -27,8 +27,9 @@ public class DtoBoardDetailProject {
     private int viewCount;
     private LocalDateTime createdAt;
     private boolean isMine;
+    private int commentCount;
 
-    public static DtoBoardDetailProject of(Board board, Long currentAccountId) {
+    public static DtoBoardDetailProject of(Board board, Long currentAccountId, int commentCount) {
         return new DtoBoardDetailProject(
                 board.getBoardId(),
                 board.getTitle(),
@@ -43,8 +44,10 @@ public class DtoBoardDetailProject {
                 board.getApplyMethod(),
                 board.getViewCount(),
                 board.getCreatedAt(),
-                board.getWriter().getId().equals(currentAccountId)
+                board.getWriter().getId().equals(currentAccountId),
+                commentCount
         );
     }
+
 }
 

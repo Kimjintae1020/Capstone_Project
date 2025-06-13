@@ -15,6 +15,7 @@ import JMP.JMP.Board.Repository.BoardRepository;
 import JMP.JMP.Comment.Repository.CommentRepository;
 import JMP.JMP.Enum.BoardType;
 import JMP.JMP.Error.ErrorCode;
+import JMP.JMP.Error.ErrorResponse;
 import JMP.JMP.Error.Exception.CustomException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -139,16 +140,18 @@ public class BoardService {
 
         board.setViewCount(board.getViewCount() + 1);
 
+        int commentCount = commentRepository.countByBoard(board);
+
         if (board.getBoardType() == BoardType.GENERAL) {
-            return ResponseEntity.ok(DtoBoardDetailGeneral.of(board, findAccount.getId()));
+            return ResponseEntity.ok(DtoBoardDetailGeneral.of(board, findAccount.getId(), commentCount));
         }
 
         else if (board.getBoardType() == BoardType.PROJECT_RECRUIT) {
-            return ResponseEntity.ok(DtoBoardDetailProject.of(board, findAccount.getId()));
+            return ResponseEntity.ok(DtoBoardDetailProject.of(board, findAccount.getId(), commentCount));
         }
 
         else if (board.getBoardType() == BoardType.STUDY_RECRUIT) {
-            return ResponseEntity.ok(DtoBoardDetailStudy.of(board, findAccount.getId()));
+            return ResponseEntity.ok(DtoBoardDetailStudy.of(board, findAccount.getId(), commentCount));
         }
 
         else {
@@ -165,14 +168,42 @@ public class BoardService {
 
         List<Board> boards = boardRepository.findAllByWriter_IdAndBoardType(findAccount.getId(), boardType);
 
-        List<DtoBoardMineList> response = boards.stream()
-                .map(board -> DtoBoardMineList.of(
-                        board,
-                        commentRepository.countByBoard(board)
-                ))
-                .toList();
+        if (boardType.equals(BoardType.GENERAL)) {
+            List<DtoBoardDetailGeneral> response = boards.stream()
+                    .map(board -> DtoBoardDetailGeneral.of(
+                            board,
+                            findAccount.getId(),
+                            commentRepository.countByBoard(board)
+                    ))
+                    .toList();
 
+            return ResponseEntity.ok(response);
+        }
 
-        return ResponseEntity.ok(response);
+        else if (boardType.equals(BoardType.PROJECT_RECRUIT)) {
+            List<DtoBoardDetailProject> response = boards.stream()
+                    .map(board -> DtoBoardDetailProject.of(
+                            board,
+                            findAccount.getId(),
+                            commentRepository.countByBoard(board)
+                    ))
+                    .toList();
+
+            return ResponseEntity.ok(response);
+
+        }
+        else if (boardType.equals(BoardType.STUDY_RECRUIT)) {
+            List<DtoBoardDetailStudy> response = boards.stream()
+                    .map(board -> DtoBoardDetailStudy.of(
+                            board,
+                            findAccount.getId(),
+                            commentRepository.countByBoard(board)
+                    ))
+                    .toList();
+
+            return ResponseEntity.ok(response);
+        }
+
+        return ResponseEntity.ok(ErrorResponse.of(ErrorCode.BOARD_NOT_FOUND));
     }
 }

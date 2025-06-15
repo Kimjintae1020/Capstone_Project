@@ -57,7 +57,6 @@ public class SSEService {
 
     // 구독되어 있는 클라이언트에게 데이터 전송
     public void broadcast(Long receiverId, EventPayload eventPayload) {
-        log.info("상대방 역할1111: " + eventPayload.getRole()); // null
 
         if (eventPayload.getRole() == null) {
             throw new CustomException(ErrorCode.INVALID_ROLE); // 직접 정의한 에러코드로 대체 가능
@@ -66,14 +65,14 @@ public class SSEService {
         Event event = Event.builder()
                 .eventType(eventPayload.getEventType())
                 .message(eventPayload.getMessage())
-                .role(Role.valueOf(eventPayload.getRole())) // 여기서 null이면 에러
+                .role(Role.valueOf(eventPayload.getRole())) 
                 .receiverId(eventPayload.getReceiverId())
                 .senderName(eventPayload.getSenderName())
                 .createdAt(LocalDateTime.now())
                 .build();
 
         eventRepository.save(event);
-//        sendToClient(receiverId, eventPayload);
+        sendToClient(receiverId, eventPayload);
     }
 
 

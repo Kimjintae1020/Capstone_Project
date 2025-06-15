@@ -99,7 +99,6 @@ public class ApplyService {
 
         // 알림 전송
         SSEService.broadcast(receiverId, payload);
-        log.info("상대방 역할 " + role);
 
         log.info("프로젝트 지원 성공");
         return ResponseEntity.ok(SuccessResponse.of(200, "프로젝트 지원 성공"));

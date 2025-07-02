@@ -16,6 +16,7 @@ import JMP.JMP.Jwt.JWTUtil;
 import JMP.JMP.Project.Dto.*;
 import JMP.JMP.Project.Entity.Project;
 import JMP.JMP.Project.Entity.ProjectBookmark;
+import JMP.JMP.Project.Mapper.ProjectMapper;
 import JMP.JMP.Project.Repository.ProjectBookmardRepository;
 import JMP.JMP.Project.Repository.ProjectRepository;
 import JMP.JMP.Resume.Dto.DtoResume;
@@ -61,7 +62,8 @@ public class ProjectService {
                     .body(ErrorResponse.of(ErrorCode.NO_POST_PERMISSION));
         }
 
-        Project project = Project.createProject(company, dtoCreateProject);
+        Project project = ProjectMapper.toEntity(company, dtoCreateProject);
+
         projectRepository.save(project);
 
         log.info("프로젝트 공고 작성 성공");
@@ -100,7 +102,7 @@ public class ProjectService {
     }
 
     // 프로젝트 공고 상세 조회
-    @Transactional
+    @Transactional(readOnly = true)
     public DtoProjectDetail getProjectDetail(Long projectId) {
 
         Project project = projectRepository.findById(projectId)
@@ -112,6 +114,7 @@ public class ProjectService {
     }
 
     // 프로젝트 지원자 목록 조회
+    @Transactional(readOnly = true)
     public List<DtoProjectApplicants> getProjectApplicants(Long projectId, String token) throws UnauthorizedException {
 
         List<Apply> applyList = applyRepository.findRecentByProjectId(projectId);
@@ -161,6 +164,7 @@ public class ProjectService {
     }
 
     // 최근 등록한 프로젝트 공고 목록 조회
+    @Transactional(readOnly = true)
     public List<DtoProjectRecent> getProjectRecent() {
         Pageable pageale = PageRequest.of(0, 3, Sort.by(Sort.Direction.DESC, "createdAt"));
 
@@ -189,7 +193,7 @@ public class ProjectService {
             throw new CustomException(ErrorCode.ALREADY_BOOKMARKED);
         }
 
-        ProjectBookmark bookmark = ProjectBookmark.addProjectBookmark(account,project);
+        ProjectBookmark bookmark = ProjectMapper.addProjectBookmark(account,project);
         projectBookmardRepository.save(bookmark);
 
         return ResponseEntity.ok(SuccessResponse.of(200, "프로젝트 공고를 스크랩하였습니다."));

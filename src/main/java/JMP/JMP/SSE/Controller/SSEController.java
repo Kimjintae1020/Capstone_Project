@@ -1,6 +1,9 @@
-package JMP.JMP.SSE;
+package JMP.JMP.SSE.Controller;
 
 import JMP.JMP.Enum.Role;
+import JMP.JMP.SSE.Entity.EventPayload;
+import JMP.JMP.SSE.Dto.EventResponse;
+import JMP.JMP.SSE.Service.SSEService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -24,14 +27,10 @@ public class SSEController {
     }
 
     // 이벤트 발생 -> 구독 중인 클라이언트에게 데이터 전송
-    @PostMapping("/sse/broadcast/{receiverId}")
-    public void broadcast(@RequestBody EventPayload eventPayload,
-                          @PathVariable Long receiverId) {
+    @PostMapping("/sse/broadcast")
+    public void broadcast(@RequestBody EventPayload eventPayload) {
 
-        if (receiverId == null) {
-            log.info("controller null 입니다!");
-        }
-        SSEService.broadcast(receiverId, eventPayload);
+        SSEService.broadcast(eventPayload);
         log.info(eventPayload.getMessage());
     }
 

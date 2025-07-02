@@ -1,4 +1,4 @@
-package JMP.JMP.SSE;
+package JMP.JMP.SSE.Service;
 
 import JMP.JMP.Account.Entity.Account;
 import JMP.JMP.Account.Repository.AccountRepository;
@@ -8,6 +8,12 @@ import JMP.JMP.Enum.Role;
 import JMP.JMP.Error.ErrorCode;
 import JMP.JMP.Error.Exception.CustomException;
 import JMP.JMP.Jwt.JWTUtil;
+import JMP.JMP.SSE.Dto.EventResponse;
+import JMP.JMP.SSE.Entity.Event;
+import JMP.JMP.SSE.Entity.EventPayload;
+import JMP.JMP.SSE.Mapper.EventMapper;
+import JMP.JMP.SSE.Repository.EventRepository;
+import JMP.JMP.SSE.Repository.SSEEmitterRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -56,23 +62,15 @@ public class SSEService {
     }
 
     // 구독되어 있는 클라이언트에게 데이터 전송
-    public void broadcast(Long receiverId, EventPayload eventPayload) {
+    public void broadcast(EventPayload eventPayload) {
 
         if (eventPayload.getRole() == null) {
             throw new CustomException(ErrorCode.INVALID_ROLE); // 직접 정의한 에러코드로 대체 가능
         }
 
-        Event event = Event.builder()
-                .eventType(eventPayload.getEventType())
-                .message(eventPayload.getMessage())
-                .role(Role.valueOf(eventPayload.getRole())) 
-                .receiverId(eventPayload.getReceiverId())
-                .senderName(eventPayload.getSenderName())
-                .createdAt(LocalDateTime.now())
-                .build();
-
-        eventRepository.save(event);
-        sendToClient(receiverId, eventPayload);
+        Event savedEvent = EventMapper.toEntity(eventPayload);
+        eventRepository.save(savedEvent);
+        sendToClient(eventPayload.getReceiverId(), eventPayload);
     }
 
 

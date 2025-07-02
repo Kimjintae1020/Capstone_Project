@@ -75,19 +75,4 @@ public class Project {
         this.updatedAt = LocalDate.now();
     }
 
-    public static Project createProject(Company writer, DtoCreateProject dto) {
-        Project project = new Project();
-        project.setManager(writer);
-        project.setTitle(dto.getTitle());
-        project.setDescription(dto.getDescription());
-        project.setViewCount(0);
-        project.setRequiredSkill(dto.getRequiredSkill());
-        project.setStartDate(dto.getStartDate());
-        project.setEndDate(dto.getEndDate());
-        project.setRecruitCount(dto.getRecruitCount());
-        project.setRecruitDeadline(dto.getRecruitDeadline());
-        project.setCreatedAt(LocalDate.now());
-        project.setUpdatedAt(LocalDate.now());
-        return project;
-    }
 }

@@ -1,6 +1,7 @@
 package JMP.JMP.Account.Service;
 
 import JMP.JMP.Account.Dto.DtoRegister;
+import JMP.JMP.Account.Mapper.AccountMapper;
 import JMP.JMP.Error.ErrorResponse;
 import JMP.JMP.Auth.Dto.SuccessResponse;
 import JMP.JMP.Account.Entity.Account;
@@ -14,6 +15,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import static JMP.JMP.Account.Mapper.AccountMapper.toEntity;
 
 @Service
 @RequiredArgsConstructor
@@ -36,18 +39,8 @@ public class AccountService {
 
         String encodedPassword = passwordEncoder.encode(dtoRegister.getPassword());
 
-        Account savedaccount = Account.builder()
-                .email(dtoRegister.getEmail())
-                .password(encodedPassword)
-                .name(dtoRegister.getName())
-                .birthYear(dtoRegister.getBirthYear())
-                .gender(dtoRegister.getGender())
-                .phone(dtoRegister.getPhone())
-                .major(dtoRegister.getMajor())
-                .education(dtoRegister.getEducation())
-                .role(Role.USER)
-                .build();
-        accountRepository.save(savedaccount);
+        Account savedAccount = AccountMapper.toEntity(encodedPassword,dtoRegister);
+        accountRepository.save(savedAccount);
 
         // 회원가입 성공 Http 상태코드 (201 created)
         return ResponseEntity

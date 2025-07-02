@@ -6,6 +6,7 @@ import JMP.JMP.Auth.Dto.SuccessResponse;
 import JMP.JMP.Board.Entity.Board;
 import JMP.JMP.Board.Repository.BoardRepository;
 import JMP.JMP.Comment.Dto.DtoCommentList;
+import JMP.JMP.Comment.Mapper.CommentMapper;
 import JMP.JMP.Comment.Repository.CommentRepository;
 import JMP.JMP.Comment.Dto.DtoCreateComment;
 import JMP.JMP.Comment.Entity.Comment;
@@ -39,7 +40,7 @@ public class CommentService {
         Board board = boardRepository.findById(boardId)
                 .orElseThrow(() -> new CustomException(ErrorCode.BOARD_NOT_FOUND));
 
-        Comment comment = Comment.createComment(account, board, dtoCreateComment);
+        Comment comment = CommentMapper.toEntity(account, board, dtoCreateComment);
         commentRepository.save(comment);
 
         return ResponseEntity

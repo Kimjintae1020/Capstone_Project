@@ -1,6 +1,5 @@
-package JMP.JMP.SSE;
+package JMP.JMP.SSE.Entity;
 
-import JMP.JMP.Account.Entity.Account;
 import JMP.JMP.Enum.Role;
 import jakarta.persistence.*;
 import lombok.*;

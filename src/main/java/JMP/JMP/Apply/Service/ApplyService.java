@@ -1,6 +1,7 @@
 package JMP.JMP.Apply.Service;
 
 import JMP.JMP.Apply.Dto.DtoAppliedProject;
+import JMP.JMP.Apply.Mapper.ApplyMapper;
 import JMP.JMP.Company.Repository.CompanyRepository;
 import JMP.JMP.Error.ErrorResponse;
 import JMP.JMP.Auth.Dto.SuccessResponse;
@@ -10,14 +11,14 @@ import JMP.JMP.Apply.Entity.Apply;
 import JMP.JMP.Apply.Repository.ApplyRepository;
 import JMP.JMP.Enum.ApplyStatus;
 import JMP.JMP.Error.ErrorCode;
-import JMP.JMP.Error.Exception.CustomException;
 import JMP.JMP.Jwt.JWTUtil;
 import JMP.JMP.Project.Entity.Project;
 import JMP.JMP.Project.Repository.ProjectRepository;
 import JMP.JMP.Resume.Entity.Resume;
 import JMP.JMP.Resume.Repository.ResumeRepository;
-import JMP.JMP.SSE.EventPayload;
-import JMP.JMP.SSE.SSEService;
+import JMP.JMP.SSE.Entity.EventPayload;
+import JMP.JMP.SSE.Mapper.EventMapper;
+import JMP.JMP.SSE.Service.SSEService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -28,6 +29,9 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
+
+import static JMP.JMP.Apply.Mapper.ApplyMapper.toEntity;
+import static JMP.JMP.SSE.Mapper.EventMapper.toApplyPayload;
 
 @Service
 @RequiredArgsConstructor
@@ -72,33 +76,14 @@ public class ApplyService {
                     .body(ErrorResponse.of(ErrorCode.ALREADY_APPLIED));
         }
 
-        Apply savedApply = Apply.builder()
-                .project(project)
-                .account(account)
-                .resume(resume)
-                .status(ApplyStatus.PENDING)
-                .appliedAt(LocalDate.now())
-                .build();
+        Apply savedApply = ApplyMapper.toEntity(project,account,resume);
         applyRepository.save(savedApply);
 
-
         // SSE 기반 알림  지원자 -> 프로젝트 작성자  message: "[지원자 이름] 님이 프로젝트에 지원하셨습니다."
-        String senderName = account.getName(); // 지원자 이름
-        Long receiverId = project.getManager().getId(); // 프로젝트 작성자
-        String role = project.getManager().getRole().name();
-
-
-        EventPayload payload = new EventPayload(
-                "apply",
-                senderName + " 님이 '" + project.getTitle() + "' 프로젝트에 지원하셨습니다.",
-                role,
-                receiverId,
-                senderName,
-                LocalDate.now().toString()
-        );
+        EventPayload eventPayload = EventMapper.toApplyPayload(project, account);
 
         // 알림 전송
-        SSEService.broadcast(receiverId, payload);
+        SSEService.broadcast(eventPayload);
 
         log.info("프로젝트 지원 성공");
         return ResponseEntity.ok(SuccessResponse.of(200, "프로젝트 지원 성공"));
@@ -175,17 +160,6 @@ public class ApplyService {
         return applyList.stream()
                 .map(apply -> {
                     Project project = apply.getProject();
-
-                    // 진행 상태 계산 (프론트에서 할 거면 날짜만 전달)
-                    LocalDate today = LocalDate.now();
-                    String status = "모집중";
-                    if (project.getRecruitDeadline() != null) {
-                        if (project.getRecruitDeadline().isBefore(today)) {
-                            status = "모집마감";
-                        } else if (project.getRecruitDeadline().minusDays(3).isBefore(today)) {
-                            status = "마감임박";
-                        }
-                    }
 
                     return new DtoAppliedProject(
                             project.getProjectId(),

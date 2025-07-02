@@ -1,6 +1,7 @@
-package JMP.JMP.SSE;
+package JMP.JMP.SSE.Repository;
 
 import JMP.JMP.Enum.Role;
+import JMP.JMP.SSE.Entity.Event;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

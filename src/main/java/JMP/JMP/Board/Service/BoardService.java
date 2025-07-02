@@ -11,6 +11,7 @@ import JMP.JMP.Board.Dto.Response.BoardGeneralPageResponse;
 import JMP.JMP.Board.Dto.Response.BoardProjectPageResponse;
 import JMP.JMP.Board.Dto.Response.BoardStudyPageResponse;
 import JMP.JMP.Board.Entity.Board;
+import JMP.JMP.Board.Mapper.BoardMapper;
 import JMP.JMP.Board.Repository.BoardRepository;
 import JMP.JMP.Comment.Repository.CommentRepository;
 import JMP.JMP.Enum.BoardType;
@@ -26,6 +27,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+
+import static JMP.JMP.Board.Mapper.BoardMapper.toEntity;
 
 @Service
 @RequiredArgsConstructor
@@ -43,7 +46,7 @@ public class BoardService {
         Account account = accountRepository.findByEmail(loginId)
                 .orElseThrow(() -> new CustomException(ErrorCode.INVALID_COMPANY));
 
-        Board board = Board.createBoard(account, dtoCreateBoard);
+        Board board = BoardMapper.toEntity(account, dtoCreateBoard);
         boardRepository.save(board);
 
         log.info("게시글 작성 성공");

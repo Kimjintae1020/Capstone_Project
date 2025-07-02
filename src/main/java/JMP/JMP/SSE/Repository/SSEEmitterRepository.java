@@ -1,4 +1,4 @@
-package JMP.JMP.SSE;
+package JMP.JMP.SSE.Repository;
 
 import org.springframework.stereotype.Repository;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;

@@ -1,4 +1,4 @@
-package JMP.JMP.SSE;
+package JMP.JMP.SSE.Entity;
 
 import jakarta.validation.constraints.NotBlank;
 import lombok.*;

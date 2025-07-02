@@ -1,4 +1,4 @@
-package JMP.JMP.SSE;
+package JMP.JMP.SSE.Dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

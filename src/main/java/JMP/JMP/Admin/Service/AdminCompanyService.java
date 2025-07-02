@@ -2,15 +2,13 @@ package JMP.JMP.Admin.Service;
 
 import JMP.JMP.Account.Repository.AccountRepository;
 import JMP.JMP.Admin.Dto.DtoPendingCompanyList;
-import JMP.JMP.Apply.Entity.Apply;
 import JMP.JMP.Auth.Dto.SuccessResponse;
 import JMP.JMP.Company.Entity.Company;
 import JMP.JMP.Company.Repository.CompanyRepository;
-import JMP.JMP.Enum.ApplyStatus;
 import JMP.JMP.Enum.PostRole;
-import JMP.JMP.Enum.Role;
 import JMP.JMP.Error.ErrorCode;
 import JMP.JMP.Error.ErrorResponse;
+import JMP.JMP.Error.Exception.CustomException;
 import JMP.JMP.Jwt.JWTUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -20,7 +18,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -71,27 +68,23 @@ public class AdminCompanyService {
                     .body(ErrorResponse.of(ErrorCode.INVALID_ADMIN_ROLE));
         }
 
-        Optional<Company> optionalCompany = companyRepository.findById(companyId);
-        Company findCompany = optionalCompany.get();
+        Company company = companyRepository.findById(companyId)
+                .orElseThrow(() -> new CustomException(ErrorCode.COMPANY_NOT_FOUND));
 
-        if (optionalCompany.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(ErrorResponse.of(ErrorCode.COMPANY_NOT_FOUND));
-        }
         // 중복 상태 요청 방지
-        if (findCompany.getPostRole() == status) {
+        if (company.getPostRole() == status) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .body(ErrorResponse.of(ErrorCode.ALREADY_SET_POST_STATUS));
         }
 
         if (status == PostRole.APPROVED) {
-            findCompany.setPostRole(PostRole.APPROVED);
+            company.setPostRole(PostRole.APPROVED);
         }
         else if (status == PostRole.REJECTED) {
-            findCompany.setPostRole(PostRole.REJECTED);
+            company.setPostRole(PostRole.REJECTED);
         }
 
-        return ResponseEntity.ok(SuccessResponse.of(200, findCompany.getCompanyName() + "님 " + status +"처리 되었습니다."));
+        return ResponseEntity.ok(SuccessResponse.of(200, company.getCompanyName() + "님 " + status +"처리 되었습니다."));
 
     }
 

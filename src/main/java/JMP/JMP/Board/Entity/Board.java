@@ -105,39 +105,6 @@ public class Board {
     @OneToMany(mappedBy = "board", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Comment> comments = new ArrayList<>();         // 댓글
 
-
-
-    public static Board createBoard(Account writer, DtoCreateBoard dto) {
-        Board board = new Board();
-        board.writer = writer;
-        board.boardType = dto.getBoardType();
-        board.title = dto.getTitle();
-        board.description = dto.getDescription();
-        board.viewCount = 0;
-
-        if (dto.getBoardType() == BoardType.GENERAL) {
-            board.tags = dto.getTags();
-        } else if (dto.getBoardType() == BoardType.PROJECT_RECRUIT) {
-            board.recruitCount = dto.getRecruitCount();
-            board.requiredSkills = dto.getRequiredSkills();
-            board.projectStartDate = dto.getProjectStartDate();
-            board.projectEndDate = dto.getProjectEndDate();
-            board.projectWarning = dto.getProjectWarning();
-            board.applyMethod = dto.getApplyMethod();
-        } else if (dto.getBoardType() == BoardType.STUDY_RECRUIT) {
-            board.recruitCount = dto.getRecruitCount();
-            board.requiredSkills = dto.getRequiredSkills();
-            board.studyStartDate = dto.getStudyStartDate();
-            board.studyEndDate = dto.getStudyEndDate();
-            board.studyCurriculum = dto.getStudyCurriculum();
-            board.studyWarning = dto.getStudyWarning();
-            board.applyMethod = dto.getApplyMethod();
-        }
-
-        return board;
-    }
-
-
     public void updateBoard(Account findAccount, DtoUpdateBoard dto) {
         if (!this.writer.getId().equals(findAccount.getId())){
             throw new CustomException(ErrorCode.INVALID_ACCESS);

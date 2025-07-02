@@ -15,6 +15,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import static JMP.JMP.Company.Mapper.CompanyMapper.toEntity;
+
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -50,19 +52,7 @@ public class CompanyService {
 
         String encodedPassword = passwordEncoder.encode(dtoCompanyRegister.getPassword());
 
-        Company savedCompany = Company.builder()
-                .email(dtoCompanyRegister.getEmail())
-                .password(encodedPassword)
-                .name(dtoCompanyRegister.getName())
-                .gender(dtoCompanyRegister.getGender())
-                .phone(dtoCompanyRegister.getPhone())
-                .businessNumber(dtoCompanyRegister.getBusinessNumber())
-                .position(dtoCompanyRegister.getPosition())
-                .companyLocation(dtoCompanyRegister.getCompanyLocation())
-                .companyName(dtoCompanyRegister.getCompanyName())
-                .postRole(PostRole.PENDING)
-                .role(Role.COMPANY)
-                .build();
+        Company savedCompany = toEntity(encodedPassword, dtoCompanyRegister);
         companyRepository.save(savedCompany);
 
         log.info("기업 담당자 회원가입 완료");

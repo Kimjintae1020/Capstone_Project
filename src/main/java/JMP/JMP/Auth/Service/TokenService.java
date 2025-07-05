@@ -15,7 +15,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import java.time.temporal.ChronoUnit;
 
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.Date;
 
 import static JMP.JMP.Auth.Service.util.TokenConst.*;
@@ -47,11 +50,19 @@ public class TokenService {
         RefreshEntity refreshEntity = new RefreshEntity();
         refreshEntity.setUsername(email);
         refreshEntity.setRefresh(refreshToken);
-        refreshEntity.setExpiration(new Date(System.currentTimeMillis() + REFRESH_TOKEN_EXPIRATION).toString());
+        refreshEntity.setExpiration(
+                ZonedDateTime.now(ZoneId.of("Asia/Seoul"))
+                        .plus(REFRESH_TOKEN_EXPIRATION, ChronoUnit.SECONDS)
+                        .toString()
+        );
+//        refreshEntity.setExpiration(new Date(System.currentTimeMillis() + REFRESH_TOKEN_EXPIRATION).toString());
+
+        ZonedDateTime accessTokenExpiresAt = ZonedDateTime.now(ZoneId.of("Asia/Seoul"))
+                .plus(ACCESS_TOKEN_EXPIRATION, ChronoUnit.MILLIS);
 
         refreshRepository.save(refreshEntity);
 
-        return ResponseEntity.ok(LoginSuccessResponse.of(200, "로그인 성공", role));
+        return ResponseEntity.ok(LoginSuccessResponse.of(200, "로그인 성공", role, ACCESS_TOKEN_EXPIRATION, accessTokenExpiresAt));
     }
 
     // access 토큰 만료시 Refresh Token 재발급

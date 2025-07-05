@@ -12,7 +12,7 @@ import JMP.JMP.Error.ErrorCode;
 import JMP.JMP.Enum.PostRole;
 import JMP.JMP.Error.Exception.CustomException;
 import JMP.JMP.Error.Exception.UnauthorizedException;
-import JMP.JMP.Jwt.JWTUtil;
+import JMP.JMP.Auth.Security.JWTUtil;
 import JMP.JMP.Project.Dto.*;
 import JMP.JMP.Project.Entity.Project;
 import JMP.JMP.Project.Entity.ProjectBookmark;

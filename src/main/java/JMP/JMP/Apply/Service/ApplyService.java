@@ -11,7 +11,7 @@ import JMP.JMP.Apply.Entity.Apply;
 import JMP.JMP.Apply.Repository.ApplyRepository;
 import JMP.JMP.Enum.ApplyStatus;
 import JMP.JMP.Error.ErrorCode;
-import JMP.JMP.Jwt.JWTUtil;
+import JMP.JMP.Auth.Security.JWTUtil;
 import JMP.JMP.Project.Entity.Project;
 import JMP.JMP.Project.Repository.ProjectRepository;
 import JMP.JMP.Resume.Entity.Resume;
@@ -29,9 +29,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
-
-import static JMP.JMP.Apply.Mapper.ApplyMapper.toEntity;
-import static JMP.JMP.SSE.Mapper.EventMapper.toApplyPayload;
 
 @Service
 @RequiredArgsConstructor

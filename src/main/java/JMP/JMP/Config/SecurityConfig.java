@@ -2,7 +2,7 @@ package JMP.JMP.Config;
 
 import JMP.JMP.Account.Repository.RefreshRepository;
 import JMP.JMP.Jwt.JWTFilter;
-import JMP.JMP.Jwt.JWTUtil;
+import JMP.JMP.Auth.Security.JWTUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;

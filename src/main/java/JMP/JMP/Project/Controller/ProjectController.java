@@ -3,7 +3,7 @@ package JMP.JMP.Project.Controller;
 import JMP.JMP.Error.ErrorResponse;
 import JMP.JMP.Error.ErrorCode;
 import JMP.JMP.Error.Exception.UnauthorizedException;
-import JMP.JMP.Jwt.JWTUtil;
+import JMP.JMP.Auth.Security.JWTUtil;
 import JMP.JMP.Project.Dto.*;
 import JMP.JMP.Project.Service.ProjectService;
 import jakarta.validation.Valid;

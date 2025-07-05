@@ -1,6 +1,6 @@
 package JMP.JMP.Resume.Controller;
 
-import JMP.JMP.Jwt.JWTUtil;
+import JMP.JMP.Auth.Security.JWTUtil;
 import JMP.JMP.Resume.Dto.DtoCreateResume;
 import JMP.JMP.Resume.Dto.DtoResumeDetail;
 import JMP.JMP.Resume.Dto.DtoResumeList;

@@ -6,7 +6,7 @@ import JMP.JMP.Auth.Dto.SuccessResponse;
 import JMP.JMP.Auth.Service.AuthService;
 import JMP.JMP.Error.ErrorCode;
 import JMP.JMP.Enum.Role;
-import JMP.JMP.Jwt.JWTUtil;
+import JMP.JMP.Auth.Security.JWTUtil;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

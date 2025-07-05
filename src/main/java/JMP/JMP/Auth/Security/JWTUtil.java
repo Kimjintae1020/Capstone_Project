@@ -1,4 +1,4 @@
-package JMP.JMP.Jwt;
+package JMP.JMP.Auth.Security;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
@@ -10,6 +10,8 @@ import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 import java.nio.charset.StandardCharsets;
 import java.util.Date;
+
+import static JMP.JMP.Auth.Service.util.TokenConst.TOKEN_TYPE_ROLE;
 
 @Component
 public class JWTUtil {
@@ -49,7 +51,7 @@ public class JWTUtil {
         return Jwts.builder()
                 .claim("category", category)
                 .claim("username", username)
-                .claim("role", role)
+                .claim(TOKEN_TYPE_ROLE, role)
                 .issuedAt(new Date(System.currentTimeMillis()))
                 .expiration(new Date(System.currentTimeMillis() + expiredMs))
                 .signWith(secretKey)

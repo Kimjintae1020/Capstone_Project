@@ -39,13 +39,4 @@ public class Comment {
     @Column(name = "UPDATED_AT")
     private LocalDateTime updateAt;
 
-    public static Comment createComment(Account account, Board board, DtoCreateComment dtoCreateComment) {
-        Comment comment = new Comment();
-        comment.account = account;
-        comment.board = board;
-        comment.content = dtoCreateComment.getContent();
-        comment.createAt = LocalDateTime.now();
-        comment.updateAt = LocalDateTime.now();
-        return comment;
-    }
 }

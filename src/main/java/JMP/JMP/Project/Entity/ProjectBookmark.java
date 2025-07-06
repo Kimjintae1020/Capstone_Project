@@ -2,10 +2,7 @@ package JMP.JMP.Project.Entity;
 
 import JMP.JMP.Account.Entity.Account;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.time.LocalDate;
 
@@ -15,6 +12,7 @@ import java.time.LocalDate;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 public class ProjectBookmark {
 
     @Id
@@ -38,12 +36,4 @@ public class ProjectBookmark {
         this.createdAt = LocalDate.now();
     }
 
-    // 프로젝트 북마크 등록
-    public static ProjectBookmark addProjectBookmark(Account account, Project projectId) {
-        ProjectBookmark bookmark = new ProjectBookmark();
-        bookmark.setProject(projectId);
-        bookmark.setAccount(account);
-        bookmark.setCreatedAt(LocalDate.now());
-        return bookmark;
-    }
 }

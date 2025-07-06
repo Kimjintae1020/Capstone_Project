@@ -7,7 +7,7 @@ import JMP.JMP.Company.Repository.CompanyRepository;
 import JMP.JMP.Enum.Role;
 import JMP.JMP.Error.ErrorCode;
 import JMP.JMP.Error.Exception.CustomException;
-import JMP.JMP.Jwt.JWTUtil;
+import JMP.JMP.Auth.Security.JWTUtil;
 import JMP.JMP.SSE.Dto.EventResponse;
 import JMP.JMP.SSE.Entity.Event;
 import JMP.JMP.SSE.Entity.EventPayload;
@@ -20,7 +20,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import java.io.IOException;
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Service

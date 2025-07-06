@@ -4,7 +4,7 @@ import JMP.JMP.Comment.Service.CommentService;
 import JMP.JMP.Comment.Dto.DtoCreateComment;
 import JMP.JMP.Error.ErrorCode;
 import JMP.JMP.Error.ErrorResponse;
-import JMP.JMP.Jwt.JWTUtil;
+import JMP.JMP.Auth.Security.JWTUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

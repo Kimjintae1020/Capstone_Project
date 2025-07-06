@@ -5,7 +5,7 @@ import JMP.JMP.Account.Repository.AccountRepository;
 import JMP.JMP.Auth.Dto.SuccessResponse;
 import JMP.JMP.Error.ErrorCode;
 import JMP.JMP.Error.Exception.CustomException;
-import JMP.JMP.Jwt.JWTUtil;
+import JMP.JMP.Auth.Security.JWTUtil;
 import JMP.JMP.Resume.Dto.*;
 import JMP.JMP.Resume.Entity.Resume;
 import JMP.JMP.Resume.Entity.ResumeProject;
@@ -21,8 +21,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
-
-import static JMP.JMP.Resume.Mapper.ResumeMapper.toEntity;
 
 @Service
 @RequiredArgsConstructor

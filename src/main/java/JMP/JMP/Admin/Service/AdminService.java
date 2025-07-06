@@ -9,7 +9,7 @@ import JMP.JMP.Enum.PostRole;
 import JMP.JMP.Error.ErrorCode;
 import JMP.JMP.Error.ErrorResponse;
 import JMP.JMP.Error.Exception.CustomException;
-import JMP.JMP.Jwt.JWTUtil;
+import JMP.JMP.Auth.Security.JWTUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -23,7 +23,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @Slf4j
 @Transactional
-public class AdminCompanyService {
+public class AdminService {
 
     private final JWTUtil jwtUtil;
     private final CompanyRepository companyRepository;

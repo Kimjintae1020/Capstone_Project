@@ -55,6 +55,7 @@ public class BoardService {
 
 
     // 게시글 목록 조회
+    @Transactional(readOnly = true)
     public Object getBoardList(BoardType boardType, Pageable pageable, String loginId) {
         Page<Board> projects = boardRepository.findByBoardType(boardType,pageable);
 

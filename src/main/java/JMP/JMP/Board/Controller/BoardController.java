@@ -6,7 +6,7 @@ import JMP.JMP.Board.Dto.DtoCreateBoard;
 import JMP.JMP.Enum.BoardType;
 import JMP.JMP.Error.ErrorCode;
 import JMP.JMP.Error.ErrorResponse;
-import JMP.JMP.Jwt.JWTUtil;
+import JMP.JMP.Auth.Security.JWTUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;

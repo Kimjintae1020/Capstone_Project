@@ -2,6 +2,7 @@ package JMP.JMP.Jwt;
 
 import JMP.JMP.Account.Dto.CustomUserDetails;
 import JMP.JMP.Account.Entity.Account;
+import JMP.JMP.Auth.Security.JWTUtil;
 import JMP.JMP.Enum.Role;
 import JMP.JMP.Error.ErrorCode;
 import JMP.JMP.Error.ErrorResponse;
@@ -20,6 +21,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+
+import static JMP.JMP.Auth.Service.util.TokenConst.*;
 
 @AllArgsConstructor
 @Slf4j
@@ -57,7 +60,7 @@ public class JWTFilter extends OncePerRequestFilter {
 
             // access 토큰 유효함
             String category = jwtUtil.getCategory(accessToken);
-            if (!"access".equals(category)) {
+            if (!TOKEN_TYPE_ACCESS.equals(category)) {
                 response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
                 return;
             }
@@ -79,7 +82,7 @@ public class JWTFilter extends OncePerRequestFilter {
                     // refresh 토큰 유효 → 새로운 access 토큰 재발급
                     String username = jwtUtil.getUsername(refreshToken);
                     String role = jwtUtil.getRole(refreshToken);
-                    String newAccessToken = jwtUtil.createJwt("access", username, role, 15 * 60 * 1000L);
+                    String newAccessToken = jwtUtil.createJwt(TOKEN_TYPE_ACCESS, username, role, ACCESS_TOKEN_EXPRIRED_MS);
                     response.setHeader("Authorization", "Bearer " + newAccessToken);
 
                     setAuthentication(username, role);
@@ -100,7 +103,7 @@ public class JWTFilter extends OncePerRequestFilter {
         }
 
         String category = jwtUtil.getCategory(accessToken);
-        if (!"access".equals(category)) {
+        if (!TOKEN_TYPE_ACCESS.equals(category)) {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             return;
         }
@@ -125,7 +128,7 @@ public class JWTFilter extends OncePerRequestFilter {
         if (cookies == null) return null;
 
         for (Cookie cookie : cookies) {
-            if ("refresh".equals(cookie.getName())) {
+            if (TOKEN_TYPE_REFRESH.equals(cookie.getName())) {
                 return cookie.getValue();
             }
         }

@@ -124,7 +124,7 @@ public class TokenService {
                 .plus(ACCESS_TOKEN_EXPIRATION, ChronoUnit.MILLIS);
         refreshRepository.save(refreshEntity);
 
-        response.setHeader("Authorization", "Bearer " + newAccess);
+//        response.setHeader("Authorization", "Bearer " + newAccess);
         response.addCookie(createCookie(TOKEN_TYPE_REFRESH, newRefresh));
 
         return ResponseEntity.ok(ReussueSuccessResponse.of(200, "토큰 재발급 성공", newAccess, ACCESS_TOKEN_EXPIRATION, accessTokenExpiresAt));

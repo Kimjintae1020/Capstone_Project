@@ -26,9 +26,6 @@ public class ResumeController {
     private final ResumeService resumeService;
     private final JWTUtil jwtUtil;
 
-    @Value("${file.dir}")
-    private String uploadDir;
-
     //  이력서 등록
     @PostMapping(value = "/resume/create", consumes = MediaType.MULTIPART_FORM_DATA_VALUE) // multipart/form-data 타입만 허용
     public ResponseEntity<?> createResume(
@@ -36,18 +33,8 @@ public class ResumeController {
             @RequestPart("dto") DtoCreateResume dtoCreateResume,
             @RequestPart(value = "photo", required = false) MultipartFile photo) throws IOException {
 
-        String savedPath = null;
-        if (photo != null && !photo.isEmpty()) {
 
-            String fileName = UUID.randomUUID() + "_" + photo.getOriginalFilename();
-            String resolvedPath = new File(uploadDir).getAbsolutePath();
-            File file = new File(resolvedPath, fileName);
-
-            photo.transferTo(file);
-            savedPath = fileName;
-        }
-
-        ResponseEntity<?> response = resumeService.createResume(token, dtoCreateResume, savedPath);
+        ResponseEntity<?> response = resumeService.createResume(token, dtoCreateResume, photo);
 
         return response;
     }
@@ -94,21 +81,7 @@ public class ResumeController {
 
         String email = jwtUtil.getUsername(token.replace("Bearer ", ""));
 
-        String savedPath = null;
-        if (photo != null && !photo.isEmpty()) {
-
-            String originalFilename = photo.getOriginalFilename();
-            String extension = originalFilename.substring(originalFilename.lastIndexOf("."));
-            String fileName = UUID.randomUUID() + extension;
-
-            String resolvedPath = new File(uploadDir).getAbsolutePath();
-            File file = new File(resolvedPath, fileName);
-
-            photo.transferTo(file);
-            savedPath = fileName;
-        }
-
-        ResponseEntity<?> response = resumeService.updateResume(email,resumeId,dtoUpdateResume,savedPath);
+        ResponseEntity<?> response = resumeService.updateResume(email,resumeId,dtoUpdateResume,photo);
 
         return response;
     }

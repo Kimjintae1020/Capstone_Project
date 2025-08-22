@@ -33,7 +33,6 @@ public class ResumeController {
             @RequestPart("dto") DtoCreateResume dtoCreateResume,
             @RequestPart(value = "photo", required = false) MultipartFile photo) throws IOException {
 
-
         ResponseEntity<?> response = resumeService.createResume(token, dtoCreateResume, photo);
 
         return response;

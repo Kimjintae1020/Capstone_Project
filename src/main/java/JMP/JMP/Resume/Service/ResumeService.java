@@ -53,14 +53,16 @@ public class ResumeService {
         String savedPath = null;
         if (photo != null && !photo.isEmpty()) {
 
-            String fileName = UUID.randomUUID() + "_" + photo.getOriginalFilename();
+            String originalFilename = photo.getOriginalFilename();
+            String extension = originalFilename.substring(originalFilename.lastIndexOf("."));
+            String fileName = UUID.randomUUID() + extension;
+
             String resolvedPath = new File(uploadDir).getAbsolutePath();
             File file = new File(resolvedPath, fileName);
 
             photo.transferTo(file);
             savedPath = fileName;
         }
-
 
         Resume savedResume = ResumeMapper.toEntity(account, dtoCreateResume, savedPath);
         resumeRepository.save(savedResume);
@@ -88,6 +90,12 @@ public class ResumeService {
                 ))
                 .toList();
 
+    }
+
+    // 이력서 전체 목록 조회
+    @Transactional(readOnly = true)
+    public List<Resume> getResumeAllList(){
+            return resumeRepository.findAll();
     }
 
     // 이력서 삭제
@@ -186,7 +194,6 @@ public class ResumeService {
 
         DtoResumeDetail dtoResumeDetail = new DtoResumeDetail(resume);
 
-        log.info("getGithubUrl: " + dtoResumeDetail.getGithubUrl());
         return dtoResumeDetail;
     }
 }

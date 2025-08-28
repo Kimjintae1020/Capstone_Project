@@ -3,7 +3,7 @@ package JMP.JMP.Auth.Service;
 import JMP.JMP.Account.Entity.RefreshEntity;
 import JMP.JMP.Account.Repository.RefreshRepository;
 import JMP.JMP.Auth.Dto.LoginSuccessResponse;
-import JMP.JMP.Auth.Dto.SuccessResponse;
+import JMP.JMP.Auth.Dto.ReussueSuccessResponse;
 import JMP.JMP.Auth.Security.JWTUtil;
 import JMP.JMP.Enum.Role;
 import io.jsonwebtoken.ExpiredJwtException;
@@ -55,7 +55,6 @@ public class TokenService {
                         .plus(REFRESH_TOKEN_EXPIRATION, ChronoUnit.SECONDS)
                         .toString()
         );
-//        refreshEntity.setExpiration(new Date(System.currentTimeMillis() + REFRESH_TOKEN_EXPIRATION).toString());
 
         ZonedDateTime accessTokenExpiresAt = ZonedDateTime.now(ZoneId.of("Asia/Seoul"))
                 .plus(ACCESS_TOKEN_EXPIRATION, ChronoUnit.MILLIS);
@@ -114,16 +113,22 @@ public class TokenService {
         RefreshEntity refreshEntity = new RefreshEntity();
         refreshEntity.setUsername(username);
         refreshEntity.setRefresh(newRefresh);
-        refreshEntity.setExpiration(new Date(System.currentTimeMillis() + REFRESH_TOKEN_EXPIRATION).toString());
 
+        refreshEntity.setExpiration(
+                ZonedDateTime.now(ZoneId.of("Asia/Seoul"))
+                        .plus(REFRESH_TOKEN_EXPIRATION, ChronoUnit.SECONDS)
+                        .toString()
+        );
+
+        ZonedDateTime accessTokenExpiresAt = ZonedDateTime.now(ZoneId.of("Asia/Seoul"))
+                .plus(ACCESS_TOKEN_EXPIRATION, ChronoUnit.MILLIS);
         refreshRepository.save(refreshEntity);
 
-        response.setHeader("Authorization", "Bearer " + newAccess);
+//        response.setHeader("Authorization", "Bearer " + newAccess);
         response.addCookie(createCookie(TOKEN_TYPE_REFRESH, newRefresh));
 
-        return ResponseEntity.ok(SuccessResponse.of(200, "토큰 재발급 성공"));
+        return ResponseEntity.ok(ReussueSuccessResponse.of(200, "토큰 재발급 성공", newAccess, ACCESS_TOKEN_EXPIRATION, accessTokenExpiresAt));
     }
-
 
     private Cookie createCookie(String key, String value) {
         Cookie cookie = new Cookie(key, value);

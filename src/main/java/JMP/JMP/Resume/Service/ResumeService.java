@@ -13,13 +13,18 @@ import JMP.JMP.Resume.Mapper.ResumeMapper;
 import JMP.JMP.Resume.Repository.ResumeRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.io.IOException;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
@@ -32,15 +37,32 @@ public class ResumeService {
     private final AccountRepository accountRepository;
     private final JWTUtil jwtUtil;
 
+    @Value("${file.dir}")
+    private String uploadDir;
+
     // 이력서 등록
     @Transactional
-    public ResponseEntity<?> createResume(String token, DtoCreateResume dtoCreateResume, String savedPath) {
+    public ResponseEntity<?> createResume(String token, DtoCreateResume dtoCreateResume, MultipartFile photo) throws IOException {
 
         String accessToken = token.replace("Bearer ", "");
         String loginId = jwtUtil.getUsername(accessToken);
 
         Account account = accountRepository.findByEmail(loginId)
                 .orElseThrow(() -> new CustomException(ErrorCode.ACCOUNT_NOT_FOUND));
+
+        String savedPath = null;
+        if (photo != null && !photo.isEmpty()) {
+
+            String originalFilename = photo.getOriginalFilename();
+            String extension = originalFilename.substring(originalFilename.lastIndexOf("."));
+            String fileName = UUID.randomUUID() + extension;
+
+            String resolvedPath = new File(uploadDir).getAbsolutePath();
+            File file = new File(resolvedPath, fileName);
+
+            photo.transferTo(file);
+            savedPath = fileName;
+        }
 
         Resume savedResume = ResumeMapper.toEntity(account, dtoCreateResume, savedPath);
         resumeRepository.save(savedResume);
@@ -70,6 +92,12 @@ public class ResumeService {
 
     }
 
+    // 이력서 전체 목록 조회
+    @Transactional(readOnly = true)
+    public List<Resume> getResumeAllList(){
+            return resumeRepository.findAll();
+    }
+
     // 이력서 삭제
     @Transactional
     public ResponseEntity<?> deleteResume(String email, Long resumeId) {
@@ -87,13 +115,28 @@ public class ResumeService {
 
     // 이력서 수정 기능
     @Transactional
-    public ResponseEntity<?> updateResume(String email, Long resumeId, DtoUpdateResume dtoUpdateResume, String photo) {
+    public ResponseEntity<?> updateResume(String email, Long resumeId, DtoUpdateResume dtoUpdateResume, MultipartFile photo) throws IOException {
 
         Account account = accountRepository.findByEmail(email)
                 .orElseThrow(() -> new CustomException(ErrorCode.ACCOUNT_NOT_FOUND));
 
         Resume resume = resumeRepository.findByResumeIdAndAccountId(resumeId, account.getId())
                 .orElseThrow(() -> new CustomException(ErrorCode.RESUME_NOT_FOUND));
+
+
+        String savedPath = null;
+        if (photo != null && !photo.isEmpty()) {
+
+            String originalFilename = photo.getOriginalFilename();
+            String extension = originalFilename.substring(originalFilename.lastIndexOf("."));
+            String fileName = UUID.randomUUID() + extension;
+
+            String resolvedPath = new File(uploadDir).getAbsolutePath();
+            File file = new File(resolvedPath, fileName);
+
+            photo.transferTo(file);
+            savedPath = fileName;
+        }
 
         resume.setAccount(account);
         resume.setTitle(dtoUpdateResume.getTitle());
@@ -102,7 +145,7 @@ public class ResumeService {
         resume.setGithuburl(dtoUpdateResume.getGithubUrl());
         resume.setVisible(dtoUpdateResume.isVisible());
         resume.setDevposition(dtoUpdateResume.getDevposition());
-        resume.setPhoto(photo);
+        resume.setPhoto(savedPath);
         resume.setIntroduce(dtoUpdateResume.getIntroduce());
 
         resume.getProjects().clear();
@@ -151,7 +194,6 @@ public class ResumeService {
 
         DtoResumeDetail dtoResumeDetail = new DtoResumeDetail(resume);
 
-        log.info("getGithubUrl: " + dtoResumeDetail.getGithubUrl());
         return dtoResumeDetail;
     }
 }
